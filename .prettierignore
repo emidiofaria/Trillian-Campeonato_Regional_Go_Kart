@@ -4,3 +4,4 @@ node_modules/
 00_inputs/
 package-lock.json
 public/
+docs/rules.md

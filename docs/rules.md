@@ -1,90 +1,76 @@
-# Kart Cup 2026 — Regulamento
+# 🏎️ Regulamento Oficial do Campeonato de Kart de Aluguer
 
-> **Nota:** documento reconstruído a partir de `00_inputs/IMPLEMENTATION_PLAN.md`, porque o
-> original (`2.md`) não estava disponível. Os pontos marcados com **A definir** têm de ser
-> confirmados pelo grupo antes de serem publicados como definitivos.
+## 1. Introdução e Filosofia
+Este campeonato foi criado entre amigos com o objetivo de desfrutar de bons momentos de convívio a um custo reduzido. Utiliza sessões livres de 10 minutos nos kartódromos e prioriza fortemente a **assiduidade**, a **consistência** e o **fair-play**.
 
-## 1. Objetivo
+---
 
-A Kart Cup 2026 é um campeonato de karting de aluguer entre amigos, disputado ao longo de
-7 Grandes Prémios (GP), com o apoio técnico da **Trillian Driving Coach**.
+## 2. Pilotos Inscritos
+* Emídio
+* P. Queirós
+* Joel
+* Dinis
 
-## 2. Pilotos
+---
 
-| N.º | Piloto     |
-| --- | ---------- |
-| #1  | Emídio     |
-| #2  | P. Queirós |
-| #3  | Joel       |
-| #4  | Dinis      |
+## 3. Calendário Oficial (7 GPs)
 
-## 3. Calendário
+| GP | Circuito / Pista | Tipo | Localização |
+| :-: | :--- | :-: | :--- |
+| **GP 1** | Kartódromo Cabo do Mundo | Outdoor | Matosinhos |
+| **GP 2** | Kartódromo de Baltar | Outdoor | Paredes / Baltar |
+| **GP 3** | Rilhadas | Outdoor | Fafe |
+| **GP 4** | Kartódromo Internacional de Braga | Outdoor | Braga |
+| **GP 5** | Kartódromo de Viana | Outdoor | Viana do Castelo |
+| **GP 6** | Kartódromo Indoor de Matosinhos | Indoor | Matosinhos |
+| **GP 7** | Kartódromo Indoor de Famalicão | Indoor | Vila Nova de Famalicão |
 
-O campeonato tem **7 GP**. Cada GP realiza-se num circuito de karting de aluguer, que pode ser
-**Indoor** ou **Outdoor**.
+---
 
-| GP  | Circuito  | Tipo      | Localização | Data      |
-| --- | --------- | --------- | ----------- | --------- |
-| GP1 | A definir | A definir | A definir   | A definir |
-| GP2 | A definir | A definir | A definir   | A definir |
-| GP3 | A definir | A definir | A definir   | A definir |
-| GP4 | A definir | A definir | A definir   | A definir |
-| GP5 | A definir | A definir | A definir   | A definir |
-| GP6 | A definir | A definir | A definir   | A definir |
-| GP7 | A definir | A definir | A definir   | A definir |
+## 4. Formato das Provas
+* **Formato por GP:** 1 sessão de 10 minutos em modo de **sessão livre**.
+* **Atribuição de Karts:** Sorteio aleatório dos karts antes de entrar para a pista em cada etapa, para minimizar diferenças mecânicas.
+* **Classificação do GP:** Definida através do **Tempo Médio** por volta obtido na folha oficial de telemetria fornecida pelo kartódromo.
 
-As datas são acordadas no grupo e publicadas no site assim que confirmadas.
+---
 
-## 4. Formato da sessão
+## 5. Sistema de Pontuação (para 4 Participantes)
 
-- Cada GP consiste numa **sessão livre de 10 minutos**.
-- Os karts são atribuídos por **sorteio** antes da sessão.
-- A classificação da sessão é feita pelo **tempo médio por volta** (do mais baixo para o mais
-  alto).
-- No final da sessão é registada, para cada piloto, a volta mais rápida e a segunda volta mais
-  rápida (usadas para desempate e para a volta mais rápida).
+Os pontos da classificação geral são atribuídos com base no tempo médio da sessão:
 
-## 5. Pontuação
+| Posição | Critério (Tempo Médio) | Cálculo | Pontos Conquistados |
+| :--- | :--- | :---: | :---: |
+| **1º Lugar** | Tempo Médio mais rápido | 4 × 2 | **8 pts** |
+| **2º Lugar** | 2º Tempo Médio | 3 × 2 | **6 pts** |
+| **3º Lugar** | 3º Tempo Médio | 2 × 2 | **4 pts** |
+| **4º Lugar** | 4º Tempo Médio | - | **0 pts** |
+| **Falta** | **Não compareceu ao GP** | - | **0 pts** |
 
-| Posição na sessão | Pontos |
-| ----------------- | ------ |
-| 1.º               | 8      |
-| 2.º               | 6      |
-| 3.º               | 4      |
-| 4.º               | 0      |
-| Falta (ausência)  | 0      |
+### Bónus de Volta Mais Rápida (VR)
+* **+4 pontos** (metade dos pontos da vitória) para o piloto que realizar a **volta mais rápida absoluta** da sessão de 10 minutos.
+* Estes pontos somam diretamente à pontuação obtida na classificação geral do GP (ex: o 1º classificado que também faça a volta mais rápida soma 8 + 4 = 12 pontos).
 
-## 6. Volta mais rápida (VR)
+---
 
-O piloto com a **volta mais rápida da sessão** recebe um bónus de **+4 pontos**, independentemente
-da posição em que terminou.
+## 6. Gestão de Faltas e Assiduidade
+* **Penalização por Falta:** Quem não comparecer a um GP obtém **0 pontos** nessa jornada. 
+* O campeonato premeia explicitamente a consistência e a presença regular em todas as etapas.
 
-## 7. Faltas e desempates
+---
 
-### 7.1 Faltas
+## 7. Critérios de Desempate
 
-- Um piloto que não compareça a um GP regista uma **falta** e recebe **0 pontos** nesse GP.
-- **A definir:** quando há ausentes, os pilotos presentes ocupam as primeiras posições por ordem
-  (com 3 presentes: 8/6/4) ou mantém-se a tabela fixa de 4 pilotos (8/6/0)? O site usa, por
-  omissão, a primeira opção (configurável via `ABSENCE_RANKING_MODE`).
+### Em caso de empate no Tempo Médio (numa sessão):
+1. **Melhor volta individual** na respetiva sessão.
+2. **2ª melhor volta individual** na respetiva sessão.
 
-### 7.2 Desempate na sessão
+### Em caso de empate na Classificação Final do Campeonato:
+1. **Maior número de vitórias** (1ºs lugares nos GPs).
+2. **Maior número de Voltas Mais Rápidas** conquistadas ao longo da época.
+3. Menor número de faltas.
 
-Se dois pilotos tiverem o mesmo tempo médio por volta, fica à frente:
+---
 
-1. quem tiver a melhor volta mais rápida;
-2. se persistir, quem tiver a melhor segunda volta mais rápida.
-
-### 7.3 Desempate no campeonato
-
-Em caso de igualdade de pontos na classificação geral, fica à frente:
-
-1. quem tiver mais vitórias;
-2. se persistir, quem tiver mais voltas mais rápidas (VR);
-3. se persistir, quem tiver menos faltas.
-
-## 8. Conduta e transparência
-
-- Espera-se de todos os pilotos fair play e respeito pelas regras e pela equipa do kartódromo.
-- Após cada sessão, a **folha de tempos** oficial é partilhada no grupo, e os resultados
-  publicados no site são baseados nessa folha.
+## 8. Regras de Conduta e Transparência
+* **Folha de Tempos:** Após o final de cada sessão de 10 minutos, a folha de tempos oficial do kartódromo deve ser partilhada no grupo oficial do campeonato para validação pública de todos os participantes.
+* **Ambiente:** O fair-play e o respeito mútuo em pista estão acima de tudo. Divirtam-se e boa sorte ao Emídio, P. Queirós, Joel e Dinis!
