@@ -6,6 +6,7 @@ docs/rules.md (rules) and docs/layout.md (layout). Read both fully before coding
 The full phased plan is in 00_inputs/IMPLEMENTATION_PLAN.md.
 
 Stack and constraints:
+
 - Astro 4.16.x (pinned: local Node is 18.19.x, Astro 5 needs >= 18.20.8),
   TypeScript strict, fully static output (no SSR). Tailwind CSS 3 via @astrojs/tailwind.
 - Deployed to GitHub Pages as a project site:
@@ -30,7 +31,7 @@ Stack and constraints:
   --brand-green #19833c, --brand-ring #82b07a, --bg #0d1117.
 - Sponsor links (use exactly these):
   App website: https://emidiofaria.github.io/Trillian-website/
-  Play Store:  https://play.google.com/store/apps/details?id=io.github.emidiofaria.trillian
+  Play Store: https://play.google.com/store/apps/details?id=io.github.emidiofaria.trillian
 - Do not run git push. Do not install dependencies not needed for the task.
 
 Work in small, reviewable steps. At the end of each task, report what changed
