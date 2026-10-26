@@ -1,9 +1,22 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Section from '../components/ui/Section.astro';
+import { NAV_ITEMS } from '../lib/site';
 ---
 
 <BaseLayout>
-  <main id="conteudo">
-    <h1>Kart Cup 2026</h1>
-  </main>
+  <div class="speed-lines border-b border-border">
+    <div class="mx-auto max-w-content px-4 py-20 sm:px-6">
+      <h1 class="text-4xl font-bold sm:text-6xl">Kart Cup 2026</h1>
+      <p class="mt-4 max-w-2xl text-lg text-fg-muted">Site em construção.</p>
+    </div>
+  </div>
+
+  {
+    NAV_ITEMS.map((item) => (
+      <Section id={item.id} title={item.label}>
+        <p class="text-fg-muted">Em breve.</p>
+      </Section>
+    ))
+  }
 </BaseLayout>

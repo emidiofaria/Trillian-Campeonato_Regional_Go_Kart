@@ -1,3 +1,130 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+
+    /* Surfaces */
+    --bg: #0d1117;
+    --surface: #161b22;
+    --elevated: #1f2630;
+    --border: #30363d;
+    --border-strong: #484f58;
+
+    /* Text */
+    --text: #e6edf3;
+    --text-muted: #9aa4b2;
+
+    /* Brand (sampled from the Trillian logo) */
+    --brand-blue: #0f4174; /* surfaces only, 1.8:1 on --bg */
+    --brand-blue-text: #6ea8fe; /* AA-safe link/text variant, 7.8:1 */
+    --brand-yellow: #e9be00; /* 10.7:1 on --bg */
+    --brand-green: #19833c; /* button bg, white text 4.8:1 */
+    --brand-green-strong: #16753a; /* hover, white text 5.8:1 */
+    --brand-green-text: #3fb950; /* AA-safe text variant, 7.5:1 */
+    --brand-ring: #82b07a; /* 7.6:1 */
+
+    --focus: var(--brand-yellow);
+    --header-h: 4rem;
+  }
+
+  html {
+    background-color: var(--bg);
+    color: var(--text);
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--header-h) + 1rem);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply font-sans antialiased;
+    min-height: 100vh;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display tracking-tight;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .skip-link {
+    @apply sr-only;
+  }
+  .skip-link:focus {
+    @apply not-sr-only fixed left-4 top-4 z-[100] rounded-md bg-brand-yellow px-4 py-2 font-semibold text-bg;
+  }
+
+  /* Checkered-flag divider */
+  .checkered-divider {
+    height: 12px;
+    background-image: linear-gradient(45deg, var(--border-strong) 25%, transparent 25%),
+      linear-gradient(-45deg, var(--border-strong) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, var(--border-strong) 75%),
+      linear-gradient(-45deg, transparent 75%, var(--border-strong) 75%);
+    background-size: 12px 12px;
+    background-position:
+      0 0,
+      0 6px,
+      6px -6px,
+      -6px 0;
+    opacity: 0.6;
+    mask-image: linear-gradient(90deg, transparent, #000 15%, #000 85%, transparent);
+  }
+
+  /* Speed-line accent */
+  .speed-lines {
+    position: relative;
+    overflow: hidden;
+  }
+  .speed-lines::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      100deg,
+      transparent 0 38px,
+      rgb(233 190 0 / 0.05) 38px 40px,
+      transparent 40px 90px
+    );
+    background-size: 200% 100%;
+    animation: speed 14s linear infinite;
+  }
+  @keyframes speed {
+    to {
+      background-position: -200% 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .speed-lines::before {
+      animation: none;
+    }
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}

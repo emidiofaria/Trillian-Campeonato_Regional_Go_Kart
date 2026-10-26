@@ -1,0 +1,37 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+import Icon from '../icons/Icon.astro';
+import type { ButtonVariant } from '../types';
+
+type Props = Omit<HTMLAttributes<'a'>, 'class'> & {
+  href: string;
+  variant?: ButtonVariant;
+  external?: boolean;
+  class?: string;
+};
+
+const { href, variant = 'primary', external = false, class: className = '', ...rest } = Astro.props;
+
+const variants: Record<ButtonVariant, string> = {
+  primary: 'bg-brand-yellow text-bg hover:bg-[#f5cc1a]',
+  secondary:
+    'border border-border-strong bg-elevated text-fg hover:border-brand-ring hover:text-white',
+  green: 'bg-brand-green text-white hover:bg-brand-green-strong',
+};
+
+const externalAttrs = external ? { target: '_blank', rel: 'noopener noreferrer' } : {};
+---
+
+<a
+  href={href}
+  class:list={[
+    'inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-offset-4',
+    variants[variant],
+    className,
+  ]}
+  {...externalAttrs}
+  {...rest}
+>
+  <slot />
+  {external && <Icon name="external" size={16} />}
+</a>

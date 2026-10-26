@@ -1,0 +1,19 @@
+---
+interface Props {
+  as?: 'div' | 'article' | 'li';
+  class?: string;
+  highlight?: boolean;
+}
+
+const { as: Tag = 'div', class: className = '', highlight = false } = Astro.props;
+---
+
+<Tag
+  class:list={[
+    'rounded-xl border bg-surface p-5 shadow-sm shadow-black/30',
+    highlight ? 'border-brand-yellow/70' : 'border-border',
+    className,
+  ]}
+>
+  <slot />
+</Tag>

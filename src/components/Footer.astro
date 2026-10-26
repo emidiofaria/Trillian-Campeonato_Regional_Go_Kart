@@ -1,0 +1,62 @@
+---
+import { NAV_ITEMS, SITE_NAME, SPONSOR, withBase } from '../lib/site';
+
+const year = new Date().getFullYear();
+const home = withBase();
+---
+
+<footer class="mt-16 border-t border-border bg-surface">
+  <div class="checkered-divider"></div>
+  <div class="mx-auto grid max-w-content gap-8 px-4 py-10 sm:px-6 md:grid-cols-3">
+    <div>
+      <p class="font-display text-xl font-bold text-fg">{SITE_NAME}</p>
+      <p class="mt-2 text-sm text-fg-muted">Campeonato de karting de aluguer entre amigos.</p>
+    </div>
+
+    <nav aria-label="Ligações rápidas">
+      <p class="text-sm font-semibold uppercase tracking-wider text-fg">Ligações rápidas</p>
+      <ul class="mt-3 grid grid-cols-2 gap-1 text-sm">
+        {
+          NAV_ITEMS.map((item) => (
+            <li>
+              <a
+                href={`${home}#${item.id}`}
+                class="inline-block py-1 text-fg-muted underline-offset-4 hover:text-fg hover:underline"
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="flex items-start gap-3">
+      <img
+        src={withBase('trillian-logo-64.png')}
+        width="48"
+        height="48"
+        alt=""
+        loading="lazy"
+        decoding="async"
+        class="h-12 w-12 shrink-0 rounded-full"
+      />
+      <p class="text-sm text-fg-muted">
+        Com o apoio técnico da
+        <a
+          href={SPONSOR.websiteUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="font-semibold text-brand-blue-text underline-offset-4 hover:underline"
+          >{SPONSOR.name}<span class="sr-only"> (abre num novo separador)</span></a
+        >
+      </p>
+    </div>
+  </div>
+  <div class="border-t border-border">
+    <p class="mx-auto max-w-content px-4 py-4 text-xs text-fg-muted sm:px-6">
+      &copy; {year}
+      {SITE_NAME}. Todos os direitos reservados.
+    </p>
+  </div>
+</footer>

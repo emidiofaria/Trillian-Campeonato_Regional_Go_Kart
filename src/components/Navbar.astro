@@ -1,0 +1,136 @@
+---
+import Icon from './icons/Icon.astro';
+import { NAV_ITEMS, SITE_NAME, withBase } from '../lib/site';
+
+const home = withBase();
+---
+
+<header
+  class="sticky top-0 z-50 border-b border-border bg-bg/85 backdrop-blur supports-[backdrop-filter]:bg-bg/70"
+>
+  <nav aria-label="Navegação principal" class="mx-auto max-w-content px-4 sm:px-6">
+    <div class="relative flex min-h-16 flex-wrap items-center justify-between gap-x-4">
+      <a href={home} class="flex h-16 items-center gap-2 font-display text-xl font-bold text-fg">
+        <span class="text-brand-yellow"><Icon name="trophy" size={24} /></span>
+        {SITE_NAME}
+      </a>
+
+      <button
+        type="button"
+        class="nav-toggle inline-flex h-11 w-11 items-center justify-center rounded-lg border border-border text-fg md:hidden"
+        aria-expanded="false"
+        aria-controls="nav-menu"
+        hidden
+      >
+        <span class="sr-only">Abrir menu</span>
+        <span class="icon-open"><Icon name="menu" size={22} /></span>
+        <span class="icon-close hidden"><Icon name="close" size={22} /></span>
+      </button>
+
+      <ul
+        id="nav-menu"
+        class="nav-menu w-full flex-col gap-1 pb-3 md:w-auto md:flex-row md:items-center md:pb-0"
+      >
+        {
+          NAV_ITEMS.map((item) => (
+            <li>
+              <a
+                href={`${home}#${item.id}`}
+                data-section={item.id}
+                class="nav-link block rounded-md px-3 py-3 text-sm font-medium text-fg-muted transition-colors hover:bg-elevated hover:text-fg md:py-2"
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </nav>
+</header>
+
+<style>
+  /* Without JS the menu wraps below the brand on mobile; with JS it is a disclosure panel. */
+  .nav-menu {
+    display: flex;
+  }
+  @media (max-width: 767.98px) {
+    :global(html.js) .nav-menu {
+      position: absolute;
+      inset-inline: -1rem;
+      top: 4rem;
+      width: auto;
+      padding: 0.5rem 1rem 1rem;
+      background-color: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+    :global(html.js) .nav-menu:not(.is-open) {
+      display: none;
+    }
+  }
+  @media (min-width: 640px) and (max-width: 767.98px) {
+    :global(html.js) .nav-menu {
+      inset-inline: -1.5rem;
+      padding-inline: 1.5rem;
+    }
+  }
+  .nav-link[aria-current='true'] {
+    color: var(--brand-yellow);
+    background-color: rgb(233 190 0 / 0.08);
+  }
+</style>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('.nav-toggle');
+  const menu = document.getElementById('nav-menu');
+
+  if (toggle && menu) {
+    toggle.hidden = false;
+    const label = toggle.querySelector('.sr-only');
+    const iconOpen = toggle.querySelector('.icon-open');
+    const iconClose = toggle.querySelector('.icon-close');
+
+    const setOpen = (open: boolean) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      menu.classList.toggle('is-open', open);
+      iconOpen?.classList.toggle('hidden', open);
+      iconClose?.classList.toggle('hidden', !open);
+      if (label) label.textContent = open ? 'Fechar menu' : 'Abrir menu';
+    };
+
+    toggle.addEventListener('click', () =>
+      setOpen(toggle.getAttribute('aria-expanded') !== 'true'),
+    );
+    menu.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('a')) setOpen(false);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+  }
+
+  // Active section highlighting (progressive enhancement).
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('.nav-link[data-section]'));
+  const sections = links
+    .map((l) => document.getElementById(l.dataset.section ?? ''))
+    .filter((s): s is HTMLElement => s !== null);
+
+  if ('IntersectionObserver' in window && sections.length) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          for (const link of links) {
+            if (link.dataset.section === entry.target.id) link.setAttribute('aria-current', 'true');
+            else link.removeAttribute('aria-current');
+          }
+        }
+      },
+      { rootMargin: '-45% 0px -50% 0px' },
+    );
+    sections.forEach((s) => observer.observe(s));
+  }
+</script>
