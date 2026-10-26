@@ -1,0 +1,58 @@
+[
+  {
+    "id": "gp1",
+    "round": 1,
+    "circuit": "Kartódromo Cabo do Mundo",
+    "type": "Outdoor",
+    "location": "Matosinhos",
+    "status": "next"
+  },
+  {
+    "id": "gp2",
+    "round": 2,
+    "circuit": "Kartódromo de Baltar",
+    "type": "Outdoor",
+    "location": "Paredes / Baltar",
+    "status": "scheduled"
+  },
+  {
+    "id": "gp3",
+    "round": 3,
+    "circuit": "Rilhadas",
+    "type": "Outdoor",
+    "location": "Fafe",
+    "status": "scheduled"
+  },
+  {
+    "id": "gp4",
+    "round": 4,
+    "circuit": "Kartódromo Internacional de Braga",
+    "type": "Outdoor",
+    "location": "Braga",
+    "status": "scheduled"
+  },
+  {
+    "id": "gp5",
+    "round": 5,
+    "circuit": "Kartódromo de Viana",
+    "type": "Outdoor",
+    "location": "Viana do Castelo",
+    "status": "scheduled"
+  },
+  {
+    "id": "gp6",
+    "round": 6,
+    "circuit": "Kartódromo Indoor de Matosinhos",
+    "type": "Indoor",
+    "location": "Matosinhos",
+    "status": "scheduled"
+  },
+  {
+    "id": "gp7",
+    "round": 7,
+    "circuit": "Kartódromo Indoor de Famalicão",
+    "type": "Indoor",
+    "location": "Vila Nova de Famalicão",
+    "status": "scheduled"
+  }
+]

@@ -1,0 +1,166 @@
+{
+  "_comment": "TEST FIXTURE ONLY - never used in production data.",
+  "races": [
+    {
+      "id": "gp1",
+      "round": 1,
+      "circuit": "Kartódromo Cabo do Mundo",
+      "type": "Outdoor",
+      "location": "Matosinhos",
+      "status": "completed",
+      "date": "2026-03-14",
+      "timesheetUrl": "https://example.com/folha-gp1.pdf"
+    },
+    {
+      "id": "gp2",
+      "round": 2,
+      "circuit": "Kartódromo de Baltar",
+      "type": "Outdoor",
+      "location": "Paredes / Baltar",
+      "status": "completed",
+      "date": "2026-04-18"
+    },
+    {
+      "id": "gp3",
+      "round": 3,
+      "circuit": "Rilhadas",
+      "type": "Outdoor",
+      "location": "Fafe",
+      "status": "completed",
+      "date": "2026-05-16"
+    },
+    {
+      "id": "gp4",
+      "round": 4,
+      "circuit": "Kartódromo Internacional de Braga",
+      "type": "Outdoor",
+      "location": "Braga",
+      "status": "next"
+    },
+    {
+      "id": "gp5",
+      "round": 5,
+      "circuit": "Kartódromo de Viana",
+      "type": "Outdoor",
+      "location": "Viana do Castelo",
+      "status": "scheduled"
+    },
+    {
+      "id": "gp6",
+      "round": 6,
+      "circuit": "Kartódromo Indoor de Matosinhos",
+      "type": "Indoor",
+      "location": "Matosinhos",
+      "status": "scheduled"
+    },
+    {
+      "id": "gp7",
+      "round": 7,
+      "circuit": "Kartódromo Indoor de Famalicão",
+      "type": "Indoor",
+      "location": "Vila Nova de Famalicão",
+      "status": "scheduled"
+    }
+  ],
+  "results": [
+    {
+      "raceId": "gp1",
+      "entries": [
+        {
+          "pilotId": "emidio",
+          "attended": true,
+          "avgLapTime": 52.8,
+          "bestLap": 51.9,
+          "secondBestLap": 52.1
+        },
+        {
+          "pilotId": "p-queiros",
+          "attended": true,
+          "avgLapTime": 53.1,
+          "bestLap": 51.5,
+          "secondBestLap": 52.0
+        },
+        {
+          "pilotId": "joel",
+          "attended": true,
+          "avgLapTime": 53.5,
+          "bestLap": 52.6,
+          "secondBestLap": 52.9
+        },
+        {
+          "pilotId": "dinis",
+          "attended": true,
+          "avgLapTime": 54.0,
+          "bestLap": 53.0,
+          "secondBestLap": 53.2
+        }
+      ]
+    },
+    {
+      "raceId": "gp2",
+      "entries": [
+        {
+          "pilotId": "emidio",
+          "attended": true,
+          "avgLapTime": 50.5,
+          "bestLap": 49.8,
+          "secondBestLap": 50.0
+        },
+        {
+          "pilotId": "p-queiros",
+          "attended": true,
+          "avgLapTime": 50.9,
+          "bestLap": 50.1,
+          "secondBestLap": 50.3
+        },
+        {
+          "pilotId": "joel",
+          "attended": false,
+          "avgLapTime": null,
+          "bestLap": null,
+          "secondBestLap": null
+        },
+        {
+          "pilotId": "dinis",
+          "attended": true,
+          "avgLapTime": 50.2,
+          "bestLap": 49.5,
+          "secondBestLap": 49.7
+        }
+      ]
+    },
+    {
+      "raceId": "gp3",
+      "entries": [
+        {
+          "pilotId": "emidio",
+          "attended": true,
+          "avgLapTime": 48.0,
+          "bestLap": 47.2,
+          "secondBestLap": 47.4
+        },
+        {
+          "pilotId": "p-queiros",
+          "attended": true,
+          "avgLapTime": 48.0,
+          "bestLap": 47.3,
+          "secondBestLap": 47.5
+        },
+        {
+          "pilotId": "joel",
+          "attended": true,
+          "avgLapTime": 48.4,
+          "bestLap": 47.1,
+          "secondBestLap": 47.6
+        },
+        {
+          "pilotId": "dinis",
+          "attended": true,
+          "avgLapTime": 49.0,
+          "bestLap": 48.0,
+          "secondBestLap": 48.2
+        }
+      ]
+    }
+  ]
+}
