@@ -1,6 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const PORT = 4321;
+const FIXTURE = process.env.KARTCUP_FIXTURE === '1';
+const PORT = FIXTURE ? 4322 : 4321;
 const BASE_PATH = (process.env.BASE_PATH ?? '/Trillian-Campeonato_Regional_Go_Kart').replace(
   /\/?$/,
   '/',

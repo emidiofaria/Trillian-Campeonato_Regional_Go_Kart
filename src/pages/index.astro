@@ -2,14 +2,16 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/sections/Hero.astro';
 import Section from '../components/ui/Section.astro';
+import Standings from '../components/sections/Standings.astro';
 import { NAV_ITEMS } from '../lib/site';
 ---
 
 <BaseLayout>
   <Hero />
+  <Standings />
 
   {
-    NAV_ITEMS.map((item) => (
+    NAV_ITEMS.filter((item) => item.id !== 'classificacao').map((item) => (
       <Section id={item.id} title={item.label}>
         <p class="text-fg-muted">Em breve.</p>
       </Section>

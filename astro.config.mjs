@@ -6,9 +6,13 @@ import tailwind from '@astrojs/tailwind';
 const site = process.env.SITE_URL ?? 'https://emidiofaria.github.io';
 const base = process.env.BASE_PATH ?? '/Trillian-Campeonato_Regional_Go_Kart';
 
+// Test-only builds with tests/fixtures/season.json go to a separate folder (never deployed).
+const fixture = process.env.KARTCUP_FIXTURE === '1';
+
 export default defineConfig({
   site,
   base,
+  outDir: fixture ? './dist-fixture' : './dist',
   trailingSlash: 'ignore',
   output: 'static',
   integrations: [tailwind({ applyBaseStyles: false })],

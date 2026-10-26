@@ -1,0 +1,19 @@
+---
+import type { Pilot } from '../lib/schemas';
+
+interface Props {
+  pilot: Pilot;
+  size?: 'sm' | 'lg';
+}
+
+const { pilot, size = 'sm' } = Astro.props;
+---
+
+<span
+  class:list={[
+    'inline-grid shrink-0 place-items-center rounded-full font-display font-bold text-bg',
+    size === 'sm' ? 'h-8 w-8 text-sm' : 'h-16 w-16 text-2xl',
+  ]}
+  style={{ backgroundColor: pilot.color }}
+  aria-hidden="true">{pilot.initials}</span
+>

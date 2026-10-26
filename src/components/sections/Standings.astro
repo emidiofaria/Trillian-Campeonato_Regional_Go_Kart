@@ -1,0 +1,229 @@
+---
+import Section from '../ui/Section.astro';
+import Badge from '../ui/Badge.astro';
+import Icon from '../icons/Icon.astro';
+import PilotAvatar from '../PilotAvatar.astro';
+import { championship, pilotById, sortedRaces } from '../../lib/data';
+import { FASTEST_LAP_BONUS } from '../../lib/scoring';
+
+const { standings, completedRaces } = championship;
+const started = completedRaces > 0;
+---
+
+<Section id="classificacao" eyebrow="Kart Cup 2026" title="Classificação Geral">
+  <span slot="title-icon" class="mr-2 inline-block align-[-0.1em] text-brand-yellow">
+    <Icon name="flag" size={30} />
+  </span>
+  <Badge slot="header-aside" variant="neutral"><Icon name="users" size={14} /> 4 Pilotos</Badge>
+
+  {
+    !started && (
+      <p
+        class="mb-6 rounded-lg border border-border bg-surface px-4 py-3 text-fg-muted"
+        data-testid="season-not-started"
+      >
+        A temporada ainda não começou. A classificação é atualizada após cada GP.
+      </p>
+    )
+  }
+
+  <p class="mb-2 flex items-center gap-2 text-xs text-fg-muted md:hidden" aria-hidden="true">
+    Desliza para ver todos os GP <span class="scroll-hint-arrow">→</span>
+  </p>
+
+  <div
+    class="standings-scroll relative overflow-x-auto rounded-xl border border-border bg-surface"
+    role="region"
+    aria-labelledby="standings-caption"
+    tabindex="0"
+  >
+    <table class="w-full min-w-[46rem] border-collapse text-sm">
+      <caption id="standings-caption" class="sr-only">
+        Classificação geral da Kart Cup 2026: posição, piloto, pontos totais e pontos por GP
+      </caption>
+      <thead>
+        <tr class="border-b border-border text-left text-xs uppercase tracking-wider text-fg-muted">
+          <th scope="col" class="sticky-col sticky-pos px-3 py-3 text-center">Pos</th>
+          <th scope="col" class="sticky-col sticky-pilot px-3 py-3">Piloto</th>
+          <th scope="col" class="px-3 py-3 text-right">Pontos Totais</th>
+          {
+            sortedRaces.map((race) => (
+              <th scope="col" class="px-2 py-3 text-center">
+                <abbr title={`GP ${race.round} — ${race.circuit}`} class="no-underline">
+                  GP{race.round}
+                </abbr>
+              </th>
+            ))
+          }
+        </tr>
+      </thead>
+      <tbody>
+        {
+          standings.map((row) => {
+            const pilot = pilotById.get(row.pilotId)!;
+            const isLeader = started && row.position === 1;
+            return (
+              <tr
+                class:list={['border-b border-border last:border-0', isLeader && 'leader-row']}
+                data-pilot={pilot.id}
+              >
+                <td class="sticky-col sticky-pos tabular px-3 py-3 text-center font-display text-lg font-bold text-fg">
+                  {row.position}
+                  <span class="sr-only">.º</span>
+                </td>
+                <th scope="row" class="sticky-col sticky-pilot px-3 py-3 text-left font-normal">
+                  <span class="flex items-center gap-3">
+                    <PilotAvatar pilot={pilot} />
+                    <span class="font-semibold text-fg">{pilot.name}</span>
+                    {isLeader && (
+                      <Badge variant="yellow" class="hidden sm:inline-flex">
+                        Líder
+                      </Badge>
+                    )}
+                    {isLeader && <span class="sr-only sm:hidden">(Líder)</span>}
+                  </span>
+                </th>
+                <td
+                  class:list={[
+                    'tabular px-3 py-3 text-right font-display text-xl font-bold',
+                    isLeader ? 'text-brand-yellow' : 'text-fg',
+                  ]}
+                >
+                  {row.total}
+                </td>
+                {row.perGp.map((cell) => (
+                  <td class="tabular px-2 py-3 text-center">
+                    {cell.state === 'not-run' && (
+                      <span class="text-fg-muted">
+                        <span aria-hidden="true">—</span>
+                        <span class="sr-only">Não realizado</span>
+                      </span>
+                    )}
+                    {cell.state === 'absent' && (
+                      <span class="cell-absent" title="Falta">
+                        <span aria-hidden="true">F</span>
+                        <span class="sr-only">Falta, 0 pontos</span>
+                      </span>
+                    )}
+                    {cell.state === 'scored' && (
+                      <span class="inline-flex items-center justify-center gap-1">
+                        <span class="font-semibold text-fg">{cell.points}</span>
+                        {cell.fastestLap && (
+                          <span class="vr-marker" title="Volta mais rápida (+4)">
+                            <span aria-hidden="true">VR</span>
+                            <span class="sr-only">
+                              (inclui {cell.bonusPoints} pontos de bónus pela volta mais rápida)
+                            </span>
+                          </span>
+                        )}
+                      </span>
+                    )}
+                  </td>
+                ))}
+              </tr>
+            );
+          })
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <p class="mt-3 text-sm text-fg-muted">
+    <span class="vr-marker" aria-hidden="true">VR</span>
+    +{FASTEST_LAP_BONUS} pontos pela volta mais rápida (VR) da sessão ·
+    <span class="cell-absent" aria-hidden="true">F</span> Falta (0 pontos) · — GP ainda não realizado
+  </p>
+
+  <details class="group mt-6 rounded-xl border border-border bg-surface">
+    <summary
+      class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-xl px-5 py-4 font-semibold text-fg hover:bg-elevated"
+    >
+      Critérios de desempate
+      <span class="text-fg-muted transition-transform group-open:rotate-180" aria-hidden="true"
+        >▾</span
+      >
+    </summary>
+    <div class="grid gap-6 border-t border-border px-5 py-5 text-sm text-fg-muted sm:grid-cols-2">
+      <div>
+        <h3 class="font-sans text-sm font-semibold uppercase tracking-wider text-fg">
+          Empate no tempo médio (numa sessão)
+        </h3>
+        <ol class="mt-2 list-decimal space-y-1 pl-5">
+          <li>Melhor volta individual na respetiva sessão.</li>
+          <li>2.ª melhor volta individual na respetiva sessão.</li>
+        </ol>
+      </div>
+      <div>
+        <h3 class="font-sans text-sm font-semibold uppercase tracking-wider text-fg">
+          Empate na classificação final
+        </h3>
+        <ol class="mt-2 list-decimal space-y-1 pl-5">
+          <li>Maior número de vitórias (1.ºs lugares nos GP).</li>
+          <li>Maior número de voltas mais rápidas conquistadas ao longo da época.</li>
+          <li>Menor número de faltas.</li>
+        </ol>
+      </div>
+    </div>
+  </details>
+</Section>
+
+<style>
+  .sticky-col {
+    position: sticky;
+    z-index: 1;
+    background-color: var(--surface);
+  }
+  .sticky-pos {
+    left: 0;
+    width: 3.5rem;
+    min-width: 3.5rem;
+  }
+  .sticky-pilot {
+    left: 3.5rem;
+    min-width: 11rem;
+    box-shadow: 1px 0 0 var(--border);
+  }
+  .leader-row,
+  .leader-row .sticky-col {
+    background-color: #1c1d17;
+  }
+  .leader-row .sticky-pos {
+    box-shadow: inset 3px 0 0 var(--brand-yellow);
+  }
+  .cell-absent {
+    display: inline-grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.5rem;
+    border-radius: 0.375rem;
+    border: 1px dashed rgb(251 113 133 / 0.6);
+    color: #fda4af;
+    font-weight: 700;
+    font-size: 0.75rem;
+  }
+  .vr-marker {
+    display: inline-block;
+    border-radius: 0.25rem;
+    background-color: rgb(130 176 122 / 0.15);
+    color: var(--brand-ring);
+    padding: 0 0.3rem;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    line-height: 1.2rem;
+  }
+  .standings-scroll:focus-visible {
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .scroll-hint-arrow {
+      display: inline-block;
+      animation: nudge 1.6s ease-in-out infinite;
+    }
+  }
+  @keyframes nudge {
+    50% {
+      transform: translateX(4px);
+    }
+  }
+</style>

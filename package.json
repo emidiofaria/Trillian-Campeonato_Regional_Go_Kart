@@ -15,9 +15,10 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check": "astro check && eslint .",
-    "test:e2e": "playwright test",
+    "test:e2e": "astro build && playwright test",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:e2e:fixture": "KARTCUP_FIXTURE=1 astro build && KARTCUP_FIXTURE=1 playwright test"
   },
   "dependencies": {
     "@astrojs/check": "0.9.4",

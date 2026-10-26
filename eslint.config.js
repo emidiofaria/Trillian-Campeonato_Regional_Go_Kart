@@ -8,6 +8,7 @@ export default [
     ignores: [
       'src/env.d.ts',
       'dist/',
+      'dist-fixture/',
       '.astro/',
       'node_modules/',
       'coverage/',
