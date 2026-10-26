@@ -1,16 +1,12 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/sections/Hero.astro';
 import Section from '../components/ui/Section.astro';
 import { NAV_ITEMS } from '../lib/site';
 ---
 
 <BaseLayout>
-  <div class="speed-lines border-b border-border">
-    <div class="mx-auto max-w-content px-4 py-20 sm:px-6">
-      <h1 class="text-4xl font-bold sm:text-6xl">Kart Cup 2026</h1>
-      <p class="mt-4 max-w-2xl text-lg text-fg-muted">Site em construção.</p>
-    </div>
-  </div>
+  <Hero />
 
   {
     NAV_ITEMS.map((item) => (

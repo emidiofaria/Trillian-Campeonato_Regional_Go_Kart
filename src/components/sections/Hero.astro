@@ -1,0 +1,167 @@
+---
+import Badge from '../ui/Badge.astro';
+import Button from '../ui/Button.astro';
+import Icon from '../icons/Icon.astro';
+import { championship, nextRace, pilotById } from '../../lib/data';
+import { formatDate, formatPoints } from '../../lib/format';
+import { SPONSOR, withBase } from '../../lib/site';
+
+const leaders = championship.leaderIds.map((id) => pilotById.get(id)!).filter(Boolean);
+const leaderTotal = championship.standings[0]?.total ?? 0;
+---
+
+<section aria-labelledby="hero-titulo" class="speed-lines border-b border-border">
+  <div
+    class="mx-auto grid max-w-content items-center gap-12 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-[1.15fr_1fr]"
+  >
+    <div>
+      <Badge variant="yellow"><Icon name="star" size={14} /> Patrocinador Oficial</Badge>
+      <h1
+        id="hero-titulo"
+        class="mt-5 text-4xl font-bold leading-[1.05] text-fg sm:text-5xl lg:text-6xl"
+      >
+        Melhora as tuas voltas com a
+        <span class="text-brand-yellow">Trillian Driving Coach</span>
+      </h1>
+      <p class="mt-5 max-w-xl text-lg leading-relaxed text-fg-muted">
+        A assistente oficial da Kart Cup 2026. Analisa a telemetria de cada sessão, descobre onde
+        estás a perder tempo e torna-te um piloto mais rápido e consistente, volta após volta.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <Button
+          href={SPONSOR.playStoreUrl}
+          variant="green"
+          external
+          aria-label="Download da app Trillian Driving Coach na Google Play Store (abre num novo separador)"
+        >
+          Download na Play Store
+        </Button>
+        <Button
+          href={SPONSOR.websiteUrl}
+          variant="secondary"
+          external
+          aria-label="Visitar o website da Trillian Driving Coach (abre num novo separador)"
+        >
+          Visitar Website
+        </Button>
+      </div>
+
+      <ul class="mt-10 flex flex-wrap gap-3" aria-label="Destaques do campeonato">
+        {
+          nextRace && (
+            <li class="hero-chip">
+              <span class="text-brand-blue-text">
+                <Icon name="calendar" size={18} />
+              </span>
+              <span>
+                <span class="block text-xs uppercase tracking-wider text-fg-muted">Próximo GP</span>
+                <a
+                  href={withBase(`#${nextRace.id}`)}
+                  class="font-semibold text-fg underline-offset-4 hover:underline"
+                >
+                  GP {nextRace.round} · {nextRace.circuit}
+                </a>
+                {nextRace.date && (
+                  <span class="block text-xs text-fg-muted">{formatDate(nextRace.date)}</span>
+                )}
+              </span>
+            </li>
+          )
+        }
+        {
+          leaders.length > 0 && (
+            <li class="hero-chip" data-testid="leader-chip">
+              <span class="text-brand-yellow">
+                <Icon name="trophy" size={18} />
+              </span>
+              <span>
+                <span class="block text-xs uppercase tracking-wider text-fg-muted">
+                  {leaders.length > 1 ? 'Líderes' : 'Líder'}
+                </span>
+                <span class="font-semibold text-fg">{leaders.map((p) => p.name).join(' e ')}</span>
+                <span class="tabular block text-xs text-brand-yellow">
+                  {formatPoints(leaderTotal)}
+                </span>
+              </span>
+            </li>
+          )
+        }
+      </ul>
+    </div>
+
+    <div class="flex justify-center lg:justify-end">
+      <div
+        class="logo-ring relative grid aspect-square w-64 place-items-center sm:w-80 lg:w-[22rem]"
+      >
+        <span class="ring-gradient" aria-hidden="true"></span>
+        <span class="ring-glow" aria-hidden="true"></span>
+        <picture class="relative block w-[86%]">
+          <source srcset={withBase('trillian-logo.webp')} type="image/webp" />
+          <img
+            src={withBase('trillian-logo-512.png')}
+            width="512"
+            height="512"
+            alt="Logótipo Trillian Driving Coach"
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
+            class="aspect-square h-auto w-full rounded-full"
+          />
+        </picture>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-chip {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    border: 1px solid var(--border);
+    background-color: var(--surface);
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    min-width: 13rem;
+  }
+
+  /* Only the outer ring animates; the logo itself never moves or changes. */
+  .ring-gradient {
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    background: conic-gradient(
+      from 0deg,
+      var(--brand-blue),
+      var(--brand-green),
+      var(--brand-yellow),
+      var(--brand-ring),
+      var(--brand-blue)
+    );
+    -webkit-mask: radial-gradient(
+      farthest-side,
+      transparent calc(100% - 6px),
+      #000 calc(100% - 5px)
+    );
+    mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #000 calc(100% - 5px));
+    animation: ring-spin 18s linear infinite;
+  }
+  .ring-glow {
+    position: absolute;
+    inset: 8%;
+    border-radius: 9999px;
+    box-shadow:
+      0 0 60px 10px rgb(15 65 116 / 0.55),
+      0 0 120px 30px rgb(130 176 122 / 0.12);
+  }
+  @keyframes ring-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ring-gradient {
+      animation: none;
+    }
+  }
+</style>
