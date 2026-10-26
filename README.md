@@ -1,4 +1,4 @@
-# Trillian — Campeonato Regional Go Kart (Kart Cup 2026/2027)
+# Trillian — Campeonato Regional Go Kart ( Kart Cup 2026/2027)
 
 Site estático oficial da **Kart Cup 2026**, um campeonato de karting de aluguer entre amigos
 (Emídio, P. Queirós, Joel, Dinis), com o apoio da **Trillian Driving Coach**.
