@@ -1,0 +1,69 @@
+name: Submeter resultados do GP
+description: Envia os tempos oficiais de um GP para serem adicionados à classificação.
+title: 'Resultados: GP'
+labels: ['resultados']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Usa os valores da **folha oficial de telemetria** do kartódromo (sessão livre de 10 minutos).
+        Tempos no formato `52.341` ou `0:52.341`. Para pilotos ausentes, marca "Falta" e deixa os tempos vazios.
+  - type: dropdown
+    id: gp
+    attributes:
+      label: GP
+      options:
+        - GP1 · Kartódromo Cabo do Mundo (Matosinhos)
+        - GP2 · Kartódromo de Baltar (Paredes / Baltar)
+        - GP3 · Rilhadas (Fafe)
+        - GP4 · Kartódromo Internacional de Braga (Braga)
+        - GP5 · Kartódromo de Viana (Viana do Castelo)
+        - GP6 · Kartódromo Indoor de Matosinhos (Matosinhos)
+        - GP7 · Kartódromo Indoor de Famalicão (Vila Nova de Famalicão)
+    validations:
+      required: true
+  - type: input
+    id: date
+    attributes:
+      label: Data
+      placeholder: AAAA-MM-DD
+  - type: input
+    id: timesheet
+    attributes:
+      label: Link da folha de tempos oficial
+      description: Foto ou PDF partilhado no grupo do campeonato.
+      placeholder: https://…
+    validations:
+      required: true
+  - type: textarea
+    id: emidio
+    attributes:
+      label: Emídio
+      description: Presença (Presente/Falta), melhor volta, 2.ª melhor volta, tempo médio
+      placeholder: 'Presente · melhor 51.900 · 2.ª 52.000 · média 52.800'
+    validations:
+      required: true
+  - type: textarea
+    id: p-queiros
+    attributes:
+      label: P. Queirós
+      description: Presença (Presente/Falta), melhor volta, 2.ª melhor volta, tempo médio
+      placeholder: 'Presente · melhor 51.500 · 2.ª 51.800 · média 53.100'
+    validations:
+      required: true
+  - type: textarea
+    id: joel
+    attributes:
+      label: Joel
+      description: Presença (Presente/Falta), melhor volta, 2.ª melhor volta, tempo médio
+      placeholder: 'Falta'
+    validations:
+      required: true
+  - type: textarea
+    id: dinis
+    attributes:
+      label: Dinis
+      description: Presença (Presente/Falta), melhor volta, 2.ª melhor volta, tempo médio
+      placeholder: 'Presente · melhor 52.600 · 2.ª 52.700 · média 53.500'
+    validations:
+      required: true

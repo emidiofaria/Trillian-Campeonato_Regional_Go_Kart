@@ -13,14 +13,16 @@ Live: https://emidiofaria.github.io/Trillian-Campeonato_Regional_Go_Kart/
 
 ## Local development
 
-| Command           | Action                                         |
-| ----------------- | ---------------------------------------------- |
-| `npm install`     | Install dependencies                           |
-| `npm run dev`     | Dev server at `http://localhost:4321/<base>/`  |
-| `npm run build`   | Build the static site into `dist/`             |
-| `npm run preview` | Serve `dist/` locally (respects the base path) |
-| `npm run check`   | Type-check (`astro check`) + lint (ESLint)     |
-| `npm run format`  | Format with Prettier                           |
+| Command                 | Action                                         |
+| ----------------------- | ---------------------------------------------- |
+| `npm install`           | Install dependencies                           |
+| `npm run dev`           | Dev server at `http://localhost:4321/<base>/`  |
+| `npm run build`         | Build the static site into `dist/`             |
+| `npm run preview`       | Serve `dist/` locally (respects the base path) |
+| `npm run check`         | Validate data + type-check + lint (ESLint)     |
+| `npm run format`        | Format with Prettier                           |
+| `npm run add-result`    | Interactive CLI to record a GP result          |
+| `npm run validate-data` | Validate `src/data/*.json` only                |
 
 ## Deploying to GitHub Pages
 
@@ -58,6 +60,36 @@ Scoring (see `docs/rules.md`): sessions are ranked by average lap time (ties: be
 second-best lap) and score 8/6/4/0; absence = 0; +4 for the fastest lap (VR) of the session
 (shared if two pilots set exactly the same time). Championship ties: more wins, then more VRs,
 then fewer absences.
+
+## Recording a GP result
+
+There is no backend: results are committed to the repo and the site is rebuilt.
+
+1. After the session, run `npm run add-result` and answer the prompts:
+   - the GP (the current "next" GP is preselected; re-entering a GP replaces its results);
+   - optional date (`AAAA-MM-DD`) and link to the official timesheet;
+   - for each pilot: present or not, then best lap, 2nd-best lap and average lap.
+     Times are accepted as `52.341`, `52,341` or `0:52.341`.
+2. The CLI shows the computed classification and points and asks before saving. It then:
+   - writes `src/data/results.json`;
+   - marks the GP `completed` in `src/data/races.json`;
+   - sets the first GP that isn't completed to `next` (no GP is `next` once the season ends).
+3. Check and publish:
+   ```sh
+   npm run check            # validates the data too
+   git add src/data && git commit -m "results: GP1"
+   git push                 # the Pages workflow rebuilds and redeploys the site
+   ```
+
+Invalid data never reaches production. `npm run check` (and the site build itself) fails if:
+
+- a lap time is invalid, or the best lap is slower than the 2nd-best lap or the average;
+- an absent pilot has times, or a present pilot is missing one;
+- a pilot is duplicated, unknown, or missing from a GP;
+- a GP's `status` doesn't match whether it has results, or more than one GP is `next`.
+
+Pilots who aren't comfortable with the CLI can open the **"Submeter resultados do GP"** issue
+(template in `.github/ISSUE_TEMPLATE/`) with the timesheet; a maintainer then runs the CLI.
 
 ### `ABSENCE_RANKING_MODE`
 

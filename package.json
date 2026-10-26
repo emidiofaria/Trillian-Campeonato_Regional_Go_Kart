@@ -14,11 +14,13 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "astro check && eslint .",
+    "check": "npm run validate-data && astro check && eslint .",
     "test:e2e": "astro build && playwright test",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e:fixture": "KARTCUP_FIXTURE=1 astro build && KARTCUP_FIXTURE=1 playwright test"
+    "test:e2e:fixture": "KARTCUP_FIXTURE=1 astro build && KARTCUP_FIXTURE=1 playwright test",
+    "add-result": "tsx scripts/add-result.ts",
+    "validate-data": "tsx scripts/validate-data.ts"
   },
   "dependencies": {
     "@astrojs/check": "0.9.4",
@@ -29,6 +31,7 @@
     "zod": "3.24.1"
   },
   "devDependencies": {
+    "@clack/prompts": "0.9.1",
     "@eslint/js": "9.39.1",
     "@playwright/test": "1.57.0",
     "@types/node": "18.19.68",
@@ -37,6 +40,7 @@
     "globals": "15.14.0",
     "prettier": "3.4.2",
     "prettier-plugin-astro": "0.14.1",
+    "tsx": "4.19.2",
     "typescript-eslint": "8.18.2",
     "vitest": "2.1.9"
   },
