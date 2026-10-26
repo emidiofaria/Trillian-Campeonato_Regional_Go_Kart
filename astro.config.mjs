@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
+import sitemap from '@astrojs/sitemap';
 
 // Override with SITE_URL / BASE_PATH env vars (e.g. custom domain => BASE_PATH=/).
 const site = process.env.SITE_URL ?? 'https://emidiofaria.github.io';
@@ -15,5 +16,9 @@ export default defineConfig({
   outDir: fixture ? './dist-fixture' : './dist',
   trailingSlash: 'ignore',
   output: 'static',
-  integrations: [tailwind({ applyBaseStyles: false })],
+  integrations: [
+    tailwind({ applyBaseStyles: false }),
+    // Keep only canonical (trailing-slash) URLs; the 404 page is not indexable.
+    sitemap({ filter: (page) => page.endsWith('/') && !page.includes('/404') }),
+  ],
 });

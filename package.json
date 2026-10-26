@@ -20,7 +20,9 @@
     "test:watch": "vitest",
     "test:e2e:fixture": "KARTCUP_FIXTURE=1 astro build && KARTCUP_FIXTURE=1 playwright test",
     "add-result": "tsx scripts/add-result.ts",
-    "validate-data": "tsx scripts/validate-data.ts"
+    "validate-data": "tsx scripts/validate-data.ts",
+    "lhci": "astro build && lhci autorun",
+    "og-image": "python3 scripts/generate-og-image.py"
   },
   "dependencies": {
     "@astrojs/check": "0.9.4",
@@ -31,8 +33,11 @@
     "zod": "3.24.1"
   },
   "devDependencies": {
+    "@astrojs/sitemap": "3.2.1",
+    "@axe-core/playwright": "4.10.1",
     "@clack/prompts": "0.9.1",
     "@eslint/js": "9.39.1",
+    "@lhci/cli": "0.14.0",
     "@playwright/test": "1.57.0",
     "@types/node": "18.19.68",
     "eslint": "9.39.5",

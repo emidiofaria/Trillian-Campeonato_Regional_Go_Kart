@@ -11,8 +11,8 @@ test('hero has the sponsor heading and CTAs with safe external links', async ({ 
   );
   await expect(page.locator('h1')).toHaveCount(1);
   for (const [name, href] of [
-    [/Download da app .* Play Store/, PLAY],
-    [/Visitar o website da Trillian/, SITE],
+    [/^Download na Play Store/, PLAY],
+    [/^Visitar Website da Trillian/, SITE],
   ] as const) {
     const link = page.getByRole('link', { name }).first();
     await expect(link).toHaveAttribute('href', href);
@@ -23,16 +23,36 @@ test('hero has the sponsor heading and CTAs with safe external links', async ({ 
 
 test('hero logo is the real asset, eager, with dimensions and alt text', async ({ page }) => {
   await page.goto('./');
-  const img = page.locator('picture img');
+  const hero = page.locator('section[aria-labelledby="hero-titulo"]');
+  const img = hero.locator('picture img');
   await expect(img).toHaveAttribute('alt', 'Logótipo Trillian Driving Coach');
   await expect(img).toHaveAttribute('loading', 'eager');
   await expect(img).toHaveAttribute('width', '512');
   await expect(img).toHaveAttribute('height', '512');
-  await expect(page.locator('picture source[type="image/webp"]')).toHaveAttribute(
+  await expect(hero.locator('picture source[type="image/webp"]')).toHaveAttribute(
     'srcset',
-    /trillian-logo\.webp$/,
+    /trillian-logo-400\.webp 400w, .*trillian-logo\.webp 512w$/,
   );
-  expect(await img.evaluate((el: HTMLImageElement) => el.naturalWidth)).toBe(512);
+  await expect(img).toHaveJSProperty('complete', true);
+  expect(await img.evaluate((el: HTMLImageElement) => el.currentSrc)).toMatch(
+    /trillian-logo(-400)?\.webp$/,
+  );
+  expect(await img.evaluate((el: HTMLImageElement) => el.naturalWidth)).toBeGreaterThan(0);
+});
+
+test('labelled links include their visible text in the accessible name (WCAG 2.5.3)', async ({
+  page,
+}) => {
+  await page.goto('./');
+  const mismatches = await page.locator('a[aria-label]').evaluateAll((links) =>
+    links
+      .map((a) => ({
+        label: (a.getAttribute('aria-label') ?? '').toLowerCase(),
+        text: (a.textContent ?? '').replace(/\s+/g, ' ').trim().toLowerCase(),
+      }))
+      .filter(({ label, text }) => text && !label.includes(text)),
+  );
+  expect(mismatches).toEqual([]);
 });
 
 test('next GP chip renders from data; leader chip depends on results', async ({ page }) => {

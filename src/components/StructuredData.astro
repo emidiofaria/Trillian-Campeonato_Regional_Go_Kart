@@ -1,0 +1,44 @@
+---
+import { SITE_NAME, SPONSOR } from '../lib/site';
+import { season, sortedRaces } from '../lib/data';
+
+const pageUrl = new URL(import.meta.env.BASE_URL, Astro.site).href.replace(/\/?$/, '/');
+const statusUrl = 'https://schema.org/EventScheduled';
+
+const competitors = season.pilots.map((p) => ({ '@type': 'Person', name: p.name }));
+
+const graph = [
+  {
+    '@type': 'SportsOrganization',
+    '@id': `${pageUrl}#campeonato`,
+    name: SITE_NAME,
+    url: pageUrl,
+    sport: 'Karting',
+    sponsor: { '@type': 'Organization', name: SPONSOR.name, url: SPONSOR.websiteUrl },
+  },
+  ...sortedRaces.map((race) => ({
+    '@type': 'SportsEvent',
+    '@id': `${pageUrl}#${race.id}`,
+    name: `${SITE_NAME} · GP${race.round} · ${race.circuit}`,
+    url: `${pageUrl}#${race.id}`,
+    sport: 'Karting',
+    ...(race.date ? { startDate: race.date } : {}),
+    eventStatus: statusUrl,
+    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+    location: {
+      '@type': 'Place',
+      name: race.circuit,
+      address: { '@type': 'PostalAddress', addressLocality: race.location, addressCountry: 'PT' },
+    },
+    organizer: { '@id': `${pageUrl}#campeonato` },
+    competitor: competitors,
+  })),
+];
+
+const json = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(
+  /</g,
+  '\\u003c',
+);
+---
+
+<script type="application/ld+json" is:inline set:html={json} />

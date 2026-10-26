@@ -32,15 +32,21 @@ const home = withBase();
     </nav>
 
     <div class="flex items-start gap-3">
-      <img
-        src={withBase('trillian-logo-64.png')}
-        width="48"
-        height="48"
-        alt=""
-        loading="lazy"
-        decoding="async"
-        class="h-12 w-12 shrink-0 rounded-full"
-      />
+      <picture class="shrink-0">
+        <source
+          srcset={`${withBase('trillian-logo-64.webp')} 1x, ${withBase('trillian-logo-128.webp')} 2x`}
+          type="image/webp"
+        />
+        <img
+          src={withBase('trillian-logo-64.png')}
+          width="48"
+          height="48"
+          alt=""
+          loading="lazy"
+          decoding="async"
+          class="h-12 w-12 rounded-full"
+        />
+      </picture>
       <p class="text-sm text-fg-muted">
         Com o apoio técnico da
         <a

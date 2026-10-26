@@ -6,3 +6,7 @@ package-lock.json
 public/
 docs/rules.md
 dist-fixture/
+.lighthouseci/
+test-results/
+playwright-report/
+/C:*

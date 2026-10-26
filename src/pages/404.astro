@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Button from '../components/ui/Button.astro';
+import { SITE_NAME, withBase } from '../lib/site';
+---
+
+<BaseLayout
+  title={`Página não encontrada — ${SITE_NAME}`}
+  description="A página que procuras não existe. Volta à classificação da Kart Cup 2026."
+  noindex
+>
+  <section
+    aria-labelledby="erro-titulo"
+    class="speed-lines mx-auto flex min-h-[60vh] max-w-content flex-col items-center justify-center px-4 py-20 text-center sm:px-6"
+  >
+    <p class="font-display text-7xl font-bold text-brand-yellow sm:text-8xl">404</p>
+    <h1 id="erro-titulo" class="mt-4 text-3xl font-bold text-fg sm:text-4xl">Saíste de pista!</h1>
+    <p class="mt-4 max-w-md text-lg text-fg-muted">
+      A página que procuras não existe ou mudou de lugar. Volta às boxes e continua a acompanhar o
+      campeonato.
+    </p>
+    <div class="mt-8 flex flex-wrap justify-center gap-3">
+      <Button href={withBase('')} variant="primary">Voltar ao início</Button>
+      <Button href={withBase('#classificacao')} variant="secondary">Ver classificação</Button>
+    </div>
+  </section>
+</BaseLayout>

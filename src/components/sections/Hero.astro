@@ -32,7 +32,7 @@ const leaderTotal = championship.standings[0]?.total ?? 0;
           href={SPONSOR.playStoreUrl}
           variant="green"
           external
-          aria-label="Download da app Trillian Driving Coach na Google Play Store (abre num novo separador)"
+          aria-label="Download na Play Store: app Trillian Driving Coach (abre num novo separador)"
         >
           Download na Play Store
         </Button>
@@ -40,7 +40,7 @@ const leaderTotal = championship.standings[0]?.total ?? 0;
           href={SPONSOR.websiteUrl}
           variant="secondary"
           external
-          aria-label="Visitar o website da Trillian Driving Coach (abre num novo separador)"
+          aria-label="Visitar Website da Trillian Driving Coach (abre num novo separador)"
         >
           Visitar Website
         </Button>
@@ -96,7 +96,11 @@ const leaderTotal = championship.standings[0]?.total ?? 0;
         <span class="ring-gradient" aria-hidden="true"></span>
         <span class="ring-glow" aria-hidden="true"></span>
         <picture class="relative block w-[86%]">
-          <source srcset={withBase('trillian-logo.webp')} type="image/webp" />
+          <source
+            srcset={`${withBase('trillian-logo-400.webp')} 400w, ${withBase('trillian-logo.webp')} 512w`}
+            sizes="(min-width: 1024px) 303px, (min-width: 640px) 275px, 220px"
+            type="image/webp"
+          />
           <img
             src={withBase('trillian-logo-512.png')}
             width="512"
@@ -144,6 +148,7 @@ const leaderTotal = championship.standings[0]?.total ?? 0;
       #000 calc(100% - 5px)
     );
     mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #000 calc(100% - 5px));
+    will-change: transform;
     animation: ring-spin 18s linear infinite;
   }
   .ring-glow {
