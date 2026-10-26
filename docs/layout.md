@@ -1,6 +1,6 @@
 # Kart Cup 2026 — Layout do site
 
-> **Nota:** documento reconstruído a partir de `00_inputs/IMPLEMENTATION_PLAN.md` (o original
+> **Nota:** documento reconstruído a partir de `00_inputs/IMPLEMENTATION_PLAN.md`, porque o
 > original (`3.md`) não estava disponível. A numeração de secções (3A–3E) segue as referências
 > desse plano.
 
