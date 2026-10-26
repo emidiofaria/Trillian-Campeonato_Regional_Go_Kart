@@ -1,20 +1,18 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/sections/Hero.astro';
-import Section from '../components/ui/Section.astro';
 import Standings from '../components/sections/Standings.astro';
-import { NAV_ITEMS } from '../lib/site';
+import Calendar from '../components/sections/Calendar.astro';
+import Pilots from '../components/sections/Pilots.astro';
+import Sponsor from '../components/sections/Sponsor.astro';
+import Rules from '../components/sections/Rules.astro';
 ---
 
 <BaseLayout>
   <Hero />
   <Standings />
-
-  {
-    NAV_ITEMS.filter((item) => item.id !== 'classificacao').map((item) => (
-      <Section id={item.id} title={item.label}>
-        <p class="text-fg-muted">Em breve.</p>
-      </Section>
-    ))
-  }
+  <Calendar />
+  <Pilots />
+  <Sponsor />
+  <Rules />
 </BaseLayout>

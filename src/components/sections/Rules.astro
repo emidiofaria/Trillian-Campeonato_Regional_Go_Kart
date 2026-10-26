@@ -1,0 +1,199 @@
+---
+import Section from '../ui/Section.astro';
+import Icon from '../icons/Icon.astro';
+import { FASTEST_LAP_BONUS, POSITION_POINTS } from '../../lib/scoring';
+
+const pointsRows = [
+  { pos: '1.º lugar', criterion: 'Tempo médio mais rápido', points: POSITION_POINTS[0] },
+  { pos: '2.º lugar', criterion: '2.º tempo médio', points: POSITION_POINTS[1] },
+  { pos: '3.º lugar', criterion: '3.º tempo médio', points: POSITION_POINTS[2] },
+  { pos: '4.º lugar', criterion: '4.º tempo médio', points: POSITION_POINTS[3] },
+  { pos: 'Falta', criterion: 'Não compareceu ao GP', points: 0 },
+];
+---
+
+<Section id="regulamento" eyebrow="Regulamento Oficial" title="Regulamento">
+  <span slot="title-icon" class="mr-2 inline-block align-[-0.1em] text-brand-yellow">
+    <Icon name="book" size={30} />
+  </span>
+
+  <div class="grid gap-8 lg:grid-cols-[1fr_1.3fr]">
+    <div class="self-start rounded-xl border border-border bg-surface p-5 sm:p-6">
+      <h3 class="flex items-center gap-2 text-xl font-bold text-fg">
+        <span class="text-brand-yellow"><Icon name="trophy" size={22} /></span> Pontuação por GP
+      </h3>
+      <table class="mt-4 w-full text-left text-sm" data-testid="points-table">
+        <caption class="sr-only">Pontos atribuídos em cada GP</caption>
+        <thead class="text-xs uppercase tracking-wide text-fg-muted">
+          <tr>
+            <th scope="col" class="py-2 pr-2 font-semibold">Posição</th>
+            <th scope="col" class="py-2 pr-2 font-semibold">Critério</th>
+            <th scope="col" class="py-2 text-right font-semibold">Pontos</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            pointsRows.map((r) => (
+              <tr class="border-t border-border">
+                <th scope="row" class="py-2 pr-2 font-semibold text-fg">
+                  {r.pos}
+                </th>
+                <td class="py-2 pr-2 text-fg-muted">{r.criterion}</td>
+                <td class="py-2 text-right font-display text-lg font-bold tabular-nums text-fg">
+                  {r.points} pts
+                </td>
+              </tr>
+            ))
+          }
+          <tr class="border-t border-border">
+            <th scope="row" class="py-2 pr-2 font-semibold text-brand-green-text">Bónus VR</th>
+            <td class="py-2 pr-2 text-fg-muted">Volta mais rápida absoluta da sessão</td>
+            <td
+              class="py-2 text-right font-display text-lg font-bold tabular-nums text-brand-green-text"
+            >
+              +{FASTEST_LAP_BONUS} pts
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="mt-4 text-sm text-fg-muted">
+        Os pontos da volta mais rápida somam à pontuação do GP (ex.: o 1.º classificado que também
+        faça a volta mais rápida soma 8 + 4 = 12 pontos).
+      </p>
+    </div>
+
+    <div class="rules-accordion space-y-3">
+      <details class="rule-item" open>
+        <summary>Introdução e filosofia</summary>
+        <div class="rule-body">
+          <p>
+            Este campeonato foi criado entre amigos com o objetivo de desfrutar de bons momentos de
+            convívio a um custo reduzido. Utiliza sessões livres de 10 minutos nos kartódromos e
+            prioriza fortemente a <strong>assiduidade</strong>, a <strong>consistência</strong> e o
+            <strong>fair-play</strong>.
+          </p>
+        </div>
+      </details>
+      <details class="rule-item">
+        <summary>Formato das provas</summary>
+        <div class="rule-body">
+          <ul>
+            <li>
+              <strong>Formato por GP:</strong> 1 sessão de 10 minutos em modo de
+              <strong>sessão livre</strong>.
+            </li>
+            <li>
+              <strong>Atribuição de karts:</strong> sorteio aleatório dos karts antes de entrar para
+              a pista em cada etapa, para minimizar diferenças mecânicas.
+            </li>
+            <li>
+              <strong>Classificação do GP:</strong> definida através do
+              <strong>tempo médio</strong> por volta obtido na folha oficial de telemetria fornecida
+              pelo kartódromo.
+            </li>
+          </ul>
+        </div>
+      </details>
+      <details class="rule-item">
+        <summary>Volta mais rápida (VR)</summary>
+        <div class="rule-body">
+          <ul>
+            <li>
+              <strong>+{FASTEST_LAP_BONUS} pontos</strong> (metade dos pontos da vitória) para o piloto
+              que realizar a <strong>volta mais rápida absoluta</strong> da sessão de 10 minutos.
+            </li>
+            <li>Estes pontos somam diretamente à pontuação obtida na classificação geral do GP.</li>
+          </ul>
+        </div>
+      </details>
+      <details class="rule-item">
+        <summary>Gestão de faltas e assiduidade</summary>
+        <div class="rule-body">
+          <ul>
+            <li>
+              <strong>Penalização por falta:</strong> quem não comparecer a um GP obtém
+              <strong>0 pontos</strong> nessa jornada.
+            </li>
+            <li>
+              O campeonato premeia explicitamente a consistência e a presença regular em todas as
+              etapas.
+            </li>
+          </ul>
+        </div>
+      </details>
+      <details class="rule-item">
+        <summary>Critérios de desempate</summary>
+        <div class="rule-body">
+          <p><strong>Empate no tempo médio (numa sessão):</strong></p>
+          <ol>
+            <li>Melhor volta individual na respetiva sessão.</li>
+            <li>2.ª melhor volta individual na respetiva sessão.</li>
+          </ol>
+          <p><strong>Empate na classificação final do campeonato:</strong></p>
+          <ol>
+            <li>Maior número de vitórias (1.ºs lugares nos GP).</li>
+            <li>Maior número de voltas mais rápidas conquistadas ao longo da época.</li>
+            <li>Menor número de faltas.</li>
+          </ol>
+        </div>
+      </details>
+      <details class="rule-item">
+        <summary>Conduta e transparência</summary>
+        <div class="rule-body">
+          <ul>
+            <li>
+              <strong>Folha de tempos:</strong> após o final de cada sessão de 10 minutos, a folha de
+              tempos oficial do kartódromo deve ser partilhada no grupo oficial do campeonato para validação
+              pública de todos os participantes.
+            </li>
+            <li>
+              <strong>Ambiente:</strong> o fair-play e o respeito mútuo em pista estão acima de tudo.
+              Divirtam-se e boa sorte ao Emídio, P. Queirós, Joel e Dinis!
+            </li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+</Section>
+
+<style>
+  .rule-item {
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    background: var(--surface);
+  }
+  .rule-item > summary {
+    cursor: pointer;
+    padding: 0.875rem 1.25rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .rule-item[open] > summary {
+    border-bottom: 1px solid var(--border);
+  }
+  .rule-body {
+    padding: 1rem 1.25rem;
+    color: var(--text-muted);
+    line-height: 1.65;
+  }
+  .rule-body :global(strong) {
+    color: var(--text);
+  }
+  .rule-body ul {
+    list-style: disc;
+    padding-left: 1.25rem;
+  }
+  .rule-body ol {
+    list-style: decimal;
+    padding-left: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+  .rule-body li + li {
+    margin-top: 0.375rem;
+  }
+  .rule-body p + ol,
+  .rule-body p {
+    margin-bottom: 0.5rem;
+  }
+</style>

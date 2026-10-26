@@ -1,0 +1,162 @@
+---
+import Section from '../ui/Section.astro';
+import Badge from '../ui/Badge.astro';
+import Icon from '../icons/Icon.astro';
+import PilotAvatar from '../PilotAvatar.astro';
+import { championship, pilotById, sortedRaces } from '../../lib/data';
+import { formatDate, formatLap } from '../../lib/format';
+import type { BadgeVariant } from '../types';
+import type { RaceStatus } from '../../lib/schemas';
+
+const sessionByRace = new Map(championship.sessions.map((s) => [s.raceId, s]));
+
+const statusLabel: Record<RaceStatus, { label: string; variant: BadgeVariant }> = {
+  next: { label: 'Próximo GP', variant: 'yellow' },
+  scheduled: { label: 'Agendado', variant: 'neutral' },
+  completed: { label: 'Concluído', variant: 'green' },
+};
+const podiumLabels = ['1.º', '2.º', '3.º', '4.º'];
+---
+
+<Section id="calendario" eyebrow="7 Grandes Prémios" title="Calendário">
+  <span slot="title-icon" class="mr-2 inline-block align-[-0.1em] text-brand-yellow">
+    <Icon name="calendar" size={30} />
+  </span>
+
+  <ol
+    class="grid items-start gap-5 sm:grid-cols-2 lg:grid-cols-3"
+    aria-label="Grandes Prémios da temporada"
+  >
+    {
+      sortedRaces.map((race) => {
+        const status = statusLabel[race.status];
+        const session = sessionByRace.get(race.id);
+        const isNext = race.status === 'next';
+        return (
+          <li
+            id={race.id}
+            class:list={[
+              'gp-card flex min-w-0 scroll-mt-24 flex-col rounded-xl border bg-surface p-5 shadow-sm shadow-black/30',
+              isNext ? 'border-brand-yellow/70' : 'border-border',
+            ]}
+            data-status={race.status}
+          >
+            <div class="flex items-start justify-between gap-3">
+              <p class="font-display text-4xl font-bold leading-none text-fg">
+                <span class="sr-only">Grande Prémio </span>GP{race.round}
+              </p>
+              <Badge variant={status.variant}>{status.label}</Badge>
+            </div>
+            <h3 class="mt-4 text-xl font-bold text-fg">{race.circuit}</h3>
+            <p class="mt-1 flex items-center gap-1.5 text-sm text-fg-muted">
+              <Icon name="pin" size={16} /> {race.location}
+            </p>
+            <div class="mt-4 flex flex-wrap items-center gap-2">
+              {race.type === 'Indoor' ? (
+                <Badge variant="ring">
+                  <Icon name="indoor" size={14} /> Indoor
+                </Badge>
+              ) : (
+                <Badge variant="blue">
+                  <Icon name="outdoor" size={14} /> Outdoor
+                </Badge>
+              )}
+              {race.date && (
+                <span class="text-sm text-fg-muted">
+                  <time datetime={race.date}>{formatDate(race.date)}</time>
+                </span>
+              )}
+            </div>
+
+            {race.status === 'completed' && session && (
+              <details class="gp-details mt-5 border-t border-border pt-4">
+                <summary class="cursor-pointer text-sm font-semibold text-brand-blue-text">
+                  Ver resultados<span class="sr-only"> do GP{race.round}</span>
+                </summary>
+                <div
+                  class="mt-4 overflow-x-auto"
+                  role="region"
+                  aria-label={`Resultados do GP${race.round}`}
+                  tabindex="0"
+                >
+                  <table class="w-full text-left text-sm">
+                    <caption class="sr-only">Resultados do GP{race.round}</caption>
+                    <thead class="text-xs uppercase tracking-wide text-fg-muted">
+                      <tr>
+                        <th scope="col" class="py-1 pr-2 font-semibold">
+                          Pos
+                        </th>
+                        <th scope="col" class="py-1 pr-2 font-semibold">
+                          Piloto
+                        </th>
+                        <th scope="col" class="py-1 pr-2 text-right font-semibold">
+                          Média
+                        </th>
+                        <th scope="col" class="py-1 pr-2 text-right font-semibold">
+                          Melhor
+                        </th>
+                        <th scope="col" class="py-1 text-right font-semibold">
+                          Pts
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody class="tabular-nums">
+                      {session.entries.map((e) => {
+                        const pilot = pilotById.get(e.pilotId)!;
+                        return (
+                          <tr class="border-t border-border/60">
+                            <td class="py-1.5 pr-2 font-display font-bold text-fg">
+                              {e.position ? podiumLabels[e.position - 1] : 'F'}
+                            </td>
+                            <th scope="row" class="py-1.5 pr-2 font-medium text-fg">
+                              <span class="flex items-center gap-2 whitespace-nowrap">
+                                <PilotAvatar pilot={pilot} />
+                                {pilot.name}
+                                {e.fastestLap && (
+                                  <span class="rounded bg-brand-green/25 px-1 text-[0.65rem] font-bold text-brand-green-text">
+                                    VR
+                                  </span>
+                                )}
+                              </span>
+                            </th>
+                            <td class="py-1.5 pr-2 text-right text-fg-muted">
+                              {e.attended ? formatLap(e.avgLapTime) : 'Falta'}
+                            </td>
+                            <td class="py-1.5 pr-2 text-right text-fg-muted">
+                              {formatLap(e.bestLap)}
+                            </td>
+                            <td class="py-1.5 text-right font-semibold text-fg">{e.totalPoints}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+                {session.fastestLapPilotIds.length > 0 && (
+                  <p class="mt-3 text-sm text-fg-muted">
+                    Volta mais rápida:{' '}
+                    <strong class="text-fg">
+                      {session.fastestLapPilotIds.map((id) => pilotById.get(id)!.name).join(', ')}
+                    </strong>{' '}
+                    ({formatLap(session.fastestLapTime)})
+                  </p>
+                )}
+                {race.timesheetUrl && (
+                  <a
+                    href={race.timesheetUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-blue-text underline-offset-4 hover:underline"
+                  >
+                    <Icon name="file" size={16} /> Folha de tempos oficial
+                    <span class="sr-only">(abre num novo separador)</span>
+                  </a>
+                )}
+              </details>
+            )}
+          </li>
+        );
+      })
+    }
+  </ol>
+</Section>

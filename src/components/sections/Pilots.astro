@@ -1,0 +1,58 @@
+---
+import Section from '../ui/Section.astro';
+import Icon from '../icons/Icon.astro';
+import PilotAvatar from '../PilotAvatar.astro';
+import { championship, season } from '../../lib/data';
+
+const rowByPilot = new Map(championship.standings.map((r) => [r.pilotId, r]));
+const pilots = [...season.pilots].sort((a, b) => a.number - b.number);
+---
+
+<Section id="pilotos" eyebrow="Grelha 2026" title="Pilotos">
+  <span slot="title-icon" class="mr-2 inline-block align-[-0.1em] text-brand-yellow">
+    <Icon name="users" size={30} />
+  </span>
+
+  <ul class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+    {
+      pilots.map((pilot) => {
+        const row = rowByPilot.get(pilot.id)!;
+        const stats = [
+          { label: 'Pontos', value: row.total },
+          { label: 'Vitórias', value: row.wins },
+          { label: 'Voltas rápidas', value: row.fastestLaps },
+          { label: 'Faltas', value: row.absences },
+        ];
+        return (
+          <li
+            class="pilot-card relative overflow-hidden rounded-xl border border-border bg-surface p-5 shadow-sm shadow-black/30"
+            data-pilot={pilot.id}
+          >
+            <span
+              class="absolute inset-x-0 top-0 h-1"
+              style={{ backgroundColor: pilot.color }}
+              aria-hidden="true"
+            />
+            <div class="flex items-center gap-4">
+              <PilotAvatar pilot={pilot} size="lg" />
+              <div>
+                <h3 class="text-xl font-bold text-fg">{pilot.name}</h3>
+                <p class="font-display text-lg font-semibold text-fg-muted">
+                  <span class="sr-only">Número </span>#{pilot.number}
+                </p>
+              </div>
+            </div>
+            <dl class="mt-5 grid grid-cols-2 gap-3">
+              {stats.map((s) => (
+                <div class="rounded-lg bg-elevated px-3 py-2">
+                  <dt class="text-xs uppercase tracking-wide text-fg-muted">{s.label}</dt>
+                  <dd class="font-display text-2xl font-bold tabular-nums text-fg">{s.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </li>
+        );
+      })
+    }
+  </ul>
+</Section>

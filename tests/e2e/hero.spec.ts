@@ -37,7 +37,9 @@ test('hero logo is the real asset, eager, with dimensions and alt text', async (
 
 test('next GP chip renders from data; leader chip depends on results', async ({ page }) => {
   await page.goto('./');
-  await expect(page.getByText('Próximo GP', { exact: true })).toBeVisible();
+  await expect(
+    page.getByLabel('Destaques do campeonato').getByText('Próximo GP', { exact: true }),
+  ).toBeVisible();
   if (FIXTURE) {
     await expect(page.getByTestId('leader-chip')).toContainText('Emídio');
   } else {

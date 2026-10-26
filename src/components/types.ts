@@ -7,7 +7,13 @@ export type IconName =
   | 'calendar'
   | 'users'
   | 'book'
-  | 'star';
+  | 'star'
+  | 'indoor'
+  | 'outdoor'
+  | 'file'
+  | 'gauge'
+  | 'pin'
+  | 'shield';
 
 export type BadgeVariant = 'neutral' | 'yellow' | 'green' | 'blue' | 'ring' | 'danger';
 
