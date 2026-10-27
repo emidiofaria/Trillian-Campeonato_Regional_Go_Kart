@@ -3,11 +3,13 @@ import Badge from '../ui/Badge.astro';
 import Button from '../ui/Button.astro';
 import Icon from '../icons/Icon.astro';
 import { championship, nextRace, pilotById } from '../../lib/data';
-import { formatDate, formatPoints } from '../../lib/format';
+import { formatPoints } from '../../lib/format';
 import { SPONSOR, withBase } from '../../lib/site';
 
 const leaders = championship.leaderIds.map((id) => pilotById.get(id)!).filter(Boolean);
 const leaderTotal = championship.standings[0]?.total ?? 0;
+// The next-GP banner owns the page h1 while the season is running.
+const Heading = nextRace ? 'h2' : 'h1';
 ---
 
 <section aria-labelledby="hero-titulo" class="speed-lines border-b border-border">
@@ -16,13 +18,13 @@ const leaderTotal = championship.standings[0]?.total ?? 0;
   >
     <div>
       <Badge variant="yellow"><Icon name="star" size={14} /> Patrocinador Oficial</Badge>
-      <h1
+      <Heading
         id="hero-titulo"
         class="mt-5 text-4xl font-bold leading-[1.05] text-fg sm:text-5xl lg:text-6xl"
       >
         Melhora as tuas voltas com a
         <span class="text-brand-yellow">Trillian Driving Coach</span>
-      </h1>
+      </Heading>
       <p class="mt-5 max-w-xl text-lg leading-relaxed text-fg-muted">
         A assistente oficial da Kart Cup 2026. Analisa a telemetria de cada sessão, descobre onde
         estás a perder tempo e torna-te um piloto mais rápido e consistente, volta após volta.
@@ -46,30 +48,9 @@ const leaderTotal = championship.standings[0]?.total ?? 0;
         </Button>
       </div>
 
-      <ul class="mt-10 flex flex-wrap gap-3" aria-label="Destaques do campeonato">
-        {
-          nextRace && (
-            <li class="hero-chip">
-              <span class="text-brand-blue-text">
-                <Icon name="calendar" size={18} />
-              </span>
-              <span>
-                <span class="block text-xs uppercase tracking-wider text-fg-muted">Próximo GP</span>
-                <a
-                  href={withBase('#proximo-gp')}
-                  class="font-semibold text-fg underline-offset-4 hover:underline"
-                >
-                  GP {nextRace.round} · {nextRace.circuit}
-                </a>
-                {nextRace.date && (
-                  <span class="block text-xs text-fg-muted">{formatDate(nextRace.date)}</span>
-                )}
-              </span>
-            </li>
-          )
-        }
-        {
-          leaders.length > 0 && (
+      {
+        leaders.length > 0 && (
+          <ul class="mt-10 flex flex-wrap gap-3" aria-label="Destaques do campeonato">
             <li class="hero-chip" data-testid="leader-chip">
               <span class="text-brand-yellow">
                 <Icon name="trophy" size={18} />
@@ -84,9 +65,9 @@ const leaderTotal = championship.standings[0]?.total ?? 0;
                 </span>
               </span>
             </li>
-          )
-        }
-      </ul>
+          </ul>
+        )
+      }
     </div>
 
     <div class="flex justify-center lg:justify-end">
@@ -108,7 +89,7 @@ const leaderTotal = championship.standings[0]?.total ?? 0;
             alt="Logótipo Trillian Driving Coach"
             loading="eager"
             decoding="async"
-            fetchpriority="high"
+            fetchpriority={nextRace ? undefined : 'high'}
             class="aspect-square h-auto w-full rounded-full"
           />
         </picture>

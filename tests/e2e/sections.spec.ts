@@ -25,17 +25,7 @@ test('calendar lists the 7 official GPs with type badges and ids', async ({ page
   await expect(page.locator('#calendario').getByText('Próximo GP')).toHaveCount(1);
 });
 
-test('next-GP chip in hero links to the spotlight banner', async ({ page }) => {
-  await page.goto('./');
-  const hash = await page
-    .locator('section[aria-labelledby="hero-titulo"] a[href*="#proximo-gp"]')
-    .first()
-    .evaluate((a) => (a as HTMLAnchorElement).hash);
-  expect(hash).toBe('#proximo-gp');
-  await expect(page.locator(hash)).toHaveCount(1);
-});
-
-test('next-GP banner sits below the hero and links to its calendar card', async ({ page }) => {
+test('next-GP banner is the first section and links to its calendar card', async ({ page }) => {
   await page.clock.setFixedTime(new Date('2026-10-27T10:00:00Z'));
   await page.goto('./');
   const banner = page.getByTestId('next-gp');
@@ -45,12 +35,13 @@ test('next-GP banner sits below the hero and links to its calendar card', async 
       (s) => s.id || s.getAttribute('aria-labelledby'),
     ),
   );
-  expect(order.slice(0, 3)).toEqual(['hero-titulo', 'proximo-gp', 'classificacao']);
-  await expect(banner.getByRole('heading', { level: 2 })).toBeVisible();
+  expect(order.slice(0, 3)).toEqual(['proximo-gp', 'hero-titulo', 'classificacao']);
+  await expect(banner.getByRole('heading', { level: 1 })).toBeVisible();
 
   const photo = banner.locator('img');
   await expect(photo).toHaveAttribute('alt', '');
-  await expect(photo).toHaveAttribute('loading', 'lazy');
+  await expect(photo).toHaveAttribute('loading', 'eager');
+  await expect(photo).toHaveAttribute('fetchpriority', 'high');
 
   const hash = await banner
     .getByRole('link', { name: 'Ver no calendário' })

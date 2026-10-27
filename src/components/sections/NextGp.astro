@@ -26,8 +26,9 @@ import { withBase } from '../../lib/site';
           width="1280"
           height="851"
           alt=""
-          loading="lazy"
+          loading="eager"
           decoding="async"
+          fetchpriority="high"
           class="h-full w-full object-cover object-[60%_55%]"
         />
       </picture>
@@ -43,13 +44,13 @@ import { withBase } from '../../lib/site';
           <Badge variant="yellow">
             <Icon name="flag" size={14} /> Próximo GP
           </Badge>
-          <h2
+          <h1
             id="proximo-gp-titulo"
             class="mt-4 text-3xl font-bold leading-tight text-fg sm:text-4xl lg:text-5xl"
           >
             <span class="sr-only">Próximo Grande Prémio: GP{nextRace.round}, </span>
             {nextRace.circuit}
-          </h2>
+          </h1>
 
           <ul class="mt-5 flex flex-wrap gap-2 text-sm" aria-label="Detalhes do próximo GP">
             <li class="next-chip">
@@ -71,7 +72,7 @@ import { withBase } from '../../lib/site';
 
           {nextRace.date && (
             <p
-              class="countdown mt-6 hidden font-display text-2xl font-bold text-brand-yellow sm:text-3xl"
+              class="countdown invisible mt-6 min-h-[2rem] font-display sm:min-h-[2.25rem] text-2xl font-bold text-brand-yellow sm:text-3xl"
               data-countdown={nextRace.date}
               data-testid="next-gp-countdown"
             />
@@ -95,7 +96,9 @@ import { withBase } from '../../lib/site';
     const label = countdownLabel(daysUntil(el.dataset.countdown!));
     if (label) {
       el.textContent = label;
-      el.classList.remove('hidden');
+      el.classList.remove('invisible');
+    } else {
+      el.hidden = true;
     }
   }
 </script>
