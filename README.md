@@ -57,7 +57,7 @@ All championship data lives in `src/data/` and is validated with Zod at build ti
 | `src/data/results.json` | Per GP: `raceId` + one entry per pilot `{ pilotId, attended, avgLapTime, bestLap, secondBestLap }` (seconds; `null` when absent)                    |
 
 Scoring (see `docs/rules.md`): sessions are ranked by average lap time (ties: best lap, then
-second-best lap) and score 8/6/4/0; absence = 0; +4 for the fastest lap (VR) of the session
+second-best lap) and score 6/4/2/0; absence = 0; +3 for the fastest lap (VR) of the session
 (shared if two pilots set exactly the same time). Championship ties: more wins, then more VRs,
 then fewer absences.
 
@@ -98,8 +98,8 @@ The rules don't say how positions are awarded when someone is absent. The consta
 
 | Value                 | Behaviour                                                        | 3 attendees |
 | --------------------- | ---------------------------------------------------------------- | ----------- |
-| `'compact'` (default) | Attendees take the top positions in order                        | 8 / 6 / 4   |
-| `'fixed'`             | The slowest attendee keeps the 4-pilot table's last slot (0 pts) | 8 / 6 / 0   |
+| `'compact'` (default) | Attendees take the top positions in order                        | 6 / 4 / 2   |
+| `'fixed'`             | The slowest attendee keeps the 4-pilot table's last slot (0 pts) | 6 / 4 / 0   |
 
 ## Tests and QA
 

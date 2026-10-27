@@ -62,9 +62,9 @@ describe('applyResult', () => {
 
     const champ = computeChampionship(updated.pilots, updated.races, updated.results);
     expect(champ.standings.map((s) => [s.pilotId, s.total])).toEqual([
-      ['p-queiros', 10],
-      ['emidio', 8],
-      ['joel', 4],
+      ['p-queiros', 7],
+      ['emidio', 6],
+      ['joel', 2],
       ['dinis', 0],
     ]);
   });

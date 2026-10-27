@@ -2,17 +2,17 @@ import type { Pilot, Race, RaceResult, ResultEntry } from './schemas';
 
 /**
  * How session positions are awarded when a pilot is absent (not defined in docs/rules.md):
- * - 'compact': attendees take the top positions in order (3 attendees => 8/6/4).
+ * - 'compact': attendees take the top positions in order (3 attendees => 6/4/2).
  * - 'fixed':   the slowest attendee always takes the 4-pilot table's last slot (0 pts),
- *              the others take the table from the top (3 attendees => 8/6/0).
+ *              the others take the table from the top (3 attendees => 6/4/0).
  */
 export type AbsenceRankingMode = 'compact' | 'fixed';
 export const ABSENCE_RANKING_MODE: AbsenceRankingMode = 'compact';
 
 /** Points for 1st..4th (docs/rules.md section 5). Absent = 0. */
-export const POSITION_POINTS = [8, 6, 4, 0] as const;
+export const POSITION_POINTS = [6, 4, 2, 0] as const;
 /** Fastest-lap (VR) bonus (docs/rules.md section 5). */
-export const FASTEST_LAP_BONUS = 4;
+export const FASTEST_LAP_BONUS = 3;
 
 export interface SessionEntry {
   pilotId: string;

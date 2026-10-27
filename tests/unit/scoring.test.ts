@@ -41,7 +41,7 @@ describe('scoreSession', () => {
     expect(ABSENCE_RANKING_MODE).toBe('compact');
   });
 
-  it('normal race: ranks by average lap and awards 8/6/4/0 + VR to the winner', () => {
+  it('normal race: ranks by average lap and awards 6/4/2/0 + VR to the winner', () => {
     const s = scoreSession(
       {
         raceId: 'gp1',
@@ -55,13 +55,13 @@ describe('scoreSession', () => {
       ORDER,
     );
     expect(s.entries.map((e) => [e.pilotId, e.position, e.positionPoints, e.bonusPoints])).toEqual([
-      ['emidio', 1, 8, 4],
-      ['p-queiros', 2, 6, 0],
-      ['joel', 3, 4, 0],
+      ['emidio', 1, 6, 3],
+      ['p-queiros', 2, 4, 0],
+      ['joel', 3, 2, 0],
       ['dinis', 4, 0, 0],
     ]);
     expect(s.winnerId).toBe('emidio');
-    expect(s.entries[0].totalPoints).toBe(12);
+    expect(s.entries[0].totalPoints).toBe(9);
     expect(s.fastestLapPilotIds).toEqual(['emidio']);
     expect(s.fastestLapTime).toBe(49.5);
   });
@@ -76,7 +76,7 @@ describe('scoreSession', () => {
         at('dinis', 51.2, 50.4, 50.6),
       ],
     });
-    expect(pts).toEqual({ emidio: 8, 'p-queiros': 10, joel: 4, dinis: 0 });
+    expect(pts).toEqual({ emidio: 6, 'p-queiros': 7, joel: 2, dinis: 0 });
   });
 
   it('awards the VR bonus to every pilot sharing the exact fastest lap', () => {
@@ -100,27 +100,27 @@ describe('scoreSession', () => {
   it('absence (compact): attendees take the top positions, absent pilot scores 0', () => {
     const s = scoreSession(withAbsence, ORDER, 'compact');
     expect(s.entries.map((e) => [e.pilotId, e.position, e.positionPoints])).toEqual([
-      ['emidio', 1, 8],
-      ['joel', 2, 6],
-      ['dinis', 3, 4],
+      ['emidio', 1, 6],
+      ['joel', 2, 4],
+      ['dinis', 3, 2],
       ['p-queiros', null, 0],
     ]);
     expect(pointsOf(withAbsence, 'compact')).toEqual({
-      emidio: 8,
-      joel: 10,
-      dinis: 4,
+      emidio: 6,
+      joel: 7,
+      dinis: 2,
       'p-queiros': 0,
     });
   });
 
   it('absence (fixed): the slowest attendee keeps the 4th-place 0 points', () => {
     expect(pointsOf(withAbsence, 'fixed')).toEqual({
-      emidio: 8,
-      joel: 10,
+      emidio: 6,
+      joel: 7,
       dinis: 0,
       'p-queiros': 0,
     });
-    // Two attendees: 8/0.
+    // Two attendees: 6/0.
     const two: RaceResult = {
       raceId: 'gp2',
       entries: [
@@ -130,8 +130,8 @@ describe('scoreSession', () => {
         absent('dinis'),
       ],
     };
-    expect(pointsOf(two, 'fixed')).toEqual({ emidio: 12, joel: 0, 'p-queiros': 0, dinis: 0 });
-    expect(pointsOf(two, 'compact')).toEqual({ emidio: 12, joel: 6, 'p-queiros': 0, dinis: 0 });
+    expect(pointsOf(two, 'fixed')).toEqual({ emidio: 9, joel: 0, 'p-queiros': 0, dinis: 0 });
+    expect(pointsOf(two, 'compact')).toEqual({ emidio: 9, joel: 4, 'p-queiros': 0, dinis: 0 });
   });
 
   it('fixed and compact are identical with full attendance', () => {
@@ -183,52 +183,81 @@ describe('computeChampionship', () => {
     }
   });
 
-  it('championship tie-break chain: wins, then fastest laps, then fewer absences', () => {
-    // Points are engineered so that each pair is tied on total.
+  it('more wins breaks a tie on points, even against more fastest laps', () => {
     const results: RaceResult[] = [
-      // GP1: emidio 8+4=12, p-queiros 6, joel 4, dinis 0
+      // GP1: emidio 6, p-queiros 4+3=7, joel 2, dinis 0
       {
         raceId: 'gp1',
         entries: [
-          at('emidio', 50.0, 49.0, 49.5),
-          at('p-queiros', 50.5, 49.6, 49.8),
-          at('joel', 51.0, 49.7, 49.9),
-          at('dinis', 51.5, 49.8, 50.0),
+          at('emidio', 50.0, 49.6, 49.7),
+          at('p-queiros', 50.5, 49.2, 50.1),
+          at('joel', 51.0, 49.8, 50.0),
+          at('dinis', 51.5, 49.9, 50.2),
         ],
       },
-      // GP2: joel 8, dinis 6+4=10, p-queiros 4, emidio absent
+      // GP2: emidio 6, joel 4, p-queiros 2+3=5, dinis 0
       {
         raceId: 'gp2',
         entries: [
-          absent('emidio'),
-          at('p-queiros', 51.0, 50.3, 50.5),
-          at('joel', 50.0, 49.5, 49.7),
-          at('dinis', 50.5, 49.2, 49.9),
+          at('emidio', 50.0, 49.6, 49.7),
+          at('p-queiros', 51.0, 49.3, 50.4),
+          at('joel', 50.5, 49.7, 49.9),
+          at('dinis', 51.5, 49.9, 50.2),
         ],
       },
     ];
     const c = computeChampionship(pilots, completedRaces(2), results);
     const byId = Object.fromEntries(c.standings.map((r) => [r.pilotId, r]));
-    expect(byId.emidio).toMatchObject({ total: 12, wins: 1, fastestLaps: 1, absences: 1 });
-    expect(byId.joel).toMatchObject({ total: 12, wins: 1, fastestLaps: 0, absences: 0 });
-    expect(byId.dinis).toMatchObject({ total: 10, wins: 0, fastestLaps: 1, absences: 0 });
-    expect(byId['p-queiros']).toMatchObject({ total: 10, wins: 0, fastestLaps: 0, absences: 0 });
-    // emidio vs joel: tied on points and wins -> more VR wins.
-    // dinis vs p-queiros: tied on points, no wins -> more VR wins.
+    expect(byId.emidio).toMatchObject({ total: 12, wins: 2, fastestLaps: 0 });
+    expect(byId['p-queiros']).toMatchObject({ total: 12, wins: 0, fastestLaps: 2 });
+    expect(c.standings.map((r) => [r.pilotId, r.position])).toEqual([
+      ['emidio', 1],
+      ['p-queiros', 2],
+      ['joel', 3],
+      ['dinis', 4],
+    ]);
+    expect(c.leaderIds).toEqual(['emidio']);
+  });
+
+  it('more fastest laps breaks a tie on points and wins', () => {
+    const results: RaceResult[] = [
+      // GP1: emidio 6, p-queiros 4, joel 2+3=5, dinis 0
+      {
+        raceId: 'gp1',
+        entries: [
+          at('emidio', 50.0, 49.6, 49.7),
+          at('p-queiros', 50.5, 49.7, 49.8),
+          at('joel', 51.0, 49.2, 50.6),
+          at('dinis', 51.5, 49.9, 50.2),
+        ],
+      },
+      // GP2: emidio 6, p-queiros 4, dinis 2, joel 0+3=3
+      {
+        raceId: 'gp2',
+        entries: [
+          at('emidio', 50.0, 49.6, 49.7),
+          at('p-queiros', 50.5, 49.7, 49.8),
+          at('joel', 51.5, 49.2, 51.0),
+          at('dinis', 51.0, 49.9, 50.2),
+        ],
+      },
+    ];
+    const c = computeChampionship(pilots, completedRaces(2), results);
+    const byId = Object.fromEntries(c.standings.map((r) => [r.pilotId, r]));
+    expect(byId.joel).toMatchObject({ total: 8, wins: 0, fastestLaps: 2 });
+    expect(byId['p-queiros']).toMatchObject({ total: 8, wins: 0, fastestLaps: 0 });
     expect(c.standings.map((r) => [r.pilotId, r.position])).toEqual([
       ['emidio', 1],
       ['joel', 2],
-      ['dinis', 3],
-      ['p-queiros', 4],
+      ['p-queiros', 3],
+      ['dinis', 4],
     ]);
-    expect(c.leaderIds).toEqual(['emidio']);
-    expect(byId.emidio.perGp[1]).toEqual({ raceId: 'gp2', state: 'absent', points: 0 });
     expect(byId.emidio.perGp[2]).toEqual({ raceId: 'gp3', state: 'not-run' });
   });
 
   it('fewer absences breaks a tie on points, wins and fastest laps', () => {
     const results: RaceResult[] = [
-      // GP1: emidio 12 (win+VR), joel 6, dinis 4, p-queiros absent
+      // GP1: emidio 9 (win+VR), joel 4, dinis 2, p-queiros absent
       {
         raceId: 'gp1',
         entries: [
@@ -238,7 +267,7 @@ describe('computeChampionship', () => {
           at('dinis', 51.0, 49.7, 49.9),
         ],
       },
-      // GP2: p-queiros 12 (win+VR), joel 6, dinis 4, emidio 0 (4th, attended)
+      // GP2: p-queiros 9 (win+VR), joel 4, dinis 2, emidio 0 (4th, attended)
       {
         raceId: 'gp2',
         entries: [
@@ -254,10 +283,12 @@ describe('computeChampionship', () => {
       .slice(0, 2)
       .map((r) => [r.pilotId, r.total, r.wins, r.fastestLaps, r.absences]);
     expect(top).toEqual([
-      ['emidio', 12, 1, 1, 0],
-      ['p-queiros', 12, 1, 1, 1],
+      ['emidio', 9, 1, 1, 0],
+      ['p-queiros', 9, 1, 1, 1],
     ]);
     expect(c.standings[1].position).toBe(2);
+    const pq = c.standings.find((r) => r.pilotId === 'p-queiros');
+    expect(pq?.perGp[0]).toEqual({ raceId: 'gp1', state: 'absent', points: 0 });
   });
 
   it('pilots tied on every criterion share the position and the lead', () => {
@@ -283,8 +314,8 @@ describe('computeChampionship', () => {
     ];
     const c = computeChampionship(pilots, completedRaces(2), results);
     expect(c.standings.slice(0, 2).map((r) => [r.pilotId, r.position, r.total])).toEqual([
-      ['emidio', 1, 18],
-      ['p-queiros', 1, 18],
+      ['emidio', 1, 13],
+      ['p-queiros', 1, 13],
     ]);
     expect(c.leaderIds).toEqual(['emidio', 'p-queiros']);
   });
@@ -293,10 +324,10 @@ describe('computeChampionship', () => {
     const season = validateSeason({ pilots, races: fixture.races, results: fixture.results });
     const c = computeChampionship(season.pilots, season.races, season.results);
     expect(c.standings.map((r) => [r.pilotId, r.total, r.position])).toEqual([
-      ['emidio', 22, 1],
-      ['p-queiros', 20, 2],
-      ['dinis', 12, 3],
-      ['joel', 12, 4],
+      ['emidio', 16, 1],
+      ['p-queiros', 13, 2],
+      ['dinis', 9, 3],
+      ['joel', 7, 4],
     ]);
     expect(c.completedRaces).toBe(3);
   });

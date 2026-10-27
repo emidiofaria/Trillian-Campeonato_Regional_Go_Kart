@@ -54,7 +54,7 @@ inspirado em telemetria, em modo escuro, profissional e sem exageros.
   - marcador "VR" quando o piloto ganhou o bónus de volta mais rápida.
 - O líder tem o badge "Líder" e o total em amarelo. Antes do primeiro GP aparece
   "A temporada ainda não começou".
-- Nota de rodapé: "+4 pontos pela volta mais rápida (VR) da sessão".
+- Nota de rodapé: "+3 pontos pela volta mais rápida (VR) da sessão".
 - Painel recolhível "Critérios de desempate".
 
 ### 3C. Calendário
@@ -72,7 +72,7 @@ inspirado em telemetria, em modo escuro, profissional e sem exageros.
 
 ### 3E. Regulamento
 
-- Caixa de resumo com a tabela de pontos (8/6/4/0, falta = 0, VR +4).
+- Caixa de resumo com a tabela de pontos (6/4/2/0, falta = 0, VR +3).
 - Acordeão com o regulamento completo: formato, faltas, desempates, conduta e transparência (ver
   `docs/rules.md`).
 

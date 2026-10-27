@@ -40,15 +40,15 @@ Os pontos da classificação geral são atribuídos com base no tempo médio da 
 
 | Posição | Critério (Tempo Médio) | Cálculo | Pontos Conquistados |
 | :--- | :--- | :---: | :---: |
-| **1º Lugar** | Tempo Médio mais rápido | 4 × 2 | **8 pts** |
-| **2º Lugar** | 2º Tempo Médio | 3 × 2 | **6 pts** |
-| **3º Lugar** | 3º Tempo Médio | 2 × 2 | **4 pts** |
+| **1º Lugar** | Tempo Médio mais rápido | 3 × 2 | **6 pts** |
+| **2º Lugar** | 2º Tempo Médio | 2 × 2 | **4 pts** |
+| **3º Lugar** | 3º Tempo Médio | 1 × 2 | **2 pts** |
 | **4º Lugar** | 4º Tempo Médio | - | **0 pts** |
 | **Falta** | **Não compareceu ao GP** | - | **0 pts** |
 
 ### Bónus de Volta Mais Rápida (VR)
-* **+4 pontos** (metade dos pontos da vitória) para o piloto que realizar a **volta mais rápida absoluta** da sessão de 10 minutos.
-* Estes pontos somam diretamente à pontuação obtida na classificação geral do GP (ex: o 1º classificado que também faça a volta mais rápida soma 8 + 4 = 12 pontos).
+* **+3 pontos** (metade dos pontos da vitória) para o piloto que realizar a **volta mais rápida absoluta** da sessão de 10 minutos.
+* Estes pontos somam diretamente à pontuação obtida na classificação geral do GP (ex: o 1º classificado que também faça a volta mais rápida soma 6 + 3 = 9 pontos).
 
 ---
 

@@ -40,10 +40,10 @@ test.describe('fixture season', () => {
     ]);
     const leader = rows.first();
     await expect(leader).toContainText('Líder');
-    await expect(leader.locator('td').nth(1)).toHaveText('22');
+    await expect(leader.locator('td').nth(1)).toHaveText('16');
 
     const pq = page.locator('tr[data-pilot="p-queiros"] td');
-    await expect(pq.nth(2)).toContainText('10');
+    await expect(pq.nth(2)).toContainText('7');
     await expect(pq.nth(2)).toContainText('bónus pela volta mais rápida');
 
     const joel = page.locator('tr[data-pilot="joel"] td');

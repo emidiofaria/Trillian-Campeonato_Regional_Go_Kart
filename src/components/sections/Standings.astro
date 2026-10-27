@@ -109,7 +109,10 @@ const started = completedRaces > 0;
                       <span class="inline-flex items-center justify-center gap-1">
                         <span class="font-semibold text-fg">{cell.points}</span>
                         {cell.fastestLap && (
-                          <span class="vr-marker" title="Volta mais rápida (+4)">
+                          <span
+                            class="vr-marker"
+                            title={`Volta mais rápida (+${FASTEST_LAP_BONUS})`}
+                          >
                             <span aria-hidden="true">VR</span>
                             <span class="sr-only">
                               (inclui {cell.bonusPoints} pontos de bónus pela volta mais rápida)

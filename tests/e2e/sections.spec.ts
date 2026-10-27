@@ -51,10 +51,12 @@ test('pilot cards show 4 pilots with numbers and stats', async ({ page }) => {
 test('rules show points table and the full accordion', async ({ page }) => {
   await page.goto('./');
   const table = page.getByTestId('points-table');
-  await expect(table).toContainText('8 pts');
   await expect(table).toContainText('6 pts');
   await expect(table).toContainText('4 pts');
-  await expect(table).toContainText('+4 pts');
+  await expect(table).toContainText('2 pts');
+  await expect(table).toContainText('+3 pts');
+  await expect(table).not.toContainText('8 pts');
+  await expect(page.locator('#regulamento')).toContainText('soma 6 + 3 = 9 pontos');
   await expect(table).toContainText('Falta');
   await expect(page.locator('#regulamento details')).toHaveCount(6);
   const conduct = page.locator('#regulamento details', { hasText: 'Conduta e transparência' });
@@ -109,7 +111,7 @@ test.describe('fixture season', () => {
 
   test('pilot stats come from the engine', async ({ page }) => {
     await page.goto('./');
-    await expect(page.locator('[data-pilot="emidio"] dd')).toHaveText(['22', '2', '0', '0']);
+    await expect(page.locator('[data-pilot="emidio"] dd')).toHaveText(['16', '2', '0', '0']);
     await expect(page.locator('[data-pilot="joel"] dd').nth(3)).toHaveText('1');
   });
 });

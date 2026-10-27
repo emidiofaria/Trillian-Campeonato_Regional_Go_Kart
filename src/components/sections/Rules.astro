@@ -58,7 +58,8 @@ const pointsRows = [
       </table>
       <p class="mt-4 text-sm text-fg-muted">
         Os pontos da volta mais rápida somam à pontuação do GP (ex.: o 1.º classificado que também
-        faça a volta mais rápida soma 8 + 4 = 12 pontos).
+        faça a volta mais rápida soma {POSITION_POINTS[0]} + {FASTEST_LAP_BONUS} ={' '}
+        {POSITION_POINTS[0] + FASTEST_LAP_BONUS} pontos).
       </p>
     </div>
 
