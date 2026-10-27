@@ -1,0 +1,136 @@
+---
+import Badge from '../ui/Badge.astro';
+import Button from '../ui/Button.astro';
+import Icon from '../icons/Icon.astro';
+import { nextRace } from '../../lib/data';
+import { formatDate } from '../../lib/format';
+import { withBase } from '../../lib/site';
+---
+
+{
+  nextRace && (
+    <section
+      id="proximo-gp"
+      aria-labelledby="proximo-gp-titulo"
+      class="next-gp relative isolate scroll-mt-20 overflow-hidden border-b border-border"
+      data-testid="next-gp"
+    >
+      <picture class="absolute inset-0 -z-10">
+        <source
+          srcset={`${withBase('images/kart-pack-640.webp')} 640w, ${withBase('images/kart-pack-1280.webp')} 1280w`}
+          sizes="100vw"
+          type="image/webp"
+        />
+        <img
+          src={withBase('images/kart-pack-1280.webp')}
+          width="1280"
+          height="851"
+          alt=""
+          loading="lazy"
+          decoding="async"
+          class="h-full w-full object-cover object-[60%_55%]"
+        />
+      </picture>
+      <div class="next-gp-overlay absolute inset-0 -z-10" aria-hidden="true" />
+
+      <div class="mx-auto grid max-w-content gap-8 px-4 py-14 sm:px-6 sm:py-20 md:grid-cols-[auto_1fr] md:items-center md:gap-12">
+        <p class="font-display font-bold leading-none text-brand-yellow" aria-hidden="true">
+          <span class="block text-sm uppercase tracking-[0.3em] text-fg">Grande Prémio</span>
+          <span class="gp-number tabular block">{String(nextRace.round).padStart(2, '0')}</span>
+        </p>
+
+        <div class="min-w-0">
+          <Badge variant="yellow">
+            <Icon name="flag" size={14} /> Próximo GP
+          </Badge>
+          <h2
+            id="proximo-gp-titulo"
+            class="mt-4 text-3xl font-bold leading-tight text-fg sm:text-4xl lg:text-5xl"
+          >
+            <span class="sr-only">Próximo Grande Prémio: GP{nextRace.round}, </span>
+            {nextRace.circuit}
+          </h2>
+
+          <ul class="mt-5 flex flex-wrap gap-2 text-sm" aria-label="Detalhes do próximo GP">
+            <li class="next-chip">
+              <Icon name="pin" size={16} /> {nextRace.location}
+            </li>
+            <li class="next-chip">
+              <Icon name={nextRace.type === 'Indoor' ? 'indoor' : 'outdoor'} size={16} />
+              {nextRace.type}
+            </li>
+            <li class="next-chip">
+              <Icon name="calendar" size={16} />
+              {nextRace.date ? (
+                <time datetime={nextRace.date}>{formatDate(nextRace.date)}</time>
+              ) : (
+                'Data a anunciar'
+              )}
+            </li>
+          </ul>
+
+          {nextRace.date && (
+            <p
+              class="countdown mt-6 hidden font-display text-2xl font-bold text-brand-yellow sm:text-3xl"
+              data-countdown={nextRace.date}
+              data-testid="next-gp-countdown"
+            />
+          )}
+
+          <div class="mt-8">
+            <Button href={withBase(`#${nextRace.id}`)} variant="primary">
+              Ver no calendário
+            </Button>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<script>
+  import { countdownLabel, daysUntil } from '../../lib/format';
+
+  for (const el of document.querySelectorAll<HTMLElement>('[data-countdown]')) {
+    const label = countdownLabel(daysUntil(el.dataset.countdown!));
+    if (label) {
+      el.textContent = label;
+      el.classList.remove('hidden');
+    }
+  }
+</script>
+
+<style>
+  .next-gp-overlay {
+    background: linear-gradient(
+        90deg,
+        rgb(13 17 23 / 0.94) 0%,
+        rgb(13 17 23 / 0.82) 55%,
+        rgb(13 17 23 / 0.55) 100%
+      ),
+      linear-gradient(0deg, rgb(13 17 23 / 0.9) 0%, transparent 40%);
+  }
+
+  .next-gp::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 6px;
+    background: var(--brand-yellow);
+  }
+
+  .gp-number {
+    font-size: clamp(5rem, 18vw, 10rem);
+  }
+
+  .next-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: 1px solid var(--border-strong);
+    background-color: rgb(13 17 23 / 0.7);
+    border-radius: 9999px;
+    padding: 0.35rem 0.85rem;
+    color: var(--text);
+  }
+</style>

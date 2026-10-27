@@ -23,3 +23,25 @@ export function formatDate(iso: string | undefined, options?: Intl.DateTimeForma
 export function formatPoints(points: number): string {
   return `${points} ${points === 1 ? 'ponto' : 'pontos'}`;
 }
+
+const LISBON_DAY = new Intl.DateTimeFormat('en-CA', {
+  timeZone: 'Europe/Lisbon',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+});
+
+/** Whole calendar days from `now` (Europe/Lisbon) until the ISO date; negative once passed. */
+export function daysUntil(iso: string, now: Date = new Date()): number {
+  const [ty, tm, td] = LISBON_DAY.format(now).split('-').map(Number);
+  const [y, m, d] = iso.split('-').map(Number);
+  return Math.round((Date.UTC(y, m - 1, d) - Date.UTC(ty, tm - 1, td)) / 86_400_000);
+}
+
+/** "Faltam 12 dias" / "É amanhã!" / "É hoje!"; null once the date has passed. */
+export function countdownLabel(days: number): string | null {
+  if (days < 0) return null;
+  if (days === 0) return 'É hoje!';
+  if (days === 1) return 'É amanhã!';
+  return `Faltam ${days} dias`;
+}

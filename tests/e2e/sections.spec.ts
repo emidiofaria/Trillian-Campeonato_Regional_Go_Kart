@@ -25,13 +25,59 @@ test('calendar lists the 7 official GPs with type badges and ids', async ({ page
   await expect(page.locator('#calendario').getByText('Próximo GP')).toHaveCount(1);
 });
 
-test('next-GP chip in hero links to an existing calendar card', async ({ page }) => {
+test('next-GP chip in hero links to the spotlight banner', async ({ page }) => {
   await page.goto('./');
   const hash = await page
-    .locator('section[aria-labelledby="hero-titulo"] a[href*="#gp"]')
+    .locator('section[aria-labelledby="hero-titulo"] a[href*="#proximo-gp"]')
     .first()
     .evaluate((a) => (a as HTMLAnchorElement).hash);
-  await expect(page.locator(`#calendario ${hash}`)).toHaveCount(1);
+  expect(hash).toBe('#proximo-gp');
+  await expect(page.locator(hash)).toHaveCount(1);
+});
+
+test('next-GP banner sits below the hero and links to its calendar card', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2026-10-27T10:00:00Z'));
+  await page.goto('./');
+  const banner = page.getByTestId('next-gp');
+  await expect(banner).toBeVisible();
+  const order = await page.evaluate(() =>
+    [...document.querySelectorAll('main > section')].map(
+      (s) => s.id || s.getAttribute('aria-labelledby'),
+    ),
+  );
+  expect(order.slice(0, 3)).toEqual(['hero-titulo', 'proximo-gp', 'classificacao']);
+  await expect(banner.getByRole('heading', { level: 2 })).toBeVisible();
+
+  const photo = banner.locator('img');
+  await expect(photo).toHaveAttribute('alt', '');
+  await expect(photo).toHaveAttribute('loading', 'lazy');
+
+  const hash = await banner
+    .getByRole('link', { name: 'Ver no calendário' })
+    .evaluate((a) => (a as HTMLAnchorElement).hash);
+  const card = page.locator(`#calendario ${hash}`);
+  await expect(card).toHaveCount(1);
+  await expect(card).toHaveAttribute('data-status', 'next');
+
+  const countdown = page.getByTestId('next-gp-countdown');
+  if (FIXTURE) {
+    await expect(banner).toContainText('Kartódromo Internacional de Braga');
+    await expect(banner).toContainText('Data a anunciar');
+    await expect(countdown).toHaveCount(0);
+  } else {
+    await expect(banner).toContainText('Kartódromo Cabo do Mundo');
+    await expect(banner).toContainText('Matosinhos');
+    await expect(banner).toContainText('Outdoor');
+    await expect(banner).toContainText('7 de novembro de 2026');
+    await expect(countdown).toHaveText('Faltam 11 dias');
+  }
+});
+
+test('rules intro shows the convivio photo with alt text', async ({ page }) => {
+  await page.goto('./');
+  const img = page.locator('#regulamento details').first().locator('img');
+  await expect(img).toHaveAttribute('alt', /convívio/);
+  await expect(img).toHaveAttribute('loading', 'lazy');
 });
 
 test('pilot cards show 4 pilots with numbers and stats', async ({ page }) => {

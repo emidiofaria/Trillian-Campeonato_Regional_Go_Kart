@@ -2,6 +2,7 @@
 import Section from '../ui/Section.astro';
 import Icon from '../icons/Icon.astro';
 import { FASTEST_LAP_BONUS, POSITION_POINTS } from '../../lib/scoring';
+import { withBase } from '../../lib/site';
 
 const pointsRows = [
   { pos: '1.º lugar', criterion: 'Tempo médio mais rápido', points: POSITION_POINTS[0] },
@@ -66,7 +67,22 @@ const pointsRows = [
     <div class="rules-accordion space-y-3">
       <details class="rule-item" open>
         <summary>Introdução e filosofia</summary>
-        <div class="rule-body">
+        <div class="rule-body intro-body">
+          <picture class="intro-photo">
+            <source
+              srcset={`${withBase('images/convivio-360.webp')} 360w, ${withBase('images/convivio-720.webp')} 720w`}
+              sizes="(min-width: 640px) 160px, 100vw"
+              type="image/webp"
+            />
+            <img
+              src={withBase('images/convivio-720.webp')}
+              width="720"
+              height="900"
+              alt="Copo de cerveja junto à pista de karting — o convívio faz parte do campeonato"
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
           <p>
             Este campeonato foi criado entre amigos com o objetivo de desfrutar de bons momentos de
             convívio a um custo reduzido. Utiliza sessões livres de 10 minutos nos kartódromos e
@@ -177,6 +193,25 @@ const pointsRows = [
     padding: 1rem 1.25rem;
     color: var(--text-muted);
     line-height: 1.65;
+  }
+  .intro-body {
+    display: flow-root;
+  }
+  .intro-photo img {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    max-height: 20rem;
+    object-fit: cover;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border);
+    margin-bottom: 1rem;
+  }
+  @media (min-width: 640px) {
+    .intro-photo img {
+      float: right;
+      width: 10rem;
+      margin: 0.25rem 0 0.5rem 1.25rem;
+    }
   }
   .rule-body :global(strong) {
     color: var(--text);

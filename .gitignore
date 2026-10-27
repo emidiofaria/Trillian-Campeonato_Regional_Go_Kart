@@ -11,3 +11,4 @@ playwright-report/
 .DS_Store
 # chrome-launcher under WSL creates Windows-style temp dirs in the cwd (npm run lhci)
 /C:*
+*:Zone.Identifier
