@@ -11,7 +11,8 @@ import { validateSeason, type Season } from './validate';
 async function loadRaw(): Promise<{ pilots: unknown; races: unknown; results: unknown }> {
   if (import.meta.env.KARTCUP_FIXTURE === '1' || process.env.KARTCUP_FIXTURE === '1') {
     const fixture = await import('../../tests/fixtures/season.json');
-    return { pilots: pilotsJson, races: fixture.default.races, results: fixture.default.results };
+    const { pilots, races, results } = fixture.default;
+    return { pilots, races, results };
   }
   return { pilots: pilotsJson, races: racesJson, results: resultsJson };
 }

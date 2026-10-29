@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-const FIXTURE = process.env.KARTCUP_FIXTURE === '1';
+import { FIXTURE, N, pilots, positionPoints, vrBonus } from './season';
 
 test('every nav anchor resolves to a section on the page', async ({ page }) => {
   await page.goto('./');
@@ -71,11 +71,11 @@ test('rules intro shows the convivio photo with alt text', async ({ page }) => {
   await expect(img).toHaveAttribute('loading', 'lazy');
 });
 
-test('pilot cards show 4 pilots with numbers and stats', async ({ page }) => {
+test('pilot cards show every pilot with numbers and stats', async ({ page }) => {
   await page.goto('./');
   const cards = page.locator('#pilotos li.pilot-card');
-  await expect(cards).toHaveCount(4);
-  await expect(cards.locator('h3')).toHaveText(['Emídio', 'P. Queirós', 'Joel', 'Dinis']);
+  await expect(cards).toHaveCount(N);
+  await expect(cards.locator('h3')).toHaveText(pilots.map((p) => p.name));
   await expect(cards.first()).toContainText('#1');
   await expect(cards.first().locator('dt')).toHaveText([
     'Pontos',
@@ -88,12 +88,19 @@ test('pilot cards show 4 pilots with numbers and stats', async ({ page }) => {
 test('rules show points table and the full accordion', async ({ page }) => {
   await page.goto('./');
   const table = page.getByTestId('points-table');
-  await expect(table).toContainText('6 pts');
-  await expect(table).toContainText('4 pts');
-  await expect(table).toContainText('2 pts');
-  await expect(table).toContainText('+3 pts');
-  await expect(table).not.toContainText('8 pts');
-  await expect(page.locator('#regulamento')).toContainText('soma 6 + 3 = 9 pontos');
+  await expect(table.locator('tbody th[scope="row"]')).toHaveText([
+    ...positionPoints.map((_, i) => `${i + 1}.º lugar`),
+    'Falta',
+    'Bónus VR',
+  ]);
+  await expect(table.locator('tbody td:last-child')).toHaveText([
+    ...positionPoints.map((pts) => `${pts} pts`),
+    '0 pts',
+    `+${vrBonus} pts`,
+  ]);
+  await expect(page.locator('#regulamento')).toContainText(
+    `soma ${positionPoints[0]} + ${vrBonus} = ${positionPoints[0] + vrBonus} pontos`,
+  );
   await expect(table).toContainText('Falta');
   await expect(page.locator('#regulamento details')).toHaveCount(6);
   const conduct = page.locator('#regulamento details', { hasText: 'Conduta e transparência' });
@@ -121,7 +128,7 @@ test.describe('empty season', () => {
     await page.goto('./');
     await expect(page.locator('#calendario details')).toHaveCount(0);
     await expect(page.locator('#calendario').getByText('Concluído')).toHaveCount(0);
-    await expect(page.locator('#pilotos dd')).toHaveText(Array(16).fill('0'));
+    await expect(page.locator('#pilotos dd')).toHaveText(Array(4 * N).fill('0'));
   });
 });
 
@@ -133,7 +140,7 @@ test.describe('fixture season', () => {
     const gp1 = page.locator('#gp1');
     await expect(gp1).toContainText('Concluído');
     await gp1.locator('summary').click();
-    await expect(gp1.locator('tbody tr')).toHaveCount(4);
+    await expect(gp1.locator('tbody tr')).toHaveCount(5);
     await expect(gp1).toContainText('Volta mais rápida');
     await expect(gp1).toContainText('P. Queirós');
     await expect(gp1.getByRole('link', { name: /Folha de tempos/ })).toHaveAttribute(
@@ -148,7 +155,8 @@ test.describe('fixture season', () => {
 
   test('pilot stats come from the engine', async ({ page }) => {
     await page.goto('./');
-    await expect(page.locator('[data-pilot="emidio"] dd')).toHaveText(['16', '2', '0', '0']);
+    await expect(page.locator('[data-pilot="emidio"] dd')).toHaveText(['22', '2', '0', '0']);
     await expect(page.locator('[data-pilot="joel"] dd').nth(3)).toHaveText('1');
+    await expect(page.locator('[data-pilot="torres"] dd')).toHaveText(['2', '0', '0', '1']);
   });
 });

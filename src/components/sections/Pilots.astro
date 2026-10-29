@@ -13,7 +13,7 @@ const pilots = [...season.pilots].sort((a, b) => a.number - b.number);
     <Icon name="users" size={30} />
   </span>
 
-  <ul class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+  <ul class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
     {
       pilots.map((pilot) => {
         const row = rowByPilot.get(pilot.id)!;

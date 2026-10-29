@@ -1,7 +1,7 @@
 # Trillian — Campeonato Regional Go Kart ( Kart Cup 2026/2027)
 
 Site estático oficial da **Kart Cup 2026**, um campeonato de karting de aluguer entre amigos
-(Emídio, P. Queirós, Joel, Dinis), com o apoio da **Trillian Driving Coach**.
+(Emídio, P. Queirós, Joel, Dinis, Torres), com o apoio da **Trillian Driving Coach**.
 
 Built with [Astro](https://astro.build) 4 + Tailwind CSS, deployed to GitHub Pages.
 
@@ -22,6 +22,7 @@ Live: https://emidiofaria.github.io/Trillian-Campeonato_Regional_Go_Kart/
 | `npm run check`         | Validate data + type-check + lint (ESLint)     |
 | `npm run format`        | Format with Prettier                           |
 | `npm run add-result`    | Interactive CLI to record a GP result          |
+| `npm run add-pilot`     | Register a new pilot (interactive or flags)    |
 | `npm run validate-data` | Validate `src/data/*.json` only                |
 
 ## Deploying to GitHub Pages
@@ -52,14 +53,19 @@ All championship data lives in `src/data/` and is validated with Zod at build ti
 
 | File                    | Contents                                                                                                                                            |
 | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/data/pilots.json`  | `id`, `name`, `number` (1–4), `color`, `initials`                                                                                                   |
+| `src/data/pilots.json`  | `id`, `name`, `number` (1…N, consecutive), `color` (AA-safe), `initials`, optional `photo` (file in `src/assets/pilots/`)                           |
 | `src/data/races.json`   | 7 GPs: `id`, `round`, `circuit`, `type` (Indoor/Outdoor), `location`, optional `date`/`timesheetUrl`, `status` (`scheduled` / `next` / `completed`) |
-| `src/data/results.json` | Per GP: `raceId` + one entry per pilot `{ pilotId, attended, avgLapTime, bestLap, secondBestLap }` (seconds; `null` when absent)                    |
+| `src/data/results.json` | Per GP: `raceId`, `pilotCount` (pilots registered when it ran) + one entry per pilot `{ pilotId, attended, avgLapTime, bestLap, secondBestLap }`    |
 
 Scoring (see `docs/rules.md`): sessions are ranked by average lap time (ties: best lap, then
-second-best lap) and score 6/4/2/0; absence = 0; +3 for the fastest lap (VR) of the session
+second-best lap) and score 2×(N−1), …, 2, 0 for N pilots (today 5: 8/6/4/2/0); absence = 0;
++N−1 (half the win, today +4) for the fastest lap (VR) of the session
 (shared if two pilots set exactly the same time). Championship ties: more wins, then more VRs,
 then fewer absences.
+
+The points table is derived from the number of pilots (`positionPoints(n)` / `fastestLapBonus(n)`
+in `src/lib/scoring.ts`), so adding a pilot needs no scoring change. Each GP stores the
+`pilotCount` it was run with, so GPs already run keep their points when someone joins later.
 
 ## Recording a GP result
 
@@ -91,15 +97,35 @@ Invalid data never reaches production. `npm run check` (and the site build itsel
 Pilots who aren't comfortable with the CLI can open the **"Submeter resultados do GP"** issue
 (template in `.github/ISSUE_TEMPLATE/`) with the timesheet; a maintainer then runs the CLI.
 
+## Adding a pilot
+
+Ask Copilot to "add a new pilot" (it follows the `add-pilot` skill in
+`.github/skills/add-pilot/SKILL.md`), or run the CLI yourself:
+
+```sh
+npm run add-pilot                                             # interactive
+npm run add-pilot -- --name "Torres" --color "#34d399" --yes  # colour avatar
+npm run add-pilot -- --name "Ana Sousa" --photo ~/ana.jpg --yes  # photo avatar
+```
+
+- The CLI picks the id, the next number and initials, and suggests an unused AA-safe colour. It
+  rejects duplicate names or colours and colours too dark for the avatar initials.
+- Photos are centre-cropped to a 512px WebP in `src/assets/pilots/<id>.webp` and shown as a round
+  avatar with a ring in the pilot's colour.
+- If GPs were already run, the new pilot is recorded as absent (0 pts) and those GPs keep their
+  original points table.
+- Afterwards: `npm run og-image`, update the pilot names in `docs/rules.md`, this README and
+  `AGENTS.md`, then `npm run check && npm test`.
+
 ### `ABSENCE_RANKING_MODE`
 
 The rules don't say how positions are awarded when someone is absent. The constant in
 `src/lib/scoring.ts` controls it:
 
-| Value                 | Behaviour                                                        | 3 attendees |
-| --------------------- | ---------------------------------------------------------------- | ----------- |
-| `'compact'` (default) | Attendees take the top positions in order                        | 6 / 4 / 2   |
-| `'fixed'`             | The slowest attendee keeps the 4-pilot table's last slot (0 pts) | 6 / 4 / 0   |
+| Value                 | Behaviour                                                | 4 attendees   |
+| --------------------- | -------------------------------------------------------- | ------------- |
+| `'compact'` (default) | Attendees take the top positions in order                | 8 / 6 / 4 / 2 |
+| `'fixed'`             | The slowest attendee keeps the table's last slot (0 pts) | 8 / 6 / 4 / 0 |
 
 ## Tests and QA
 

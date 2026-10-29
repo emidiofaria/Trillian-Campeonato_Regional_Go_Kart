@@ -8,13 +8,20 @@ export const pilotSchema = z
   .object({
     id: z.string().regex(/^[a-z0-9-]+$/),
     name: z.string().min(1),
-    number: z.number().int().min(1).max(4),
+    number: z.number().int().min(1),
     color: hexColor,
     initials: z.string().min(1).max(3),
+    /** Optional photo file name in src/assets/pilots/ (e.g. "torres.jpg"). */
+    photo: z
+      .string()
+      .regex(/^[a-z0-9-]+\.(jpe?g|png|webp|avif)$/, 'Foto: nome de ficheiro inválido')
+      .optional(),
   })
   .strict();
 
-export const pilotsSchema = z.array(pilotSchema).length(4);
+export const MIN_PILOTS = 2;
+export const MAX_PILOTS = 12;
+export const pilotsSchema = z.array(pilotSchema).min(MIN_PILOTS).max(MAX_PILOTS);
 
 export const raceStatusSchema = z.enum(['scheduled', 'next', 'completed']);
 
@@ -75,6 +82,11 @@ export const resultEntrySchema = z
 export const raceResultSchema = z
   .object({
     raceId: z.string().min(1),
+    /**
+     * Registered pilots when the GP was run (defines its points table). Optional: defaults to
+     * the number of entries. Keeps past GPs frozen when a pilot joins mid-season.
+     */
+    pilotCount: z.number().int().min(2).optional(),
     entries: z.array(resultEntrySchema).min(1),
   })
   .strict();

@@ -1,8 +1,9 @@
 import { collectSeasonIssues } from '../src/lib/validate';
-import { readRawSeason } from './season-files';
+import { missingPhotos, readRawSeason } from './season-files';
 
 try {
-  const { issues } = collectSeasonIssues(readRawSeason());
+  const { issues, season } = collectSeasonIssues(readRawSeason());
+  if (season) issues.push(...missingPhotos(season));
   if (issues.length) {
     console.error(`✖ Dados do campeonato inválidos:\n- ${issues.join('\n- ')}`);
     process.exit(1);

@@ -15,7 +15,8 @@ inspirado em telemetria, em modo escuro, profissional e sem exageros.
   secundário atenuado.
 - Cores de destaque: amarelo de corrida, azul e verde, tiradas do logótipo da Trillian:
   azul `#0f4174`, amarelo `#e9be00`, verde `#19833c`, anel `#82b07a`.
-- Cada piloto tem uma cor própria (avatar com iniciais), que nunca é o único indicador de
+- Cada piloto tem uma cor própria (avatar com iniciais, ou fotografia circular com anel nessa cor),
+  que nunca é o único indicador de
   significado.
 - Motivos de corrida subtis: divisória em xadrez e linhas de velocidade, desativados quando o
   utilizador prefere movimento reduzido.
@@ -46,7 +47,7 @@ inspirado em telemetria, em modo escuro, profissional e sem exageros.
 
 ### 3B. Classificação Geral
 
-- Cabeçalho com ícone de bandeira xadrez, título "Classificação Geral" e indicação "4 Pilotos".
+- Cabeçalho com ícone de bandeira xadrez, título "Classificação Geral" e indicação "N Pilotos" (calculado a partir de `src/data/pilots.json`; hoje 5).
 - Tabela com as colunas Pos, Piloto (avatar colorido + nome), Pontos Totais e GP1 a GP7.
 - Cada célula de GP mostra os pontos desse GP:
   - "—" para GP ainda não realizado;
@@ -54,7 +55,7 @@ inspirado em telemetria, em modo escuro, profissional e sem exageros.
   - marcador "VR" quando o piloto ganhou o bónus de volta mais rápida.
 - O líder tem o badge "Líder" e o total em amarelo. Antes do primeiro GP aparece
   "A temporada ainda não começou".
-- Nota de rodapé: "+3 pontos pela volta mais rápida (VR) da sessão".
+- Nota de rodapé: "+N−1 pontos pela volta mais rápida (VR) da sessão" (hoje +4).
 - Painel recolhível "Critérios de desempate".
 
 ### 3C. Calendário
@@ -66,13 +67,14 @@ inspirado em telemetria, em modo escuro, profissional e sem exageros.
 
 ### 3D. Pilotos
 
-- 4 cartões: avatar circular com iniciais na cor do piloto, nome, número (#1–#4) e estatísticas
+- Um cartão por piloto (hoje 5): avatar circular (iniciais na cor do piloto ou fotografia), nome,
+  número (#1–#N) e estatísticas
   (pontos, vitórias, VR, faltas).
-- Grelha 2×2 em mobile/tablet e 4×1 em ecrãs grandes.
+- Grelha de 2 colunas em mobile/tablet e de 3 colunas em ecrãs grandes.
 
 ### 3E. Regulamento
 
-- Caixa de resumo com a tabela de pontos (6/4/2/0, falta = 0, VR +3).
+- Caixa de resumo com a tabela de pontos (2×(N−1)…2/0 com N pilotos, hoje 8/6/4/2/0; falta = 0; VR +N−1, hoje +4).
 - Acordeão com o regulamento completo: formato, faltas, desempates, conduta e transparência (ver
   `docs/rules.md`).
 

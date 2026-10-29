@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import type { Pilot } from '../lib/schemas';
 
 interface Props {
@@ -7,13 +9,42 @@ interface Props {
 }
 
 const { pilot, size = 'sm' } = Astro.props;
+
+const photos = import.meta.glob<{ default: ImageMetadata }>(
+  '../assets/pilots/*.{jpg,jpeg,png,webp,avif}',
+  { eager: true },
+);
+const photo = pilot.photo ? photos[`../assets/pilots/${pilot.photo}`]?.default : undefined;
+if (pilot.photo && !photo) {
+  throw new Error(`Foto do piloto "${pilot.id}" não encontrada: src/assets/pilots/${pilot.photo}`);
+}
+const px = size === 'sm' ? 32 : 64;
 ---
 
-<span
-  class:list={[
-    'inline-grid shrink-0 place-items-center rounded-full font-display font-bold text-bg',
-    size === 'sm' ? 'h-8 w-8 text-sm' : 'h-16 w-16 text-2xl',
-  ]}
-  style={{ backgroundColor: pilot.color }}
-  aria-hidden="true">{pilot.initials}</span
->
+{
+  photo ? (
+    <Image
+      src={photo}
+      alt=""
+      width={px * 2}
+      height={px * 2}
+      class:list={[
+        'inline-block shrink-0 rounded-full object-cover',
+        size === 'sm' ? 'h-8 w-8 border-2' : 'h-16 w-16 border-[3px]',
+      ]}
+      style={{ borderColor: pilot.color }}
+      aria-hidden="true"
+    />
+  ) : (
+    <span
+      class:list={[
+        'inline-grid shrink-0 place-items-center rounded-full font-display font-bold text-bg',
+        size === 'sm' ? 'h-8 w-8 text-sm' : 'h-16 w-16 text-2xl',
+      ]}
+      style={{ backgroundColor: pilot.color }}
+      aria-hidden="true"
+    >
+      {pilot.initials}
+    </span>
+  )
+}

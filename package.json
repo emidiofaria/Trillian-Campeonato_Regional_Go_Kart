@@ -22,7 +22,8 @@
     "add-result": "tsx scripts/add-result.ts",
     "validate-data": "tsx scripts/validate-data.ts",
     "lhci": "astro build && lhci autorun",
-    "og-image": "python3 scripts/generate-og-image.py"
+    "og-image": "python3 scripts/generate-og-image.py",
+    "add-pilot": "tsx scripts/add-pilot.ts"
   },
   "dependencies": {
     "@astrojs/check": "0.9.4",
