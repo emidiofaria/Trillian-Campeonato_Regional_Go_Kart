@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import pilots from '../../src/data/pilots.json';
+import pilots from '../fixtures/pilots.json';
+import prodPilots from '../../src/data/pilots.json';
 import races from '../../src/data/races.json';
 import results from '../../src/data/results.json';
 import fixture from '../fixtures/season.json';
@@ -9,7 +10,7 @@ const clone = <T>(v: T): T => JSON.parse(JSON.stringify(v));
 
 describe('season validation', () => {
   it('production data is valid and contains no results yet', () => {
-    expect(() => validateSeason({ pilots, races, results })).not.toThrow();
+    expect(() => validateSeason({ pilots: prodPilots, races, results })).not.toThrow();
     expect(results).toEqual([]);
   });
 
@@ -68,5 +69,27 @@ describe('season validation', () => {
     bad[0].raceId = 'gp9';
     const { issues } = collectSeasonIssues({ pilots, races: fixture.races, results: bad });
     expect(issues).toContain('results.json [gp9]: GP inexistente');
+  });
+
+  it('rejects non-contiguous numbers, duplicate or low-contrast colours, too few pilots', () => {
+    const bad = clone(pilots);
+    bad[4].number = 7;
+    bad[1].color = bad[0].color;
+    bad[2].color = '#1e3a8a';
+    const { issues } = collectSeasonIssues({ pilots: bad, races, results: [] });
+    const text = issues.join('\n');
+    expect(text).toMatch(/consecutivos de #1 a #5/);
+    expect(text).toMatch(/cor duplicada/);
+    expect(text).toMatch(/joel.*contraste/);
+    expect(
+      collectSeasonIssues({ pilots: pilots.slice(0, 1), races, results: [] }).issues,
+    ).not.toEqual([]);
+  });
+
+  it('rejects a pilotCount larger than the number of entries', () => {
+    const bad = clone(fixture.results) as Array<{ pilotCount?: number }>;
+    bad[0].pilotCount = 9;
+    const { issues } = collectSeasonIssues({ pilots, races: fixture.races, results: bad });
+    expect(issues.join('\n')).toMatch(/pilotCount \(9\) maior/);
   });
 });

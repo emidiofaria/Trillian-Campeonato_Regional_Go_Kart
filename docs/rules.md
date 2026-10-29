@@ -10,6 +10,7 @@ Este campeonato foi criado entre amigos com o objetivo de desfrutar de bons mome
 * P. Queirós
 * Joel
 * Dinis
+* Torres
 
 ---
 
@@ -34,21 +35,22 @@ Este campeonato foi criado entre amigos com o objetivo de desfrutar de bons mome
 
 ---
 
-## 5. Sistema de Pontuação (para 4 Participantes)
+## 5. Sistema de Pontuação (para 5 Participantes)
 
 Os pontos da classificação geral são atribuídos com base no tempo médio da sessão:
 
 | Posição | Critério (Tempo Médio) | Cálculo | Pontos Conquistados |
 | :--- | :--- | :---: | :---: |
-| **1º Lugar** | Tempo Médio mais rápido | 3 × 2 | **6 pts** |
-| **2º Lugar** | 2º Tempo Médio | 2 × 2 | **4 pts** |
-| **3º Lugar** | 3º Tempo Médio | 1 × 2 | **2 pts** |
-| **4º Lugar** | 4º Tempo Médio | - | **0 pts** |
+| **1º Lugar** | Tempo Médio mais rápido | 4 × 2 | **8 pts** |
+| **2º Lugar** | 2º Tempo Médio | 3 × 2 | **6 pts** |
+| **3º Lugar** | 3º Tempo Médio | 2 × 2 | **4 pts** |
+| **4º Lugar** | 4º Tempo Médio | 1 × 2 | **2 pts** |
+| **5º Lugar** | 5º Tempo Médio | - | **0 pts** |
 | **Falta** | **Não compareceu ao GP** | - | **0 pts** |
 
 ### Bónus de Volta Mais Rápida (VR)
-* **+3 pontos** (metade dos pontos da vitória) para o piloto que realizar a **volta mais rápida absoluta** da sessão de 10 minutos.
-* Estes pontos somam diretamente à pontuação obtida na classificação geral do GP (ex: o 1º classificado que também faça a volta mais rápida soma 6 + 3 = 9 pontos).
+* **+4 pontos** (metade dos pontos da vitória) para o piloto que realizar a **volta mais rápida absoluta** da sessão de 10 minutos.
+* Estes pontos somam diretamente à pontuação obtida na classificação geral do GP (ex: o 1º classificado que também faça a volta mais rápida soma 8 + 4 = 12 pontos).
 
 ---
 
@@ -73,4 +75,4 @@ Os pontos da classificação geral são atribuídos com base no tempo médio da 
 
 ## 8. Regras de Conduta e Transparência
 * **Folha de Tempos:** Após o final de cada sessão de 10 minutos, a folha de tempos oficial do kartódromo deve ser partilhada no grupo oficial do campeonato para validação pública de todos os participantes.
-* **Ambiente:** O fair-play e o respeito mútuo em pista estão acima de tudo. Divirtam-se e boa sorte ao Emídio, P. Queirós, Joel e Dinis!
+* **Ambiente:** O fair-play e o respeito mútuo em pista estão acima de tudo. Divirtam-se e boa sorte ao Emídio, P. Queirós, Joel, Dinis e Torres!

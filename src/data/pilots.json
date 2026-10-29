@@ -2,5 +2,6 @@
   { "id": "emidio", "name": "Emídio", "number": 1, "color": "#fb7185", "initials": "EM" },
   { "id": "p-queiros", "name": "P. Queirós", "number": 2, "color": "#38bdf8", "initials": "PQ" },
   { "id": "joel", "name": "Joel", "number": 3, "color": "#a78bfa", "initials": "JO" },
-  { "id": "dinis", "name": "Dinis", "number": 4, "color": "#fb923c", "initials": "DI" }
+  { "id": "dinis", "name": "Dinis", "number": 4, "color": "#fb923c", "initials": "DI" },
+  { "id": "torres", "name": "Torres", "number": 5, "color": "#34d399", "initials": "TO" }
 ]

@@ -1,16 +1,25 @@
 ---
 import Section from '../ui/Section.astro';
 import Icon from '../icons/Icon.astro';
-import { FASTEST_LAP_BONUS, POSITION_POINTS } from '../../lib/scoring';
+import { currentPointsTable } from '../../lib/scoring';
 import { withBase } from '../../lib/site';
+import { season } from '../../lib/data';
+
+const { positionPoints: POSITION_POINTS, fastestLapBonus: FASTEST_LAP_BONUS } = currentPointsTable(
+  season.pilots,
+);
 
 const pointsRows = [
-  { pos: '1.º lugar', criterion: 'Tempo médio mais rápido', points: POSITION_POINTS[0] },
-  { pos: '2.º lugar', criterion: '2.º tempo médio', points: POSITION_POINTS[1] },
-  { pos: '3.º lugar', criterion: '3.º tempo médio', points: POSITION_POINTS[2] },
-  { pos: '4.º lugar', criterion: '4.º tempo médio', points: POSITION_POINTS[3] },
+  ...POSITION_POINTS.map((points, i) => ({
+    pos: `${i + 1}.º lugar`,
+    criterion: i === 0 ? 'Tempo médio mais rápido' : `${i + 1}.º tempo médio`,
+    points,
+  })),
   { pos: 'Falta', criterion: 'Não compareceu ao GP', points: 0 },
 ];
+
+const pilotNames = [...season.pilots].sort((a, b) => a.number - b.number).map((p) => p.name);
+const pilotList = `${pilotNames.slice(0, -1).join(', ')} e ${pilotNames[pilotNames.length - 1]}`;
 ---
 
 <Section id="regulamento" eyebrow="Regulamento Oficial" title="Regulamento">
@@ -165,7 +174,7 @@ const pointsRows = [
             </li>
             <li>
               <strong>Ambiente:</strong> o fair-play e o respeito mútuo em pista estão acima de tudo.
-              Divirtam-se e boa sorte ao Emídio, P. Queirós, Joel e Dinis!
+              Divirtam-se e boa sorte a {pilotList}!
             </li>
           </ul>
         </div>

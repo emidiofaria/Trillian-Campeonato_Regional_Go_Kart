@@ -2,17 +2,44 @@ import type { Pilot, Race, RaceResult, ResultEntry } from './schemas';
 
 /**
  * How session positions are awarded when a pilot is absent (not defined in docs/rules.md):
- * - 'compact': attendees take the top positions in order (3 attendees => 6/4/2).
- * - 'fixed':   the slowest attendee always takes the 4-pilot table's last slot (0 pts),
- *              the others take the table from the top (3 attendees => 6/4/0).
+ * - 'compact': attendees take the top positions in order (4 attendees => 8/6/4/2).
+ * - 'fixed':   the slowest attendee always takes the table's last slot (0 pts),
+ *              the others take the table from the top (4 attendees => 8/6/4/0).
  */
 export type AbsenceRankingMode = 'compact' | 'fixed';
 export const ABSENCE_RANKING_MODE: AbsenceRankingMode = 'compact';
 
-/** Points for 1st..4th (docs/rules.md section 5). Absent = 0. */
-export const POSITION_POINTS = [6, 4, 2, 0] as const;
-/** Fastest-lap (VR) bonus (docs/rules.md section 5). */
-export const FASTEST_LAP_BONUS = 3;
+/**
+ * Points for 1st..Nth with N registered pilots (docs/rules.md section 5): 2×(N−1), …, 2, 0.
+ * Absent = 0. E.g. 5 pilots => [8, 6, 4, 2, 0].
+ */
+export function positionPoints(pilotCount: number): number[] {
+  return Array.from({ length: pilotCount }, (_, i) => 2 * (pilotCount - 1 - i));
+}
+
+/** Fastest-lap (VR) bonus: half the winner's points, i.e. N−1 (5 pilots => +4). */
+export function fastestLapBonus(pilotCount: number): number {
+  return pilotCount - 1;
+}
+
+/** Points table for the current pilot list (used by the UI and the CLIs). */
+export function currentPointsTable(pilots: readonly unknown[]): {
+  positionPoints: number[];
+  fastestLapBonus: number;
+} {
+  return {
+    positionPoints: positionPoints(pilots.length),
+    fastestLapBonus: fastestLapBonus(pilots.length),
+  };
+}
+
+/**
+ * Number of registered pilots a GP is scored with. Stored on the result so past GPs stay frozen
+ * when a pilot joins mid-season; falls back to the number of entries.
+ */
+export function sessionPilotCount(result: RaceResult): number {
+  return result.pilotCount ?? result.entries.length;
+}
 
 export interface SessionEntry {
   pilotId: string;
@@ -81,11 +108,16 @@ export function compareSession(a: Attendee, b: Attendee): number {
   return a.avgLapTime - b.avgLapTime || a.bestLap - b.bestLap || a.secondBestLap - b.secondBestLap;
 }
 
-function pointsFor(index: number, attendeeCount: number, mode: AbsenceRankingMode): number {
+function pointsFor(
+  table: number[],
+  index: number,
+  attendeeCount: number,
+  mode: AbsenceRankingMode,
+): number {
   if (mode === 'fixed' && attendeeCount > 1 && index === attendeeCount - 1) {
-    return POSITION_POINTS[POSITION_POINTS.length - 1];
+    return table[table.length - 1];
   }
-  return POSITION_POINTS[index] ?? 0;
+  return table[index] ?? 0;
 }
 
 /**
@@ -109,6 +141,10 @@ export function scoreSession(
     .filter((e) => !isAttendee(e))
     .sort((a, b) => orderIndex(a.pilotId) - orderIndex(b.pilotId));
 
+  const pilotCount = sessionPilotCount(result);
+  const table = positionPoints(pilotCount);
+  const bonus = fastestLapBonus(pilotCount);
+
   const fastestLapTime = attendees.length ? Math.min(...attendees.map((a) => a.bestLap)) : null;
   // Exact ties on the absolute fastest lap: every pilot who set it gets the bonus.
   const fastestLapPilotIds =
@@ -118,9 +154,9 @@ export function scoreSession(
 
   const entries: SessionEntry[] = [
     ...attendees.map((a, i) => {
-      const positionPoints = pointsFor(i, attendees.length, mode);
+      const positionPoints = pointsFor(table, i, attendees.length, mode);
       const fastestLap = fastestLapPilotIds.includes(a.pilotId);
-      const bonusPoints = fastestLap ? FASTEST_LAP_BONUS : 0;
+      const bonusPoints = fastestLap ? bonus : 0;
       return {
         pilotId: a.pilotId,
         attended: true,

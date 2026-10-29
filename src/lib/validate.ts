@@ -1,5 +1,6 @@
 import { pilotsSchema, racesSchema, resultsSchema } from './schemas';
 import type { Pilot, Race, RaceResult } from './schemas';
+import { isAvatarColourAccessible } from './colour';
 
 export interface Season {
   pilots: Pilot[];
@@ -49,6 +50,17 @@ export function collectSeasonIssues(raw: { pilots: unknown; races: unknown; resu
     issues.push(`pilots.json: id duplicado "${d}"`);
   for (const d of duplicates(pilots.map((p) => p.number)))
     issues.push(`pilots.json: número duplicado #${d}`);
+  const numbers = [...new Set(pilots.map((p) => p.number))].sort((x, y) => x - y);
+  if (numbers.some((n, i) => n !== i + 1))
+    issues.push(`pilots.json: os números têm de ser consecutivos de #1 a #${pilots.length}`);
+  for (const d of duplicates(pilots.map((p) => p.color.toLowerCase())))
+    issues.push(`pilots.json: cor duplicada ${d}`);
+  for (const p of pilots) {
+    if (!isAvatarColourAccessible(p.color))
+      issues.push(
+        `pilots.json [${p.id}]: cor ${p.color} sem contraste suficiente (AA) com o texto do avatar`,
+      );
+  }
 
   for (const d of duplicates(races.map((r) => r.id)))
     issues.push(`races.json: id duplicado "${d}"`);
@@ -82,6 +94,8 @@ export function collectSeasonIssues(raw: { pilots: unknown; races: unknown; resu
     for (const id of pilotIds)
       if (!ids.includes(id)) issues.push(`${where}: falta a presença de "${id}"`);
     if (!result.entries.some((e) => e.attended)) issues.push(`${where}: nenhum piloto presente`);
+    if (result.pilotCount !== undefined && result.pilotCount > result.entries.length)
+      issues.push(`${where}: pilotCount (${result.pilotCount}) maior que o número de entradas`);
   }
 
   const withResults = new Set(results.map((r) => r.raceId));

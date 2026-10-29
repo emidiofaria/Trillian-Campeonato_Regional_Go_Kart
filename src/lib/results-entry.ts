@@ -48,7 +48,7 @@ export function applyResult(
     if (r.status !== 'completed') r.status = r === upcoming ? 'next' : 'scheduled';
   }
 
-  const result: RaceResult = { raceId, entries };
+  const result: RaceResult = { raceId, pilotCount: season.pilots.length, entries };
   const results = [...season.results.filter((r) => r.raceId !== raceId), result].sort(
     (a, b) =>
       races.find((r) => r.id === a.raceId)!.round - races.find((r) => r.id === b.raceId)!.round,

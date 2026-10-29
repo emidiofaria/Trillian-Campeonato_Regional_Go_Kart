@@ -1,7 +1,7 @@
 # AGENTS.md — Project Context
 
 You are building the official website for "Kart Cup 2026", a friends' rental-kart
-championship (pilots: Emídio, P. Queirós, Joel, Dinis). Source specs are in
+championship (pilots: Emídio, P. Queirós, Joel, Dinis, Torres). Source specs are in
 docs/rules.md (rules) and docs/layout.md (layout). Read both fully before coding.
 The full phased plan is in 00_inputs/IMPLEMENTATION_PLAN.md.
 
@@ -36,3 +36,11 @@ Stack and constraints:
 
 Work in small, reviewable steps. At the end of each task, report what changed
 and the exact commands to verify it.
+
+## Skills
+
+- **Adding a pilot/driver** (e.g. "add a new pilot", "adicionar/inscrever piloto", "novo piloto"):
+  you MUST follow `.github/skills/add-pilot/SKILL.md`. It asks for the name and a photo or avatar
+  colour, runs `npm run add-pilot`, and updates the docs and the OG image. Points
+  (2×(N−1)…0, VR = N−1) are derived from the pilot count, so never edit the scoring code or the
+  tests to add a pilot.

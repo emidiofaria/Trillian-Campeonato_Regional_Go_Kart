@@ -1,8 +1,10 @@
 """Generates public/og-image.png (1200x630). Run once: python3 scripts/generate-og-image.py"""
+import json
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parent.parent
+PILOT_COUNT = len(json.loads((ROOT / 'src/data/pilots.json').read_text(encoding='utf-8')))
 W, H = 1200, 630
 BG, SURFACE, TEXT, MUTED = '#0d1117', '#161b22', '#e6edf3', '#9aa4b2'
 YELLOW, GREEN, RING, BORDER = '#e9be00', '#3fb950', '#82b07a', '#30363d'
@@ -33,7 +35,7 @@ body = lambda s: ImageFont.truetype(str(ROOT / 'public/fonts/inter-latin-wght-no
 
 d.text((80, 110), 'CAMPEONATO DE KARTING', font=semi(34), fill=YELLOW)
 d.text((76, 150), 'Kart Cup 2026', font=display(118), fill=TEXT)
-d.text((80, 305), '7 Grandes Prémios · 4 pilotos', font=body(30), fill=MUTED)
+d.text((80, 305), f'7 Grandes Prémios · {PILOT_COUNT} pilotos', font=body(30), fill=MUTED)
 d.text((80, 350), 'Classificação, calendário e regulamento', font=body(30), fill=MUTED)
 
 # Sponsor pill.

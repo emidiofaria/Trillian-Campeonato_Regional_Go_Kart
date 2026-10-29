@@ -3,10 +3,11 @@ import Section from '../ui/Section.astro';
 import Badge from '../ui/Badge.astro';
 import Icon from '../icons/Icon.astro';
 import PilotAvatar from '../PilotAvatar.astro';
-import { championship, pilotById, sortedRaces } from '../../lib/data';
-import { FASTEST_LAP_BONUS } from '../../lib/scoring';
+import { championship, pilotById, season, sortedRaces } from '../../lib/data';
+import { currentPointsTable } from '../../lib/scoring';
 
 const { standings, completedRaces } = championship;
+const FASTEST_LAP_BONUS = currentPointsTable(season.pilots).fastestLapBonus;
 const started = completedRaces > 0;
 ---
 
@@ -14,7 +15,9 @@ const started = completedRaces > 0;
   <span slot="title-icon" class="mr-2 inline-block align-[-0.1em] text-brand-yellow">
     <Icon name="flag" size={30} />
   </span>
-  <Badge slot="header-aside" variant="neutral"><Icon name="users" size={14} /> 4 Pilotos</Badge>
+  <Badge slot="header-aside" variant="neutral"
+    ><Icon name="users" size={14} /> {season.pilots.length} Pilotos</Badge
+  >
 
   {
     !started && (
@@ -111,7 +114,7 @@ const started = completedRaces > 0;
                         {cell.fastestLap && (
                           <span
                             class="vr-marker"
-                            title={`Volta mais rápida (+${FASTEST_LAP_BONUS})`}
+                            title={`Volta mais rápida (+${cell.bonusPoints})`}
                           >
                             <span aria-hidden="true">VR</span>
                             <span class="sr-only">

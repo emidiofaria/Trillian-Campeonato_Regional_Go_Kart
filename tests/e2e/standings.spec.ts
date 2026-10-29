@@ -1,13 +1,13 @@
 import { expect, test } from '@playwright/test';
 
-const FIXTURE = process.env.KARTCUP_FIXTURE === '1';
+import { FIXTURE, N } from './season';
 
-test('standings table is accessible and lists 4 pilots and 7 GPs', async ({ page }) => {
+test('standings table is accessible and lists every pilot and 7 GPs', async ({ page }) => {
   await page.goto('./');
   const table = page.locator('#classificacao table');
   await expect(table.locator('caption')).toHaveCount(1);
   await expect(table.locator('thead th[scope="col"]')).toHaveCount(10);
-  await expect(table.locator('tbody th[scope="row"]')).toHaveCount(4);
+  await expect(table.locator('tbody th[scope="row"]')).toHaveCount(N);
   await expect(page.locator('#classificacao [role="region"][tabindex="0"]')).toHaveCount(1);
 });
 
@@ -20,7 +20,9 @@ test.describe('empty season', () => {
       'A temporada ainda não começou',
     );
     await expect(page.locator('#classificacao').getByText('Líder')).toHaveCount(0);
-    await expect(page.locator('#classificacao tbody').getByText('Não realizado')).toHaveCount(28);
+    await expect(page.locator('#classificacao tbody').getByText('Não realizado')).toHaveCount(
+      7 * N,
+    );
   });
 });
 
@@ -37,13 +39,14 @@ test.describe('fixture season', () => {
       /P\. Queirós/,
       /Dinis/,
       /Joel/,
+      /Torres/,
     ]);
     const leader = rows.first();
     await expect(leader).toContainText('Líder');
-    await expect(leader.locator('td').nth(1)).toHaveText('16');
+    await expect(leader.locator('td').nth(1)).toHaveText('22');
 
     const pq = page.locator('tr[data-pilot="p-queiros"] td');
-    await expect(pq.nth(2)).toContainText('7');
+    await expect(pq.nth(2)).toContainText('10');
     await expect(pq.nth(2)).toContainText('bónus pela volta mais rápida');
 
     const joel = page.locator('tr[data-pilot="joel"] td');

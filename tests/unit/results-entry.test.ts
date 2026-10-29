@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import pilots from '../../src/data/pilots.json';
+import pilots from '../fixtures/pilots.json';
 import races from '../../src/data/races.json';
 import { applyResult, parseLapTime } from '../../src/lib/results-entry';
 import { computeChampionship } from '../../src/lib/scoring';
@@ -28,6 +28,7 @@ const gpEntries = [
   attended('p-queiros', 53.1, 51.5, 51.8),
   attended('joel', 53.5, 52.6, 52.7),
   absent('dinis'),
+  attended('torres', 54.0, 53.0, 53.2),
 ];
 
 describe('parseLapTime', () => {
@@ -59,12 +60,14 @@ describe('applyResult', () => {
     expect(byId.get('gp1')).toMatchObject({ status: 'completed', date: '2026-03-14' });
     expect(byId.get('gp2')?.status).toBe('next');
     expect(updated.races.filter((r) => r.status === 'next')).toHaveLength(1);
+    expect(updated.results[0].pilotCount).toBe(pilots.length);
 
     const champ = computeChampionship(updated.pilots, updated.races, updated.results);
     expect(champ.standings.map((s) => [s.pilotId, s.total])).toEqual([
-      ['p-queiros', 7],
-      ['emidio', 6],
-      ['joel', 2],
+      ['p-queiros', 10],
+      ['emidio', 8],
+      ['joel', 4],
+      ['torres', 2],
       ['dinis', 0],
     ]);
   });
@@ -76,6 +79,7 @@ describe('applyResult', () => {
       attended('p-queiros', 53, 52, 52.1),
       attended('joel', 54, 53, 53.1),
       attended('dinis', 55, 54, 54.1),
+      attended('torres', 56, 55, 55.1),
     ]);
     expect(twice.results).toHaveLength(1);
     expect(twice.results[0].entries.every((e) => e.attended)).toBe(true);
@@ -97,7 +101,7 @@ describe('applyResult', () => {
     expect(() =>
       applyResult(emptySeason(), 'gp1', [attended('emidio', 50, 51, 52), ...gpEntries.slice(1)]),
     ).toThrow(/melhor volta/);
-    expect(() => applyResult(emptySeason(), 'gp1', gpEntries.slice(0, 3))).toThrow(/dinis/);
+    expect(() => applyResult(emptySeason(), 'gp1', gpEntries.slice(0, 4))).toThrow(/torres/);
     expect(() => applyResult(emptySeason(), 'gp9', gpEntries)).toThrow(/inexistente/);
   });
 });
