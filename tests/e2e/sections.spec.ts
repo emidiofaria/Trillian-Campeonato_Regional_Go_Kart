@@ -59,8 +59,8 @@ test('next-GP banner is the first section and links to its calendar card', async
     await expect(banner).toContainText('Kartódromo Cabo do Mundo');
     await expect(banner).toContainText('Matosinhos');
     await expect(banner).toContainText('Outdoor');
-    await expect(banner).toContainText('7 de novembro de 2026');
-    await expect(countdown).toHaveText('Faltam 11 dias');
+    await expect(banner).toContainText('8 de novembro de 2026');
+    await expect(countdown).toHaveText('Faltam 12 dias');
   }
 });
 

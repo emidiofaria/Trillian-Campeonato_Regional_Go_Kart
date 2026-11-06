@@ -1,7 +1,7 @@
 # AGENTS.md — Project Context
 
 You are building the official website for "Kart Cup 2026", a friends' rental-kart
-championship (pilots: Emídio, P. Queirós, Joel, Dinis, Torres). Source specs are in
+championship (pilots: Emídio, P. Queirós, Joel, Dinis, Torres, P. Oliveira). Source specs are in
 docs/rules.md (rules) and docs/layout.md (layout). Read both fully before coding.
 The full phased plan is in 00_inputs/IMPLEMENTATION_PLAN.md.
 
