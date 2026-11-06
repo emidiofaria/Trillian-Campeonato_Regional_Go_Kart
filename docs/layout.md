@@ -47,7 +47,7 @@ inspirado em telemetria, em modo escuro, profissional e sem exageros.
 
 ### 3B. Classificação Geral
 
-- Cabeçalho com ícone de bandeira xadrez, título "Classificação Geral" e indicação "N Pilotos" (calculado a partir de `src/data/pilots.json`; hoje 5).
+- Cabeçalho com ícone de bandeira xadrez, título "Classificação Geral" e indicação "N Pilotos" (calculado a partir de `src/data/pilots.json`; hoje 6).
 - Tabela com as colunas Pos, Piloto (avatar colorido + nome), Pontos Totais e GP1 a GP7.
 - Cada célula de GP mostra os pontos desse GP:
   - "—" para GP ainda não realizado;
@@ -55,7 +55,7 @@ inspirado em telemetria, em modo escuro, profissional e sem exageros.
   - marcador "VR" quando o piloto ganhou o bónus de volta mais rápida.
 - O líder tem o badge "Líder" e o total em amarelo. Antes do primeiro GP aparece
   "A temporada ainda não começou".
-- Nota de rodapé: "+N−1 pontos pela volta mais rápida (VR) da sessão" (hoje +4).
+- Nota de rodapé: "+N−1 pontos pela volta mais rápida (VR) da sessão" (hoje +5).
 - Painel recolhível "Critérios de desempate".
 
 ### 3C. Calendário
@@ -67,14 +67,14 @@ inspirado em telemetria, em modo escuro, profissional e sem exageros.
 
 ### 3D. Pilotos
 
-- Um cartão por piloto (hoje 5): avatar circular (iniciais na cor do piloto ou fotografia), nome,
+- Um cartão por piloto (hoje 6): avatar circular (iniciais na cor do piloto ou fotografia), nome,
   número (#1–#N) e estatísticas
   (pontos, vitórias, VR, faltas).
 - Grelha de 2 colunas em mobile/tablet e de 3 colunas em ecrãs grandes.
 
 ### 3E. Regulamento
 
-- Caixa de resumo com a tabela de pontos (2×(N−1)…2/0 com N pilotos, hoje 8/6/4/2/0; falta = 0; VR +N−1, hoje +4).
+- Caixa de resumo com a tabela de pontos (2×(N−1)…2/0 com N pilotos, hoje 10/8/6/4/2/0; falta = 0; VR +N−1, hoje +5).
 - Acordeão com o regulamento completo: formato, faltas, desempates, conduta e transparência (ver
   `docs/rules.md`).
 

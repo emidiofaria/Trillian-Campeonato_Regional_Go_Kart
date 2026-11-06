@@ -1,7 +1,7 @@
 # Trillian — Campeonato Regional Go Kart ( Kart Cup 2026/2027)
 
 Site estático oficial da **Kart Cup 2026**, um campeonato de karting de aluguer entre amigos
-(Emídio, P. Queirós, Joel, Dinis, Torres), com o apoio da **Trillian Driving Coach**.
+(Emídio, P. Queirós, Joel, Dinis, Torres, P. Oliveira), com o apoio da **Trillian Driving Coach**.
 
 Built with [Astro](https://astro.build) 4 + Tailwind CSS, deployed to GitHub Pages.
 
@@ -58,8 +58,8 @@ All championship data lives in `src/data/` and is validated with Zod at build ti
 | `src/data/results.json` | Per GP: `raceId`, `pilotCount` (pilots registered when it ran) + one entry per pilot `{ pilotId, attended, avgLapTime, bestLap, secondBestLap }`    |
 
 Scoring (see `docs/rules.md`): sessions are ranked by average lap time (ties: best lap, then
-second-best lap) and score 2×(N−1), …, 2, 0 for N pilots (today 5: 8/6/4/2/0); absence = 0;
-+N−1 (half the win, today +4) for the fastest lap (VR) of the session
+second-best lap) and score 2×(N−1), …, 2, 0 for N pilots (today 6: 10/8/6/4/2/0); absence = 0;
++N−1 (half the win, today +5) for the fastest lap (VR) of the session
 (shared if two pilots set exactly the same time). Championship ties: more wins, then more VRs,
 then fewer absences.
 
