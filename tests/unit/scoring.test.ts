@@ -206,6 +206,30 @@ describe('scoreSession', () => {
       'emidio',
     ]);
   });
+
+  it('scores attendees without a second-best lap; it ranks behind a recorded one on a tie', () => {
+    const s = scoreSession(
+      {
+        raceId: 'gp3',
+        entries: [
+          { ...at('emidio', 50.0, 49.5, 0), secondBestLap: null },
+          at('p-queiros', 50.0, 49.5, 49.9),
+          { ...at('joel', 51.0, 49.0, 0), secondBestLap: null },
+          absent('dinis'),
+          absent('torres'),
+        ],
+      },
+      ORDER,
+    );
+    expect(s.entries.map((e) => [e.pilotId, e.position])).toEqual([
+      ['p-queiros', 1],
+      ['emidio', 2],
+      ['joel', 3],
+      ['dinis', null],
+      ['torres', null],
+    ]);
+    expect(s.fastestLapPilotIds).toEqual(['joel']);
+  });
 });
 
 describe('computeChampionship', () => {

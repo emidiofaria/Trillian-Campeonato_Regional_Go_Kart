@@ -1,6 +1,7 @@
 ---
+import { navItems } from '../lib/data';
 import Icon from './icons/Icon.astro';
-import { NAV_ITEMS, SITE_NAME, withBase } from '../lib/site';
+import { SITE_NAME, withBase } from '../lib/site';
 
 const home = withBase();
 ---
@@ -32,7 +33,7 @@ const home = withBase();
         class="nav-menu w-full flex-col gap-1 pb-3 md:w-auto md:flex-row md:items-center md:pb-0"
       >
         {
-          NAV_ITEMS.map((item) => (
+          navItems.map((item) => (
             <li>
               <a
                 href={`${home}#${item.id}`}

@@ -1,6 +1,13 @@
 import { expect, test } from '@playwright/test';
 
-const SECTIONS = ['classificacao', 'calendario', 'pilotos', 'patrocinador', 'regulamento'];
+const SECTIONS = [
+  'classificacao',
+  'resultados',
+  'calendario',
+  'pilotos',
+  'patrocinador',
+  'regulamento',
+];
 
 test('has pt-PT lang, title and no external network requests', async ({ page, baseURL }) => {
   const external: string[] = [];

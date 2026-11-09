@@ -1,0 +1,308 @@
+---
+import Icon from './icons/Icon.astro';
+import PilotAvatar from './PilotAvatar.astro';
+import { pilotById, raceById } from '../lib/data';
+import { gpReport, type RankedStat } from '../lib/gp-report';
+import { formatDate, formatLap } from '../lib/format';
+import type { SessionResult } from '../lib/scoring';
+import type { IconName } from './types';
+
+interface Props {
+  session: SessionResult;
+}
+
+/** Full report of one scored GP: highlights, classification and secondary rankings. */
+const { session } = Astro.props;
+const race = raceById.get(session.raceId);
+const report = gpReport(session);
+
+// Decimal point, matching formatLap and the official timesheets.
+const decimal = (value: number, digits: number) => value.toFixed(digits);
+const speed = (kmh: number) => `${decimal(kmh, 2)} km/h`;
+const secs = (s: number) => `${decimal(s, 3)} s`;
+const gap = (s: number) => `+${decimal(s, 3)}`;
+
+const attendees = session.entries.filter((e) => e.attended);
+const leaderAvg = attendees[0]?.avgLapTime ?? 0;
+const hasKart = attendees.some((e) => e.kart !== null);
+const hasSpeed = attendees.some((e) => e.topSpeed !== null);
+
+interface Highlight {
+  label: string;
+  icon: IconName;
+  pilotId: string;
+  value: string;
+}
+const highlights: Highlight[] = [];
+const winner = attendees[0];
+if (winner) {
+  highlights.push({
+    label: 'Vencedor',
+    icon: 'trophy',
+    pilotId: winner.pilotId,
+    value: `Média ${formatLap(winner.avgLapTime)}`,
+  });
+}
+const fl = report.fastestLaps[0];
+if (fl)
+  highlights.push({
+    label: 'Volta mais rápida',
+    icon: 'flag',
+    pilotId: fl.pilotId,
+    value: formatLap(fl.value),
+  });
+const ts = report.topSpeeds[0];
+if (ts)
+  highlights.push({
+    label: 'Velocidade máxima',
+    icon: 'gauge',
+    pilotId: ts.pilotId,
+    value: speed(ts.value),
+  });
+const cs = report.consistency[0];
+if (cs)
+  highlights.push({
+    label: 'Mais consistente',
+    icon: 'shield',
+    pilotId: cs.pilotId,
+    value: `σ ${secs(cs.value)}`,
+  });
+
+interface Ranking {
+  title: string;
+  icon: IconName;
+  rows: RankedStat[];
+  value: (r: RankedStat) => string;
+  detail: (r: RankedStat) => string;
+}
+const rankings: Ranking[] = [
+  {
+    title: 'Volta mais rápida',
+    icon: 'flag' as IconName,
+    rows: report.fastestLaps,
+    value: (r: RankedStat) => formatLap(r.value),
+    detail: (r: RankedStat) => (r.gap === 0 ? '—' : gap(r.gap)),
+  },
+  {
+    title: 'Velocidade máxima',
+    icon: 'gauge' as IconName,
+    rows: report.topSpeeds,
+    value: (r: RankedStat) => speed(r.value),
+    detail: (r: RankedStat) => (r.gap === 0 ? '—' : `−${decimal(r.gap, 2)}`),
+  },
+  {
+    title: 'Consistência',
+    icon: 'shield' as IconName,
+    rows: report.consistency,
+    value: (r: RankedStat) => `σ ${secs(r.value)}`,
+    detail: (r: RankedStat) => {
+      const spread = session.entries.find((e) => e.pilotId === r.pilotId)?.lapSpread;
+      return spread == null ? '' : `amp. ${secs(spread)}`;
+    },
+  },
+].filter((r) => r.rows.length > 0);
+---
+
+{
+  race && (
+    <div>
+      <div class="mb-8 flex flex-wrap items-center gap-x-4 gap-y-2">
+        <h3 class="text-xl font-bold text-fg sm:text-2xl">
+          <span class="text-brand-yellow">GP{race.round}</span> · {race.circuit}
+        </h3>
+        <ul
+          class="flex flex-wrap gap-2 text-sm text-fg-muted"
+          aria-label={`Detalhes do GP${race.round}`}
+        >
+          {race.date && (
+            <li class="flex items-center gap-1.5">
+              <Icon name="calendar" size={16} />{' '}
+              <time datetime={race.date}>{formatDate(race.date)}</time>
+            </li>
+          )}
+          <li class="flex items-center gap-1.5">
+            <Icon name="pin" size={16} /> {race.location}
+          </li>
+          <li class="flex items-center gap-1.5">
+            <Icon name={race.type === 'Indoor' ? 'indoor' : 'outdoor'} size={16} /> {race.type}
+          </li>
+          {session.session && <li>· Sessão {session.session}</li>}
+        </ul>
+      </div>
+
+      {highlights.length > 0 && (
+        <dl class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" data-testid="gp-highlights">
+          {highlights.map((h) => {
+            const pilot = pilotById.get(h.pilotId)!;
+            return (
+              <div class="rounded-xl border border-border bg-surface p-4 shadow-sm shadow-black/30">
+                <dt class="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-fg-muted">
+                  <span class="text-brand-yellow">
+                    <Icon name={h.icon} size={14} />
+                  </span>
+                  {h.label}
+                </dt>
+                <dd class="mt-3 flex items-center gap-3">
+                  <PilotAvatar pilot={pilot} />
+                  <span>
+                    <span class="block font-semibold text-fg">{pilot.name}</span>
+                    <span class="block font-display text-lg font-bold tabular-nums text-brand-yellow">
+                      {h.value}
+                    </span>
+                  </span>
+                </dd>
+              </div>
+            );
+          })}
+        </dl>
+      )}
+
+      <div
+        class="relative mt-8 overflow-x-auto rounded-xl border border-border bg-surface"
+        role="region"
+        aria-labelledby={`gp-caption-${race.id}`}
+        tabindex="0"
+      >
+        <table class="w-full min-w-[40rem] border-collapse text-sm">
+          <caption id={`gp-caption-${race.id}`} class="sr-only">
+            Classificação do GP{race.round} ({race.circuit}): ordenada pelo tempo médio por volta
+          </caption>
+          <thead>
+            <tr class="border-b border-border text-left text-xs uppercase tracking-wider text-fg-muted">
+              <th scope="col" class="px-3 py-3 text-center">
+                Pos
+              </th>
+              <th scope="col" class="px-3 py-3">
+                Piloto
+              </th>
+              {hasKart && (
+                <th scope="col" class="px-3 py-3 text-center">
+                  Kart
+                </th>
+              )}
+              <th scope="col" class="px-3 py-3 text-right">
+                Tempo médio
+              </th>
+              <th scope="col" class="px-3 py-3 text-right">
+                Dif.
+              </th>
+              <th scope="col" class="px-3 py-3 text-right">
+                Melhor volta
+              </th>
+              {hasSpeed && (
+                <th scope="col" class="px-3 py-3 text-right">
+                  Vel. máx.
+                </th>
+              )}
+              <th scope="col" class="px-3 py-3 text-right">
+                Pontos
+              </th>
+            </tr>
+          </thead>
+          <tbody class="tabular-nums">
+            {session.entries.map((e) => {
+              const pilot = pilotById.get(e.pilotId)!;
+              return (
+                <tr class="border-b border-border last:border-0" data-pilot={pilot.id}>
+                  <td class="px-3 py-3 text-center font-display text-lg font-bold text-fg">
+                    {e.position ?? 'F'}
+                    {e.position && <span class="sr-only">.º</span>}
+                  </td>
+                  <th scope="row" class="px-3 py-3 text-left font-normal">
+                    <span class="flex items-center gap-3 whitespace-nowrap">
+                      <PilotAvatar pilot={pilot} />
+                      <span class="font-semibold text-fg">{pilot.name}</span>
+                    </span>
+                  </th>
+                  {hasKart && <td class="px-3 py-3 text-center text-fg-muted">{e.kart ?? '—'}</td>}
+                  <td class="px-3 py-3 text-right font-semibold text-fg">
+                    {formatLap(e.avgLapTime)}
+                  </td>
+                  <td class="px-3 py-3 text-right text-fg-muted">
+                    {e.avgLapTime === null || e.position === 1
+                      ? '—'
+                      : gap(e.avgLapTime - leaderAvg)}
+                  </td>
+                  <td class="px-3 py-3 text-right text-fg">
+                    {formatLap(e.bestLap)}
+                    {e.fastestLap && (
+                      <span class="vr-marker ml-1" title="Volta mais rápida">
+                        <span aria-hidden="true">VR</span>
+                        <span class="sr-only">(volta mais rápida)</span>
+                      </span>
+                    )}
+                  </td>
+                  {hasSpeed && (
+                    <td class="px-3 py-3 text-right text-fg-muted">
+                      {e.topSpeed === null ? '—' : speed(e.topSpeed)}
+                    </td>
+                  )}
+                  <td class="px-3 py-3 text-right">
+                    <span class="font-display text-lg font-bold text-fg">{e.totalPoints}</span>
+                    {e.bonusPoints > 0 && (
+                      <span class="block text-xs text-fg-muted">
+                        {e.positionPoints} + {e.bonusPoints} VR
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {rankings.length > 0 && (
+        <div class="mt-8 grid gap-5 md:grid-cols-3">
+          {rankings.map((ranking) => (
+            <section
+              class="rounded-xl border border-border bg-surface p-5"
+              aria-label={`Ranking: ${ranking.title}`}
+            >
+              <h3 class="flex items-center gap-2 font-sans text-sm font-semibold uppercase tracking-wider text-fg">
+                <span class="text-brand-yellow">
+                  <Icon name={ranking.icon} size={16} />
+                </span>
+                {ranking.title}
+              </h3>
+              <ol class="mt-4 space-y-2 text-sm tabular-nums">
+                {ranking.rows.map((r, i) => {
+                  const pilot = pilotById.get(r.pilotId)!;
+                  return (
+                    <li class="flex items-center gap-2">
+                      <span class="w-5 font-display font-bold text-fg-muted">{i + 1}</span>
+                      <span class="min-w-0 flex-1 truncate text-fg">{pilot.name}</span>
+                      <span class="font-semibold text-fg">{ranking.value(r)}</span>
+                      <span class="min-w-[3rem] shrink-0 text-right text-xs text-fg-muted">
+                        {ranking.detail(r)}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ol>
+            </section>
+          ))}
+        </div>
+      )}
+
+      <p class="mt-4 text-sm text-fg-muted">
+        Classificação pelo tempo médio por volta. σ = desvio padrão dos tempos de volta (menor =
+        mais consistente); amp. (amplitude) = diferença entre a volta mais lenta e a mais rápida.
+      </p>
+    </div>
+  )
+}
+
+<style>
+  .vr-marker {
+    display: inline-block;
+    border-radius: 0.25rem;
+    background-color: rgb(130 176 122 / 0.15);
+    color: var(--brand-ring);
+    padding: 0 0.3rem;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    line-height: 1.2rem;
+  }
+</style>

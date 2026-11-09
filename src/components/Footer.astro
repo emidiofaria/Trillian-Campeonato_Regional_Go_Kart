@@ -1,5 +1,6 @@
 ---
-import { NAV_ITEMS, SITE_NAME, SPONSOR, withBase } from '../lib/site';
+import { navItems } from '../lib/data';
+import { SITE_NAME, SPONSOR, withBase } from '../lib/site';
 
 const year = new Date().getFullYear();
 const home = withBase();
@@ -17,7 +18,7 @@ const home = withBase();
       <p class="text-sm font-semibold uppercase tracking-wider text-fg">Ligações rápidas</p>
       <ul class="mt-3 grid grid-cols-2 gap-1 text-sm">
         {
-          NAV_ITEMS.map((item) => (
+          navItems.map((item) => (
             <li>
               <a
                 href={`${home}#${item.id}`}

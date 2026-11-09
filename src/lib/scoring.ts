@@ -49,6 +49,10 @@ export interface SessionEntry {
   avgLapTime: number | null;
   bestLap: number | null;
   secondBestLap: number | null;
+  kart: number | null;
+  topSpeed: number | null;
+  lapStdDev: number | null;
+  lapSpread: number | null;
   positionPoints: number;
   fastestLap: boolean;
   bonusPoints: number;
@@ -57,6 +61,8 @@ export interface SessionEntry {
 
 export interface SessionResult {
   raceId: string;
+  /** Track session number on the official timesheet, when known. */
+  session: string | null;
   /** Attendees by finishing position, then absentees (by pilot order). */
   entries: SessionEntry[];
   winnerId: string | null;
@@ -97,15 +103,27 @@ export interface ChampionshipResult {
   leaderIds: string[];
 }
 
-type Attendee = ResultEntry & { avgLapTime: number; bestLap: number; secondBestLap: number };
+type Attendee = ResultEntry & { avgLapTime: number; bestLap: number };
 
 function isAttendee(e: ResultEntry): e is Attendee {
-  return e.attended && e.avgLapTime !== null && e.bestLap !== null && e.secondBestLap !== null;
+  return e.attended && e.avgLapTime !== null && e.bestLap !== null;
+}
+
+/** A missing second-best lap ranks behind any recorded one. */
+function compareSecondBest(a: number | null, b: number | null): number {
+  if (a === b) return 0;
+  if (a === null) return 1;
+  if (b === null) return -1;
+  return a - b;
 }
 
 /** Session order: avg lap asc, then best lap asc, then second-best lap asc (rules section 7). */
 export function compareSession(a: Attendee, b: Attendee): number {
-  return a.avgLapTime - b.avgLapTime || a.bestLap - b.bestLap || a.secondBestLap - b.secondBestLap;
+  return (
+    a.avgLapTime - b.avgLapTime ||
+    a.bestLap - b.bestLap ||
+    compareSecondBest(a.secondBestLap, b.secondBestLap)
+  );
 }
 
 function pointsFor(
@@ -164,6 +182,10 @@ export function scoreSession(
         avgLapTime: a.avgLapTime,
         bestLap: a.bestLap,
         secondBestLap: a.secondBestLap,
+        kart: a.kart ?? null,
+        topSpeed: a.topSpeed ?? null,
+        lapStdDev: a.lapStdDev ?? null,
+        lapSpread: a.lapSpread ?? null,
         positionPoints,
         fastestLap,
         bonusPoints,
@@ -177,6 +199,10 @@ export function scoreSession(
       avgLapTime: null,
       bestLap: null,
       secondBestLap: null,
+      kart: null,
+      topSpeed: null,
+      lapStdDev: null,
+      lapSpread: null,
       positionPoints: 0,
       fastestLap: false,
       bonusPoints: 0,
@@ -186,6 +212,7 @@ export function scoreSession(
 
   return {
     raceId: result.raceId,
+    session: result.session ?? null,
     entries,
     winnerId: attendees[0]?.pilotId ?? null,
     fastestLapPilotIds,

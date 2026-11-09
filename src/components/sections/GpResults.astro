@@ -1,0 +1,136 @@
+---
+import Section from '../ui/Section.astro';
+import Badge from '../ui/Badge.astro';
+import Icon from '../icons/Icon.astro';
+import GpReport from '../GpReport.astro';
+import { championship, raceById } from '../../lib/data';
+
+/** Completed GPs in round order; the newest is the default tab. */
+const sessions = championship.sessions;
+const latest = sessions.at(-1);
+---
+
+{
+  latest && (
+    <Section id="resultados" eyebrow="Kart Cup 2026" title="Resultados dos GP">
+      <span slot="title-icon" class="mr-2 inline-block align-[-0.1em] text-brand-yellow">
+        <Icon name="star" size={30} />
+      </span>
+      <Badge slot="header-aside" variant="green">
+        {`${sessions.length} ${sessions.length === 1 ? 'GP concluído' : 'GP concluídos'}`}
+      </Badge>
+
+      <div data-gp-tabs>
+        {/* Revealed by the script below; without JS every GP is shown in full. */}
+        <div
+          role="tablist"
+          aria-label="Escolher o GP"
+          class="mb-8 flex gap-2 overflow-x-auto border-b border-border pb-px"
+          hidden
+        >
+          {sessions.map((s) => {
+            const race = raceById.get(s.raceId)!;
+            const isLatest = s === latest;
+            return (
+              <button
+                type="button"
+                role="tab"
+                id={`tab-${race.id}`}
+                aria-controls={`resultados-${race.id}`}
+                aria-selected={isLatest ? 'true' : 'false'}
+                tabindex={isLatest ? 0 : -1}
+                class="gp-tab -mb-px whitespace-nowrap rounded-t-lg border border-transparent px-4 py-2.5 text-sm font-semibold text-fg-muted hover:text-fg"
+                data-testid="gp-tab"
+              >
+                GP{race.round}
+                <span class="hidden font-normal sm:inline"> · {race.location}</span>
+                {isLatest && (
+                  <span class="ml-1 text-xs font-normal text-brand-yellow">(último)</span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {[...sessions].reverse().map((s) => (
+          <div
+            role="tabpanel"
+            id={`resultados-${s.raceId}`}
+            aria-labelledby={`tab-${s.raceId}`}
+            tabindex="0"
+            class="gp-panel scroll-mt-24"
+            data-race={s.raceId}
+          >
+            <GpReport session={s} />
+          </div>
+        ))}
+      </div>
+    </Section>
+  )
+}
+
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>('[data-gp-tabs]')) {
+    const list = root.querySelector<HTMLElement>('[role="tablist"]')!;
+    const tabs = [...list.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const panels = tabs.map((t) => document.getElementById(t.getAttribute('aria-controls')!)!);
+
+    const select = (index: number, focus = false) => {
+      tabs.forEach((tab, i) => {
+        const on = i === index;
+        tab.setAttribute('aria-selected', String(on));
+        tab.tabIndex = on ? 0 : -1;
+        panels[i].hidden = !on;
+      });
+      if (focus) tabs[index].focus();
+    };
+    const fromHash = () => panels.findIndex((p) => `#${p.id}` === location.hash);
+    const showHash = () => {
+      const i = fromHash();
+      if (i < 0) return;
+      select(i);
+      panels[i].scrollIntoView();
+    };
+
+    list.hidden = false;
+    root.classList.add('tabs-ready');
+    select(tabs.findIndex((t) => t.getAttribute('aria-selected') === 'true'));
+    showHash();
+
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => select(i));
+      tab.addEventListener('keydown', (event) => {
+        const last = tabs.length - 1;
+        const target =
+          event.key === 'ArrowRight'
+            ? (i + 1) % tabs.length
+            : event.key === 'ArrowLeft'
+              ? (i - 1 + tabs.length) % tabs.length
+              : event.key === 'Home'
+                ? 0
+                : event.key === 'End'
+                  ? last
+                  : -1;
+        if (target < 0) return;
+        event.preventDefault();
+        select(target, true);
+      });
+    });
+    window.addEventListener('hashchange', showHash);
+  }
+</script>
+
+<style>
+  .gp-tab[aria-selected='true'] {
+    border-color: var(--border);
+    border-bottom-color: var(--bg);
+    background-color: var(--surface);
+    color: var(--text);
+    box-shadow: inset 0 2px 0 var(--brand-yellow);
+  }
+  [data-gp-tabs]:not(.tabs-ready) .gp-panel + .gp-panel {
+    margin-top: 4rem;
+    padding-top: 4rem;
+    border-top: 1px solid var(--border);
+  }
+</style>

@@ -56,11 +56,11 @@ test('next-GP banner is the first section and links to its calendar card', async
     await expect(banner).toContainText('Data a anunciar');
     await expect(countdown).toHaveCount(0);
   } else {
-    await expect(banner).toContainText('Kartódromo Cabo do Mundo');
-    await expect(banner).toContainText('Matosinhos');
+    await expect(banner).toContainText('Kartódromo de Baltar');
+    await expect(banner).toContainText('Paredes / Baltar');
     await expect(banner).toContainText('Outdoor');
-    await expect(banner).toContainText('8 de novembro de 2026');
-    await expect(countdown).toHaveText('Faltam 12 dias');
+    await expect(banner).toContainText('Data a anunciar');
+    await expect(countdown).toHaveCount(0);
   }
 });
 
@@ -122,13 +122,45 @@ test('sponsor block has logo and external CTAs', async ({ page }) => {
   );
 });
 
-test.describe('empty season', () => {
+test.describe('production season', () => {
   test.skip(FIXTURE, 'production data only');
-  test('no results details and all stats at zero', async ({ page }) => {
+  test('GP1 results in the calendar and pilot stats', async ({ page }) => {
     await page.goto('./');
-    await expect(page.locator('#calendario details')).toHaveCount(0);
-    await expect(page.locator('#calendario').getByText('Concluído')).toHaveCount(0);
-    await expect(page.locator('#pilotos dd')).toHaveText(Array(4 * N).fill('0'));
+    await expect(page.locator('#calendario details')).toHaveCount(1);
+    const gp1 = page.locator('#gp1');
+    await expect(gp1).toContainText('Concluído');
+    await gp1.locator('summary').click();
+    await expect(gp1.locator('tbody tr')).toHaveCount(N);
+    await expect(gp1.locator('tbody tr').last()).toContainText('6.º');
+    await expect(page.locator('[data-pilot="emidio"] dd')).toHaveText(['15', '1', '1', '0']);
+  });
+
+  test('results section shows GP1 classification, highlights and rankings', async ({ page }) => {
+    await page.goto('./');
+    const section = page.locator('section#resultados');
+    await expect(section.getByRole('tab')).toHaveText([/GP1/]);
+    const panel = section.locator('#resultados-gp1');
+    await expect(panel).toBeVisible();
+    await expect(panel.locator('h3').first()).toContainText('GP1 · Kartódromo Cabo do Mundo');
+    await expect(panel).toContainText('Sessão 23');
+    const highlights = panel.getByTestId('gp-highlights');
+    await expect(highlights.locator('dt')).toHaveText([
+      'Vencedor',
+      'Volta mais rápida',
+      'Velocidade máxima',
+      'Mais consistente',
+    ]);
+    await expect(highlights).toContainText('48.81 km/h');
+    await expect(highlights).toContainText('σ 1.802 s');
+
+    const rows = panel.locator('table tbody tr');
+    await expect(rows).toHaveCount(N);
+    await expect(rows.first()).toContainText('1:02.769');
+    await expect(rows.first()).toContainText('10 + 5 VR');
+    await expect(rows.nth(1)).toContainText('+0.259');
+    await expect(
+      section.locator('section[aria-label="Ranking: Consistência"] li').first(),
+    ).toContainText('Torres');
   });
 });
 
@@ -151,6 +183,40 @@ test.describe('fixture season', () => {
     await gp2.locator('summary').click();
     await expect(gp2.locator('tbody')).toContainText('Falta');
     await expect(page.locator('#gp4')).toContainText('Próximo GP');
+  });
+
+  test('results tabs: newest GP first, keyboard navigation and deep links', async ({ page }) => {
+    await page.goto('./');
+    const section = page.locator('section#resultados');
+    const tabs = section.getByRole('tab');
+    await expect(tabs).toHaveCount(3);
+    await expect(tabs.nth(2)).toHaveAttribute('aria-selected', 'true');
+    await expect(section.getByRole('tabpanel')).toHaveCount(1);
+    await expect(section.locator('#resultados-gp3')).toBeVisible();
+    await expect(section.locator('#resultados-gp1')).toBeHidden();
+
+    await tabs.nth(2).focus();
+    await page.keyboard.press('Home');
+    await expect(tabs.first()).toBeFocused();
+    await expect(tabs.first()).toHaveAttribute('aria-selected', 'true');
+    await expect(section.locator('#resultados-gp1')).toBeVisible();
+    await page.keyboard.press('ArrowLeft');
+    await expect(tabs.nth(2)).toHaveAttribute('aria-selected', 'true');
+    await tabs.nth(1).click();
+    await expect(section.locator('#resultados-gp2')).toBeVisible();
+
+    await page.goto('./#resultados-gp1');
+    await expect(section.locator('#resultados-gp1')).toBeVisible();
+    await expect(section.locator('#resultados-gp3')).toBeHidden();
+
+    await page.goto('./');
+    await page.locator('#gp2 summary').click();
+    await page
+      .locator('#gp2')
+      .getByRole('link', { name: /Relatório completo/ })
+      .click();
+    await expect(section.locator('#resultados-gp2')).toBeVisible();
+    await expect(section.locator('#resultados-gp2')).toBeInViewport();
   });
 
   test('pilot stats come from the engine', async ({ page }) => {

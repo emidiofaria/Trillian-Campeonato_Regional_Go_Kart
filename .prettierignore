@@ -5,6 +5,7 @@ node_modules/
 package-lock.json
 public/
 docs/rules.md
+docs/results/
 dist-fixture/
 .lighthouseci/
 test-results/

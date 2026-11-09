@@ -2,6 +2,7 @@ import pilotsJson from '../data/pilots.json';
 import racesJson from '../data/races.json';
 import resultsJson from '../data/results.json';
 import { computeChampionship } from './scoring';
+import { NAV_ITEMS } from './site';
 import { validateSeason, type Season } from './validate';
 
 /**
@@ -24,3 +25,8 @@ export const pilotById = new Map(season.pilots.map((p) => [p.id, p]));
 export const raceById = new Map(season.races.map((r) => [r.id, r]));
 export const sortedRaces = [...season.races].sort((a, b) => a.round - b.round);
 export const nextRace = sortedRaces.find((r) => r.status === 'next') ?? null;
+
+/** Nav entries for this season: "Resultados" only exists once a GP has results. */
+export const navItems = NAV_ITEMS.filter(
+  (item) => item.id !== 'resultados' || championship.sessions.length > 0,
+);

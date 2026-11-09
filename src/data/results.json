@@ -1,1 +1,75 @@
-[]
+[
+  {
+    "raceId": "gp1",
+    "session": "23",
+    "pilotCount": 6,
+    "entries": [
+      {
+        "pilotId": "emidio",
+        "attended": true,
+        "avgLapTime": 62.769,
+        "bestLap": 59,
+        "secondBestLap": null,
+        "kart": 3,
+        "topSpeed": 48.81,
+        "lapStdDev": 3.31,
+        "lapSpread": 9.496
+      },
+      {
+        "pilotId": "p-queiros",
+        "attended": true,
+        "avgLapTime": 65.206,
+        "bestLap": 62.414,
+        "secondBestLap": null,
+        "kart": 1,
+        "topSpeed": 46.14,
+        "lapStdDev": 2.361,
+        "lapSpread": 6.918
+      },
+      {
+        "pilotId": "joel",
+        "attended": true,
+        "avgLapTime": 66.23,
+        "bestLap": 61.188,
+        "secondBestLap": null,
+        "kart": 20,
+        "topSpeed": 47.07,
+        "lapStdDev": 5.689,
+        "lapSpread": 14.245
+      },
+      {
+        "pilotId": "dinis",
+        "attended": true,
+        "avgLapTime": 63.14,
+        "bestLap": 60.059,
+        "secondBestLap": null,
+        "kart": 6,
+        "topSpeed": 47.95,
+        "lapStdDev": 2.389,
+        "lapSpread": 8.055
+      },
+      {
+        "pilotId": "torres",
+        "attended": true,
+        "avgLapTime": 63.028,
+        "bestLap": 61.195,
+        "secondBestLap": null,
+        "kart": 19,
+        "topSpeed": 47.06,
+        "lapStdDev": 1.802,
+        "lapSpread": 5.341
+      },
+      {
+        "pilotId": "p-oliveira",
+        "attended": true,
+        "avgLapTime": 63.99,
+        "bestLap": 60.008,
+        "secondBestLap": null,
+        "kart": 5,
+        "topSpeed": 47.99,
+        "lapStdDev": 4.993,
+        "lapSpread": 15.195
+      }
+    ]
+  }
+]

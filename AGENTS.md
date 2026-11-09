@@ -44,3 +44,8 @@ and the exact commands to verify it.
   colour, runs `npm run add-pilot`, and updates the docs and the OG image. Points
   (2×(N−1)…0, VR = N−1) are derived from the pilot count, so never edit the scoring code or the
   tests to add a pilot.
+- **Recording GP results** (e.g. "resultados do GP", "importar resultados", "add GP results"):
+  you MUST follow `.github/skills/add-gp-results/SKILL.md`. It asks which GP (default: the next
+  one), the date and the session report (.md file or pasted), previews with
+  `npm run import-gp -- --dry-run`, then imports. Points are recomputed and must match the report;
+  on a mismatch, stop and ask. Never hand-edit results or the scoring code to make a report fit.

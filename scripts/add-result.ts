@@ -27,6 +27,25 @@ async function askLap(message: string, validate?: (seconds: number) => string | 
   return parseLapTime(value as string)!;
 }
 
+/** Like askLap, but an empty answer returns null. */
+async function askOptionalLap(
+  message: string,
+  validate?: (seconds: number) => string | undefined,
+): Promise<number | null> {
+  const value = await p.text({
+    message,
+    placeholder: 'opcional · Enter para deixar vazio',
+    validate: (input) => {
+      if (!input?.trim()) return undefined;
+      const seconds = parseLapTime(input);
+      if (seconds === null) return 'Formato inválido. Usa 52.341 ou 0:52.341.';
+      return validate?.(seconds);
+    },
+  });
+  cancelled(value);
+  return (value as string).trim() ? parseLapTime(value as string) : null;
+}
+
 async function main() {
   p.intro('Kart Cup 2026 · Adicionar resultado de um GP');
 
@@ -107,7 +126,7 @@ async function main() {
       continue;
     }
     const bestLap = await askLap(`${pilot.name} · melhor volta`);
-    const secondBestLap = await askLap(`${pilot.name} · 2.ª melhor volta`, (s) =>
+    const secondBestLap = await askOptionalLap(`${pilot.name} · 2.ª melhor volta`, (s) =>
       s < bestLap ? `Tem de ser ≥ à melhor volta (${formatLap(bestLap)}).` : undefined,
     );
     const avgLapTime = await askLap(`${pilot.name} · tempo médio`, (s) =>

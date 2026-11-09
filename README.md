@@ -23,6 +23,7 @@ Live: https://emidiofaria.github.io/Trillian-Campeonato_Regional_Go_Kart/
 | `npm run format`        | Format with Prettier                           |
 | `npm run add-result`    | Interactive CLI to record a GP result          |
 | `npm run add-pilot`     | Register a new pilot (interactive or flags)    |
+| `npm run import-gp`     | Import a GP from its session report (markdown) |
 | `npm run validate-data` | Validate `src/data/*.json` only                |
 
 ## Deploying to GitHub Pages
@@ -51,11 +52,11 @@ assets use `import.meta.env.BASE_URL`, so never hardcode `/`-rooted paths.
 All championship data lives in `src/data/` and is validated with Zod at build time (`src/lib/schemas.ts`,
 `src/lib/validate.ts`). Standings are never hardcoded; they are computed by `src/lib/scoring.ts`.
 
-| File                    | Contents                                                                                                                                            |
-| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/data/pilots.json`  | `id`, `name`, `number` (1…N, consecutive), `color` (AA-safe), `initials`, optional `photo` (file in `src/assets/pilots/`)                           |
-| `src/data/races.json`   | 7 GPs: `id`, `round`, `circuit`, `type` (Indoor/Outdoor), `location`, optional `date`/`timesheetUrl`, `status` (`scheduled` / `next` / `completed`) |
-| `src/data/results.json` | Per GP: `raceId`, `pilotCount` (pilots registered when it ran) + one entry per pilot `{ pilotId, attended, avgLapTime, bestLap, secondBestLap }`    |
+| File                    | Contents                                                                                                                                                                                                                                                                               |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/data/pilots.json`  | `id`, `name`, `number` (1…N, consecutive), `color` (AA-safe), `initials`, optional `photo` (file in `src/assets/pilots/`)                                                                                                                                                              |
+| `src/data/races.json`   | 7 GPs: `id`, `round`, `circuit`, `type` (Indoor/Outdoor), `location`, optional `date`/`timesheetUrl`, `status` (`scheduled` / `next` / `completed`)                                                                                                                                    |
+| `src/data/results.json` | Per GP: `raceId`, `pilotCount` (pilots registered when it ran) + one entry per pilot `{ pilotId, attended, avgLapTime, bestLap, secondBestLap }`; optional `session`, and per entry optional `kart`, `topSpeed` (km/h), `lapStdDev`, `lapSpread` (s) shown in the "Resultados" section |
 
 Scoring (see `docs/rules.md`): sessions are ranked by average lap time (ties: best lap, then
 second-best lap) and score 2×(N−1), …, 2, 0 for N pilots (today 6: 10/8/6/4/2/0); absence = 0;
@@ -71,15 +72,44 @@ in `src/lib/scoring.ts`), so adding a pilot needs no scoring change. Each GP sto
 
 There is no backend: results are committed to the repo and the site is rebuilt.
 
+### From the session report (recommended)
+
+Ask Copilot to "add the GP results" (it follows the `add-gp-results` skill in
+`.github/skills/add-gp-results/SKILL.md`), or run the CLI yourself with the report as a markdown
+file (or `-` to read it from stdin):
+
+```sh
+npm run import-gp -- --race gp2 --date 2026-06-20 --dry-run report.md   # preview only
+npm run import-gp -- --race gp2 --date 2026-06-20 --yes report.md       # write
+```
+
+- The report needs the tables "Championship", "Fastest lap", "Best mean time", "Top speed" and
+  "Most consistent pilot" (an optional table with `Pilot` + `Kart` adds the kart numbers).
+- Names are matched to the registered pilots ignoring accents and case; guests are ignored and
+  missing pilots are recorded as absent. Use `--map "Name=pilotId"` (or `"Name=ignore"`) to force a
+  match.
+- The points are recomputed from the times; if they don't match the report's Championship table,
+  nothing is written.
+- Options: `--timesheet URL`, and `--replace` to overwrite a GP that already has results.
+- It writes `src/data/results.json`, `src/data/races.json` and archives the raw report in
+  `docs/results/<gpN>.md`.
+- Each completed GP gets a tab in the "Resultados" section (newest selected by default, older GPs
+  stay available; deep link `#resultados-gpN`, also linked from the calendar).
+
+### By hand (interactive)
+
 1. After the session, run `npm run add-result` and answer the prompts:
    - the GP (the current "next" GP is preselected; re-entering a GP replaces its results);
    - optional date (`AAAA-MM-DD`) and link to the official timesheet;
-   - for each pilot: present or not, then best lap, 2nd-best lap and average lap.
+   - for each pilot: present or not, then best lap, 2nd-best lap (optional, only used as a
+     tie-break) and average lap.
      Times are accepted as `52.341`, `52,341` or `0:52.341`.
 2. The CLI shows the computed classification and points and asks before saving. It then:
    - writes `src/data/results.json`;
    - marks the GP `completed` in `src/data/races.json`;
    - sets the first GP that isn't completed to `next` (no GP is `next` once the season ends).
+   - The GP gets a tab in the "Resultados" section. Kart, top speed and consistency only appear
+     when imported with `npm run import-gp` (or added by hand to `results.json`).
 3. Check and publish:
    ```sh
    npm run check            # validates the data too
@@ -166,4 +196,4 @@ The rules don't say how positions are awarded when someone is absent. The consta
 - [ ] GP dates added to `src/data/races.json` once agreed (optional `date`, `AAAA-MM-DD`).
 - [ ] The absence rule (`ABSENCE_RANKING_MODE`) is confirmed with the group.
 - [ ] CI is green (data, types, lint, unit, e2e + axe); Lighthouse ≥ 95.
-- [ ] After each GP: `npm run add-result` → commit → push.
+- [ ] After each GP: `npm run import-gp` (or `npm run add-result`) → commit → push.
