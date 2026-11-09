@@ -26,7 +26,7 @@ import {
 } from '../src/lib/pilot-entry';
 import { isAvatarColourAccessible } from '../src/lib/colour';
 import { MAX_PILOTS } from '../src/lib/schemas';
-import { fastestLapBonus, positionPoints } from '../src/lib/scoring';
+import { lapPointsTable, positionPoints } from '../src/lib/scoring';
 import { validateSeason, type Season } from '../src/lib/validate';
 import { pilotPhotosDir, readRawSeason, writePilots, writeSeason } from './season-files';
 
@@ -188,7 +188,7 @@ async function main() {
   const summary = [
     `Piloto: #${n} ${input.name.trim()} (id "${id}", iniciais ${(input.initials ?? defaultInitials(input.name)).toUpperCase()})`,
     `Avatar: ${photo ? `foto ${photo} → src/assets/pilots/` : 'iniciais'} · cor ${normaliseHex(input.color)}`,
-    `Pontos por GP (${n} pilotos): ${positionPoints(n).join(' / ')} · VR +${fastestLapBonus(n)}`,
+    `Pontos por GP (${n} pilotos): tempo médio ${positionPoints(n).join(' / ')} + melhor volta ${lapPointsTable(n).join(' / ')}`,
     season.results.length
       ? `GP já realizados (${season.results.map((r) => r.raceId.toUpperCase()).join(', ')}): ${input.name.trim()} fica com falta (0 pts); esses GP mantêm a pontuação com que foram disputados.`
       : 'Nenhum GP realizado: nada a ajustar nos resultados.',

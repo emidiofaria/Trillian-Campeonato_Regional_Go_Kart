@@ -5,17 +5,17 @@ import { currentPointsTable } from '../../lib/scoring';
 import { withBase } from '../../lib/site';
 import { season } from '../../lib/data';
 
-const { positionPoints: POSITION_POINTS, fastestLapBonus: FASTEST_LAP_BONUS } = currentPointsTable(
+const { positionPoints: POSITION_POINTS, lapPoints: LAP_POINTS } = currentPointsTable(
   season.pilots,
 );
 
 const pointsRows = [
   ...POSITION_POINTS.map((points, i) => ({
-    pos: `${i + 1}.º lugar`,
-    criterion: i === 0 ? 'Tempo médio mais rápido' : `${i + 1}.º tempo médio`,
-    points,
+    pos: `${i + 1}.º`,
+    avg: points,
+    lap: LAP_POINTS[i],
   })),
-  { pos: 'Falta', criterion: 'Não compareceu ao GP', points: 0 },
+  { pos: 'Falta', avg: 0, lap: 0 },
 ];
 
 const pilotNames = [...season.pilots].sort((a, b) => a.number - b.number).map((p) => p.name);
@@ -33,12 +33,14 @@ const pilotList = `${pilotNames.slice(0, -1).join(', ')} e ${pilotNames[pilotNam
         <span class="text-brand-yellow"><Icon name="trophy" size={22} /></span> Pontuação por GP
       </h3>
       <table class="mt-4 w-full text-left text-sm" data-testid="points-table">
-        <caption class="sr-only">Pontos atribuídos em cada GP</caption>
+        <caption class="sr-only">
+          Pontos atribuídos em cada GP pela posição no tempo médio e na melhor volta
+        </caption>
         <thead class="text-xs uppercase tracking-wide text-fg-muted">
           <tr>
             <th scope="col" class="py-2 pr-2 font-semibold">Posição</th>
-            <th scope="col" class="py-2 pr-2 font-semibold">Critério</th>
-            <th scope="col" class="py-2 text-right font-semibold">Pontos</th>
+            <th scope="col" class="py-2 pr-2 text-right font-semibold">Tempo médio</th>
+            <th scope="col" class="py-2 text-right font-semibold">Melhor volta</th>
           </tr>
         </thead>
         <tbody>
@@ -48,28 +50,22 @@ const pilotList = `${pilotNames.slice(0, -1).join(', ')} e ${pilotNames[pilotNam
                 <th scope="row" class="py-2 pr-2 font-semibold text-fg">
                   {r.pos}
                 </th>
-                <td class="py-2 pr-2 text-fg-muted">{r.criterion}</td>
-                <td class="py-2 text-right font-display text-lg font-bold tabular-nums text-fg">
-                  {r.points} pts
+                <td class="py-2 pr-2 text-right font-display text-lg font-bold tabular-nums text-fg">
+                  {r.avg} pts
+                </td>
+                <td class="py-2 text-right font-display text-lg font-bold tabular-nums text-brand-green-text">
+                  {r.lap} pts
                 </td>
               </tr>
             ))
           }
-          <tr class="border-t border-border">
-            <th scope="row" class="py-2 pr-2 font-semibold text-brand-green-text">Bónus VR</th>
-            <td class="py-2 pr-2 text-fg-muted">Volta mais rápida absoluta da sessão</td>
-            <td
-              class="py-2 text-right font-display text-lg font-bold tabular-nums text-brand-green-text"
-            >
-              +{FASTEST_LAP_BONUS} pts
-            </td>
-          </tr>
         </tbody>
       </table>
       <p class="mt-4 text-sm text-fg-muted">
-        Os pontos da volta mais rápida somam à pontuação do GP (ex.: o 1.º classificado que também
-        faça a volta mais rápida soma {POSITION_POINTS[0]} + {FASTEST_LAP_BONUS} ={' '}
-        {POSITION_POINTS[0] + FASTEST_LAP_BONUS} pontos).
+        Em cada GP, cada piloto soma os pontos da posição no tempo médio com os pontos da posição da
+        sua melhor volta (ex.: o piloto com o melhor tempo médio e a volta mais rápida soma {
+          POSITION_POINTS[0]
+        } + {LAP_POINTS[0]} = {POSITION_POINTS[0] + LAP_POINTS[0]} pontos).
       </p>
     </div>
 
@@ -121,14 +117,20 @@ const pilotList = `${pilotNames.slice(0, -1).join(', ')} e ${pilotNames[pilotNam
         </div>
       </details>
       <details class="rule-item">
-        <summary>Volta mais rápida (VR)</summary>
+        <summary>Pontos da melhor volta</summary>
         <div class="rule-body">
           <ul>
             <li>
-              <strong>+{FASTEST_LAP_BONUS} pontos</strong> (metade dos pontos da vitória) para o piloto
-              que realizar a <strong>volta mais rápida absoluta</strong> da sessão de 10 minutos.
+              Todos os pilotos presentes são ordenados pela sua <strong>melhor volta</strong> da sessão:
+              a mais rápida recebe <strong>{LAP_POINTS[0]} pontos</strong>, a seguinte {
+                LAP_POINTS[1]
+              }, e assim sucessivamente até {LAP_POINTS.at(-1)} ({LAP_POINTS.join(' / ')}).
             </li>
-            <li>Estes pontos somam diretamente à pontuação obtida na classificação geral do GP.</li>
+            <li>
+              Pilotos com exatamente a mesma melhor volta recebem os mesmos pontos (os mais altos) e
+              o piloto seguinte salta uma posição.
+            </li>
+            <li>Estes pontos somam diretamente à pontuação do tempo médio no GP.</li>
           </ul>
         </div>
       </details>

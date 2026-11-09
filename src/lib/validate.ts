@@ -69,6 +69,8 @@ export function collectSeasonIssues(raw: { pilots: unknown; races: unknown; resu
   for (const r of races) {
     if (r.id !== `gp${r.round}`)
       issues.push(`races.json: id "${r.id}" não corresponde à ronda ${r.round}`);
+    if (r.month && r.date && !r.date.startsWith(r.month))
+      issues.push(`races.json [${r.id}]: data ${r.date} não pertence ao mês ${r.month}`);
   }
   const nextCount = races.filter((r) => r.status === 'next').length;
   if (nextCount > 1)

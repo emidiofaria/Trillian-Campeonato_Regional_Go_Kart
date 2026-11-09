@@ -58,13 +58,26 @@ describe('importReport', () => {
     expect(gp.mismatches).toEqual([]);
   });
 
-  it('reports points mismatches against the rules', () => {
+  it('reports average-time points mismatches, discounting the legacy fastest-lap bonus', () => {
     const wrong = gp1Report
-      .replace('| 2 | Andre Torres | 8 |  | 8 |', '| 2 | Andre Torres | 9 |  | 9 |')
-      .replace('| 1 | Emidio | 15 | 1 | 15 |', '| 1 | Emidio | 10 |  | 10 |');
+      .replace('| 2 | Andre Torres | 8 |  | 8 |', '| 2 | Andre Torres | 7 |  | 7 |')
+      .replace('| 1 | Emidio | 15 | 1 | 15 |', '| 1 | Emidio | 12 | 1 | 12 |');
     const { mismatches } = importReport(wrong, pilots);
-    expect(mismatches).toContain('Andre Torres: relatório 9 pts, regulamento 8 pts');
-    expect(mismatches).toContain('Emidio: relatório 10 pts, regulamento 15 pts');
+    expect(mismatches).toEqual([
+      'Emidio: relatório 7 pts no tempo médio, regulamento 10 pts',
+      'Andre Torres: relatório 7 pts no tempo médio, regulamento 8 pts',
+    ]);
+  });
+
+  it('accepts a report whose totals already follow the best-lap points rule', () => {
+    const newRules = gp1Report
+      .replace('| 1 | Emidio | 15 | 1 | 15 |', '| 1 | Emidio | 15 |  | 15 |')
+      .replace('| 2 | Andre Torres | 8 |  | 8 |', '| 2 | Andre Torres | 9 |  | 9 |')
+      .replace('| 3 | Dinis | 6 |  | 6 |', '| 3 | Dinis | 9 |  | 9 |')
+      .replace('| 4 | Pedro Oliveira | 4 |  | 4 |', '| 4 | Pedro Oliveira | 8 |  | 8 |')
+      .replace('| 6 | Joel | 0 |  | 0 |', '| 6 | Joel | 2 |  | 2 |');
+    expect(newRules).not.toBe(gp1Report);
+    expect(importReport(newRules, pilots).mismatches).toEqual([]);
   });
 
   it('requires the mean time and fastest lap tables', () => {

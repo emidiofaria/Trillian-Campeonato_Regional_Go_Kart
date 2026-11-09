@@ -3,7 +3,7 @@ name: add-pilot
 description: >-
   Register a new pilot/driver in the Kart Cup 2026 championship site. Asks for the pilot name and a
   photo or avatar colour, runs `npm run add-pilot`, updates the docs and the OG image, and verifies
-  the build and tests. The points table (2×(N−1)…0, VR = N−1) adapts automatically. Use whenever
+  the build and tests. The points tables (average time 2×(N−1)…0, best lap N−1…0) adapt automatically. Use whenever
   the user asks to add, register or enrol a pilot or driver, e.g. "adicionar piloto", "novo piloto",
   "inscrever piloto", "add a pilot", "add a new driver", "new driver joins the championship".
 ---
@@ -16,13 +16,14 @@ Work from the repository root. Never `git push`.
 ## How the site adapts (don't edit these by hand)
 
 - **Points** are derived from the number of pilots N in `src/lib/scoring.ts`:
-  `positionPoints(N) = 2×(N−1), …, 2, 0` and `fastestLapBonus(N) = N−1` (half the win).
-  For example, 5 pilots give 8/6/4/2/0 + VR 4, and 6 pilots give 10/8/6/4/2/0 + VR 5.
+  `positionPoints(N) = 2×(N−1), …, 2, 0` (average time) and `lapPointsTable(N) = N−1, …, 1, 0`
+  (best lap). For example, 5 pilots give 8/6/4/2/0 + 4/3/2/1/0, and 6 pilots give
+  10/8/6/4/2/0 + 5/4/3/2/1/0.
   **Never edit the scoring code to add a pilot.**
 - **Mid-season joins:** each GP in `src/data/results.json` stores `pilotCount`. GPs already run
   keep their points table, and the newcomer is recorded there as absent (0 pts, 1 absence each).
   The CLI does this.
-- **UI:** the standings badge, rows, pilot cards, rules points table, VR text, "boa sorte" line and
+- **UI:** the standings badge, rows, pilot cards, rules points table, "boa sorte" line and
   JSON-LD all come from `src/data/pilots.json`.
 - **Tests:** the e2e specs read `src/data/pilots.json`. The unit tests use
   `tests/fixtures/pilots.json`, which must **not** be changed when adding a pilot.
@@ -78,7 +79,8 @@ never copy `[cite: …]` artifacts.
   - **§5 heading:** `(para N Participantes)`.
   - **§5 table:** one row per position from 1º to Nº, `Cálculo` = `(N−k) × 2` for position k
     (`-` for the last), `Pontos` = `2×(N−k) pts`; keep the **Falta** row.
-  - **VR:** `**+(N−1) pontos** (metade dos pontos da vitória)` and the example
+  - **§5 "Pontos da Melhor Volta" table:** one row per position from 1º to Nº with `N−k` pts for
+    position k (the last gets 0); keep the **Falta** row. Keep the example
     `soma 2(N−1) + (N−1) = 3(N−1) pontos`.
   - **§8 "boa sorte" line:** `Emídio, P. Queirós, …, <Penultimate> e <Name>!`.
   - If GPs were already run, add a note under §6 that the pilot joined from GP k and that earlier
@@ -105,7 +107,7 @@ it as a real failure.
 Tell the user:
 
 - the pilot added (#, name, id, initials, colour, photo);
-- the new points table and VR bonus;
+- the new points tables (average time and best lap);
 - any GPs where the pilot was marked absent;
 - the files changed;
 - the verification commands and their results;

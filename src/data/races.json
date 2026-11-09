@@ -11,9 +11,10 @@
   {
     "id": "gp2",
     "round": 2,
-    "circuit": "Kartódromo de Baltar",
-    "type": "Outdoor",
-    "location": "Paredes / Baltar",
+    "circuit": "Kartódromo Indoor de Matosinhos",
+    "type": "Indoor",
+    "location": "Matosinhos",
+    "month": "2026-12",
     "status": "next"
   },
   {
@@ -43,9 +44,9 @@
   {
     "id": "gp6",
     "round": 6,
-    "circuit": "Kartódromo Indoor de Matosinhos",
-    "type": "Indoor",
-    "location": "Matosinhos",
+    "circuit": "Kartódromo de Baltar",
+    "type": "Outdoor",
+    "location": "Paredes / Baltar",
     "status": "scheduled"
   },
   {

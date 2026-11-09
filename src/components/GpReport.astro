@@ -239,9 +239,14 @@ const rankings: Ranking[] = [
                   )}
                   <td class="px-3 py-3 text-right">
                     <span class="font-display text-lg font-bold text-fg">{e.totalPoints}</span>
-                    {e.bonusPoints > 0 && (
-                      <span class="block text-xs text-fg-muted">
-                        {e.positionPoints} + {e.bonusPoints} VR
+                    {e.attended && (
+                      <span class="block text-xs text-fg-muted" data-testid="points-breakdown">
+                        <span aria-hidden="true">
+                          {e.positionPoints} + {e.lapPoints}
+                        </span>
+                        <span class="sr-only">
+                          ({e.positionPoints} do tempo médio e {e.lapPoints} da melhor volta)
+                        </span>
                       </span>
                     )}
                   </td>
@@ -286,8 +291,9 @@ const rankings: Ranking[] = [
       )}
 
       <p class="mt-4 text-sm text-fg-muted">
-        Classificação pelo tempo médio por volta. σ = desvio padrão dos tempos de volta (menor =
-        mais consistente); amp. (amplitude) = diferença entre a volta mais lenta e a mais rápida.
+        Classificação pelo tempo médio por volta. Pontos = posição no tempo médio + posição na
+        melhor volta. σ = desvio padrão dos tempos de volta (menor = mais consistente); amp.
+        (amplitude) = diferença entre a volta mais lenta e a mais rápida.
       </p>
     </div>
   )

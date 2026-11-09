@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { FIXTURE, N, pilots, positionPoints, vrBonus } from './season';
+import { FIXTURE, N, lapPoints, pilots, positionPoints } from './season';
 
 test('every nav anchor resolves to a section on the page', async ({ page }) => {
   await page.goto('./');
@@ -20,8 +20,13 @@ test('calendar lists the 7 official GPs with type badges and ids', async ({ page
   for (let i = 1; i <= 7; i++) await expect(page.locator(`#gp${i}`)).toHaveCount(1);
   await expect(page.locator('#gp1')).toContainText('Cabo do Mundo');
   await expect(page.locator('#gp7')).toContainText('Famalicão');
-  await expect(page.locator('#gp6')).toContainText('Indoor');
-  await expect(page.locator('#gp2')).toContainText('Outdoor');
+  await expect(page.locator('#gp7')).toContainText('Indoor');
+  await expect(page.locator('#gp3')).toContainText('Outdoor');
+  if (!FIXTURE) {
+    await expect(page.locator('#gp2')).toContainText('Kartódromo Indoor de Matosinhos');
+    await expect(page.locator('#gp2')).toContainText('dezembro de 2026');
+    await expect(page.locator('#gp6')).toContainText('Kartódromo de Baltar');
+  }
   await expect(page.locator('#calendario').getByText('Próximo GP')).toHaveCount(1);
 });
 
@@ -56,10 +61,10 @@ test('next-GP banner is the first section and links to its calendar card', async
     await expect(banner).toContainText('Data a anunciar');
     await expect(countdown).toHaveCount(0);
   } else {
-    await expect(banner).toContainText('Kartódromo de Baltar');
-    await expect(banner).toContainText('Paredes / Baltar');
-    await expect(banner).toContainText('Outdoor');
-    await expect(banner).toContainText('Data a anunciar');
+    await expect(banner).toContainText('Kartódromo Indoor de Matosinhos');
+    await expect(banner).toContainText('Matosinhos');
+    await expect(banner).toContainText('Indoor');
+    await expect(banner).toContainText('dezembro de 2026 · dia a anunciar');
     await expect(countdown).toHaveCount(0);
   }
 });
@@ -89,17 +94,19 @@ test('rules show points table and the full accordion', async ({ page }) => {
   await page.goto('./');
   const table = page.getByTestId('points-table');
   await expect(table.locator('tbody th[scope="row"]')).toHaveText([
-    ...positionPoints.map((_, i) => `${i + 1}.º lugar`),
+    ...positionPoints.map((_, i) => `${i + 1}.º`),
     'Falta',
-    'Bónus VR',
   ]);
-  await expect(table.locator('tbody td:last-child')).toHaveText([
+  await expect(table.locator('tbody td:nth-child(2)')).toHaveText([
     ...positionPoints.map((pts) => `${pts} pts`),
     '0 pts',
-    `+${vrBonus} pts`,
+  ]);
+  await expect(table.locator('tbody td:last-child')).toHaveText([
+    ...lapPoints.map((pts) => `${pts} pts`),
+    '0 pts',
   ]);
   await expect(page.locator('#regulamento')).toContainText(
-    `soma ${positionPoints[0]} + ${vrBonus} = ${positionPoints[0] + vrBonus} pontos`,
+    `soma ${positionPoints[0]} + ${lapPoints[0]} = ${positionPoints[0] + lapPoints[0]} pontos`,
   );
   await expect(table).toContainText('Falta');
   await expect(page.locator('#regulamento details')).toHaveCount(6);
@@ -156,7 +163,8 @@ test.describe('production season', () => {
     const rows = panel.locator('table tbody tr');
     await expect(rows).toHaveCount(N);
     await expect(rows.first()).toContainText('1:02.769');
-    await expect(rows.first()).toContainText('10 + 5 VR');
+    await expect(rows.first().getByTestId('points-breakdown')).toContainText('10 + 5');
+    await expect(rows.nth(1).getByTestId('points-breakdown')).toContainText('8 + 1');
     await expect(rows.nth(1)).toContainText('+0.259');
     await expect(
       section.locator('section[aria-label="Ranking: Consistência"] li').first(),
@@ -221,8 +229,8 @@ test.describe('fixture season', () => {
 
   test('pilot stats come from the engine', async ({ page }) => {
     await page.goto('./');
-    await expect(page.locator('[data-pilot="emidio"] dd')).toHaveText(['22', '2', '0', '0']);
+    await expect(page.locator('[data-pilot="emidio"] dd')).toHaveText(['31', '2', '0', '0']);
     await expect(page.locator('[data-pilot="joel"] dd').nth(3)).toHaveText('1');
-    await expect(page.locator('[data-pilot="torres"] dd')).toHaveText(['2', '0', '0', '1']);
+    await expect(page.locator('[data-pilot="torres"] dd')).toHaveText(['3', '0', '0', '1']);
   });
 });
