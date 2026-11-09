@@ -59,10 +59,11 @@ All championship data lives in `src/data/` and is validated with Zod at build ti
 | `src/data/results.json` | Per GP: `raceId`, `pilotCount` (pilots registered when it ran) + one entry per pilot `{ pilotId, attended, avgLapTime, bestLap, secondBestLap }`; optional `session`, and per entry optional `kart`, `topSpeed` (km/h), `lapStdDev`, `lapSpread` (s) shown in the "Resultados" section |
 
 Scoring (see `docs/rules.md`): sessions are ranked by average lap time (ties: best lap, then
-second-best lap) and score 2×(N−1), …, 2, 0 for N pilots (today 6: 10/8/6/4/2/0); absence = 0;
-plus best-lap points N−1, …, 1, 0 for every attendee ranked by best lap (today 5/4/3/2/1/0;
+second-best lap) and score 2×N, …, 4, 2 for N pilots (today 6: 12/10/8/6/4/2); absence = 0;
+plus best-lap points N, …, 2, 1 for every attendee ranked by best lap (today 6/5/4/3/2/1;
 equal best laps share the higher points and the next pilot skips a place). Championship ties: more wins, then more VRs,
-then fewer absences.
+then fewer absences. The next GP's start grid is the championship order inverted (leader last;
+`startGrid()`), shown in the next-GP banner from GP2 onwards.
 
 The points table is derived from the number of pilots (`positionPoints(n)` / `lapPointsTable(n)`
 in `src/lib/scoring.ts`), so adding a pilot needs no scoring change. Each GP stores the
@@ -88,9 +89,10 @@ npm run import-gp -- --race gp2 --date 2026-06-20 --yes report.md       # write
 - Names are matched to the registered pilots ignoring accents and case; guests are ignored and
   missing pilots are recorded as absent. Use `--map "Name=pilotId"` (or `"Name=ignore"`) to force a
   match.
-- The points are recomputed from the times. The report's average-time points (its Championship
-  total, minus the single fastest-lap bonus when the `FL` column is set) must match, otherwise
-  nothing is written; best-lap points are always computed by the site.
+- The points are recomputed from the times. Only the average-time **order** is checked: ranking
+  the report's Championship totals (minus the legacy fastest-lap bonus N−1 when the `FL` column is
+  set) must not contradict the order given by the times (ties allowed); a report whose totals
+  already match the site's totals is also accepted. On a mismatch nothing is written.
 - Options: `--timesheet URL`, and `--replace` to overwrite a GP that already has results.
 - It writes `src/data/results.json`, `src/data/races.json` and archives the raw report in
   `docs/results/<gpN>.md`.
@@ -153,10 +155,10 @@ npm run add-pilot -- --name "Ana Sousa" --photo ~/ana.jpg --yes  # photo avatar
 The rules don't say how positions are awarded when someone is absent. The constant in
 `src/lib/scoring.ts` controls it (for both the average-time and the best-lap points):
 
-| Value                 | Behaviour                                                | 4 attendees   |
-| --------------------- | -------------------------------------------------------- | ------------- |
-| `'compact'` (default) | Attendees take the top positions in order                | 8 / 6 / 4 / 2 |
-| `'fixed'`             | The slowest attendee keeps the table's last slot (0 pts) | 8 / 6 / 4 / 0 |
+| Value                 | Behaviour                                                | 4 of 5 attend  |
+| --------------------- | -------------------------------------------------------- | -------------- |
+| `'compact'` (default) | Attendees take the top positions in order                | 10 / 8 / 6 / 4 |
+| `'fixed'`             | The slowest attendee keeps the table's last slot (2 pts) | 10 / 8 / 6 / 2 |
 
 ## Tests and QA
 

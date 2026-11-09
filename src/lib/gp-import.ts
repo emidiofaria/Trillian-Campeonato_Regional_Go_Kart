@@ -1,6 +1,6 @@
 import { parseLapTime } from './results-entry';
 import type { Pilot, ResultEntry } from './schemas';
-import { scoreSession, type SessionResult } from './scoring';
+import { scoreSession, type SessionEntry, type SessionResult } from './scoring';
 
 /** One markdown table: header cells and body rows (cells trimmed, separator row dropped). */
 interface MdTable {
@@ -240,7 +240,7 @@ export interface ImportedGp {
   ignored: string[];
   matched: Map<string, string>;
   scored: SessionResult;
-  /** Differences between the report and the rules (average-time points or fastest lap); empty if consistent. */
+  /** Differences between the report and the rules (average-time order or fastest lap); empty if consistent. */
   mismatches: string[];
 }
 
@@ -289,23 +289,40 @@ export function importReport(
   const order = [...pilots].sort((a, b) => a.number - b.number).map((p) => p.id);
   const scored = scoreSession({ raceId: 'import', pilotCount: pilots.length, entries }, order);
 
-  // Only the average-time points are checked: best-lap points are always computed here. Reports
-  // in the legacy format add a single fastest-lap bonus (N−1, flagged in the FL column) to the
-  // total; reports already on the new rules carry the full total.
+  // Only the average-time order is checked: the points are always computed here. Reports in the
+  // legacy format add a single fastest-lap bonus (N−1, flagged in the FL column) to the total, so
+  // it is removed before ranking; reports whose totals already follow the rules are accepted.
   const legacyBonus = pilots.length - 1;
   const reportedFlNames = new Set(report.reportedFastestLap);
   const mismatches: string[] = [];
+  const reportedOf = (e: SessionEntry) => {
+    const name = nameOf.get(e.pilotId);
+    return name !== undefined ? report.reportedPoints.get(name) : undefined;
+  };
+  const ranked = scored.entries
+    .filter((e) => e.attended && reportedOf(e) !== undefined)
+    .map((e) => {
+      const name = nameOf.get(e.pilotId)!;
+      const reported = reportedOf(e)!;
+      return {
+        name,
+        position: e.position!,
+        reported,
+        totalPoints: e.totalPoints,
+        avgPoints: reported - (reportedFlNames.has(name) ? legacyBonus : 0),
+      };
+    });
+  if (!ranked.every((r) => r.reported === r.totalPoints)) {
+    for (const a of ranked)
+      for (const b of ranked)
+        if (a.avgPoints > b.avgPoints && a.position > b.position)
+          mismatches.push(
+            `${a.name}: relatório à frente de ${b.name} no tempo médio, regulamento ${a.position}.º vs ${b.position}.º`,
+          );
+  }
   for (const e of scored.entries) {
     const name = nameOf.get(e.pilotId);
-    const reported = name !== undefined ? report.reportedPoints.get(name) : undefined;
-    if (reported !== undefined && name !== undefined) {
-      const avgPoints = reported - (reportedFlNames.has(name) ? legacyBonus : 0);
-      if (avgPoints !== e.positionPoints && reported !== e.totalPoints)
-        mismatches.push(
-          `${name}: relatório ${avgPoints} pts no tempo médio, regulamento ${e.positionPoints} pts`,
-        );
-    }
-    if (name && !e.attended && reported)
+    if (name && !e.attended && reportedOf(e))
       mismatches.push(`${name}: tem pontos no relatório mas falta o tempo médio ou a melhor volta`);
   }
   const reportedFl = report.reportedFastestLap

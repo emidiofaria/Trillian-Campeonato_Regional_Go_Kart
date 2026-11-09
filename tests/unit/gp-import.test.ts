@@ -58,25 +58,30 @@ describe('importReport', () => {
     expect(gp.mismatches).toEqual([]);
   });
 
-  it('reports average-time points mismatches, discounting the legacy fastest-lap bonus', () => {
-    const wrong = gp1Report
-      .replace('| 2 | Andre Torres | 8 |  | 8 |', '| 2 | Andre Torres | 7 |  | 7 |')
-      .replace('| 1 | Emidio | 15 | 1 | 15 |', '| 1 | Emidio | 12 | 1 | 12 |');
-    const { mismatches } = importReport(wrong, pilots);
-    expect(mismatches).toEqual([
-      'Emidio: relatório 7 pts no tempo médio, regulamento 10 pts',
-      'Andre Torres: relatório 7 pts no tempo médio, regulamento 8 pts',
+  it('reports average-time order mismatches, discounting the legacy fastest-lap bonus', () => {
+    // Emidio's 12 includes the legacy FL bonus (5): 7 average-time points puts him behind Torres.
+    const wrong = gp1Report.replace('| 1 | Emidio | 15 | 1 | 15 |', '| 1 | Emidio | 12 | 1 | 12 |');
+    expect(importReport(wrong, pilots).mismatches).toEqual([
+      'Andre Torres: relatório à frente de Emidio no tempo médio, regulamento 2.º vs 1.º',
     ]);
   });
 
-  it('accepts a report whose totals already follow the best-lap points rule', () => {
+  it('accepts different point values as long as the average-time order matches', () => {
+    const otherScale = gp1Report
+      .replace('| 1 | Emidio | 15 | 1 | 15 |', '| 1 | Emidio | 30 | 1 | 30 |')
+      .replace('| 2 | Andre Torres | 8 |  | 8 |', '| 2 | Andre Torres | 20 |  | 20 |');
+    expect(otherScale).not.toBe(gp1Report);
+    expect(importReport(otherScale, pilots).mismatches).toEqual([]);
+  });
+
+  it('accepts a report whose totals already follow the current rules', () => {
     const newRules = gp1Report
-      .replace('| 1 | Emidio | 15 | 1 | 15 |', '| 1 | Emidio | 15 |  | 15 |')
-      .replace('| 2 | Andre Torres | 8 |  | 8 |', '| 2 | Andre Torres | 9 |  | 9 |')
-      .replace('| 3 | Dinis | 6 |  | 6 |', '| 3 | Dinis | 9 |  | 9 |')
-      .replace('| 4 | Pedro Oliveira | 4 |  | 4 |', '| 4 | Pedro Oliveira | 8 |  | 8 |')
-      .replace('| 6 | Joel | 0 |  | 0 |', '| 6 | Joel | 2 |  | 2 |');
-    expect(newRules).not.toBe(gp1Report);
+      .replace('| 1 | Emidio | 15 | 1 | 15 |', '| 1 | Emidio | 18 |  | 18 |')
+      .replace('| 2 | Andre Torres | 8 |  | 8 |', '| 2 | Andre Torres | 12 |  | 12 |')
+      .replace('| 3 | Dinis | 6 |  | 6 |', '| 3 | Dinis | 12 |  | 12 |')
+      .replace('| 4 | Pedro Oliveira | 4 |  | 4 |', '| 4 | Pedro Oliveira | 11 |  | 11 |')
+      .replace('| 5 | Pedro Queiros | 2 |  | 2 |', '| 5 | Pedro Queiros | 5 |  | 5 |')
+      .replace('| 6 | Joel | 0 |  | 0 |', '| 6 | Joel | 5 |  | 5 |');
     expect(importReport(newRules, pilots).mismatches).toEqual([]);
   });
 

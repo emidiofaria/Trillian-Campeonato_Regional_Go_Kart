@@ -36,16 +36,19 @@ Stack and constraints:
 
 Scoring (single source of truth: `src/lib/scoring.ts`, documented in docs/rules.md §5/§7):
 
-- Each GP awards average-time points 2×(N−1)…0 (6 pilots: 10/8/6/4/2/0) plus best-lap points
-  N−1…0 for every pilot (6 pilots: 5/4/3/2/1/0), N = registered pilots. Applies retroactively
-  from GP1.
-- Equal best laps share the higher points and the next pilot skips a place (5, 5, 3).
+- Each GP awards average-time points 2×N…2 (6 pilots: 12/10/8/6/4/2) plus best-lap points N…1
+  for every pilot (6 pilots: 6/5/4/3/2/1), N = registered pilots. Last place still scores;
+  absence = 0. Applies retroactively from GP1 (changed 2026-11 from 10/8/…/0 + 5/4/…/0).
+- Equal best laps share the higher points and the next pilot skips a place (6, 6, 4).
 - Absent pilots score 0; attendees take the top values of both tables (compact mode,
   `ABSENCE_RANKING_MODE`).
 - "VR" (volta mais rápida) marks only the GP's best lap (lap rank 1); it counts for the
   tie-break: wins → fastest laps → fewer absences.
 - The standings show "Pts média" and "Pts volta" columns, and GP cells show the split
-  (e.g. "8 + 1"). Never hardcode these values; they are computed.
+  (e.g. "10 + 2"). Never hardcode these values; they are computed.
+- Start grid: from GP2, the next GP starts in inverted championship order (leader last; ties by
+  the tie-break, then pilot number, better-placed further back). `startGrid()` in scoring.ts;
+  shown in the next-GP banner (`data-testid="start-grid"`) and printed by `import-gp`.
 
 Calendar (`src/data/races.json`, mirrored in docs/rules.md §3 and the results issue template):
 
@@ -65,12 +68,13 @@ and the exact commands to verify it.
 - **Adding a pilot/driver** (e.g. "add a new pilot", "adicionar/inscrever piloto", "novo piloto"):
   you MUST follow `.github/skills/add-pilot/SKILL.md`. It asks for the name and a photo or avatar
   colour, runs `npm run add-pilot`, and updates the docs and the OG image. Points
-  (average time 2×(N−1)…0 + best lap N−1…0) are derived from the pilot count, so never edit the scoring code or the
+  (average time 2×N…2 + best lap N…1) are derived from the pilot count, so never edit the scoring code or the
   tests to add a pilot.
 - **Recording GP results** (e.g. "resultados do GP", "importar resultados", "add GP results"):
   you MUST follow `.github/skills/add-gp-results/SKILL.md`. It asks which GP (default: the next
   one), the date and the session report (.md file or pasted), previews with
   `npm run import-gp -- --dry-run`, then imports. Points are recomputed (average time + best lap for
-  every pilot; the preview prints `N pts (média + volta)`); only the average-time points are
-  checked against the report (its total minus the legacy N−1 fastest-lap bonus when `FL` is set,
-  or the new-rule total); on a mismatch, stop and ask. Never hand-edit results or the scoring code to make a report fit.
+  every pilot; the preview prints `N pts (média + volta)` and the next start grid); only the
+  average-time **order** is checked against the report (its totals minus the legacy N−1
+  fastest-lap bonus when `FL` is set, ties allowed; totals equal to the site's are also
+  accepted); on a mismatch, stop and ask. Never hand-edit results or the scoring code to make a report fit.

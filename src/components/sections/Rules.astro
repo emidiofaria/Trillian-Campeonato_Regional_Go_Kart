@@ -117,6 +117,22 @@ const pilotList = `${pilotNames.slice(0, -1).join(', ')} e ${pilotNames[pilotNam
         </div>
       </details>
       <details class="rule-item">
+        <summary>Grelha de partida</summary>
+        <div class="rule-body">
+          <ul>
+            <li>
+              A partir do GP2, a ordem de saída para a pista é a <strong>grelha invertida</strong> da
+              classificação geral: o último classificado sai em 1.º e o líder sai em último.
+            </li>
+            <li>
+              Pilotos empatados em pontos são ordenados pelas regras de desempate do campeonato (e,
+              se continuarem empatados, pelo número de piloto); o melhor classificado sai mais
+              atrás.
+            </li>
+          </ul>
+        </div>
+      </details>
+      <details class="rule-item">
         <summary>Pontos da melhor volta</summary>
         <div class="rule-body">
           <ul>
@@ -124,7 +140,8 @@ const pilotList = `${pilotNames.slice(0, -1).join(', ')} e ${pilotNames[pilotNam
               Todos os pilotos presentes são ordenados pela sua <strong>melhor volta</strong> da sessão:
               a mais rápida recebe <strong>{LAP_POINTS[0]} pontos</strong>, a seguinte {
                 LAP_POINTS[1]
-              }, e assim sucessivamente até {LAP_POINTS.at(-1)} ({LAP_POINTS.join(' / ')}).
+              }, e assim sucessivamente até {LAP_POINTS.at(-1)} ({LAP_POINTS.join(' / ')}). Falta =
+              0.
             </li>
             <li>
               Pilotos com exatamente a mesma melhor volta recebem os mesmos pontos (os mais altos) e

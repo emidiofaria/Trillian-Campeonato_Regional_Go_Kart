@@ -36,14 +36,14 @@ test.describe('production season', () => {
     ]);
     await expect(rows.first()).toContainText('Líder');
     const emidio = rows.first().locator('td');
-    await expect(emidio.nth(1)).toHaveText('15');
-    await expect(emidio.nth(2)).toHaveText('10');
-    await expect(emidio.nth(3)).toHaveText('5');
+    await expect(emidio.nth(1)).toHaveText('18');
+    await expect(emidio.nth(2)).toHaveText('12');
+    await expect(emidio.nth(3)).toHaveText('6');
     await expect(emidio.nth(4)).toContainText('volta mais rápida do GP');
-    await expect(emidio.nth(4).getByTestId('gp-breakdown')).toContainText('10 + 5');
+    await expect(emidio.nth(4).getByTestId('gp-breakdown')).toContainText('12 + 6');
     const torres = page.locator('tr[data-pilot="torres"] td');
-    await expect(torres.nth(1)).toHaveText('9');
-    await expect(torres.nth(4).getByTestId('gp-breakdown')).toContainText('8 + 1');
+    await expect(torres.nth(1)).toHaveText('12');
+    await expect(torres.nth(4).getByTestId('gp-breakdown')).toContainText('10 + 2');
     await expect(page.locator('#classificacao tbody').getByText('Não realizado')).toHaveCount(
       6 * N,
     );
@@ -67,12 +67,12 @@ test.describe('fixture season', () => {
     ]);
     const leader = rows.first();
     await expect(leader).toContainText('Líder');
-    await expect(leader.locator('td').nth(1)).toHaveText('31');
+    await expect(leader.locator('td').nth(1)).toHaveText('40');
 
     const pq = page.locator('tr[data-pilot="p-queiros"] td');
-    await expect(pq.nth(1)).toHaveText('24');
+    await expect(pq.nth(1)).toHaveText('33');
     await expect(pq.nth(4)).toContainText('volta mais rápida do GP');
-    await expect(pq.nth(4).getByTestId('gp-breakdown')).toContainText('6 + 4');
+    await expect(pq.nth(4).getByTestId('gp-breakdown')).toContainText('8 + 5');
 
     const joel = page.locator('tr[data-pilot="joel"] td');
     await expect(joel.nth(5)).toContainText('Falta, 0 pontos');

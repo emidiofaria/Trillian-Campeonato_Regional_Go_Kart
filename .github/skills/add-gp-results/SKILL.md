@@ -21,19 +21,22 @@ Work from the repository root. Never `git push`.
 
 - **Standings, calendar, pilot stats, hero leader chip** are computed from `src/data/results.json`
   by `src/lib/scoring.ts`. Never hardcode results in components.
-- **Points are recomputed, not copied.** Each GP scores average-time points (2×(N−1)…0) plus
-  best-lap points for every attendee (N−1…0, equal best laps share the higher value). The CLI
-  checks only the **average-time points** against the report's Championship table: the reported
-  total minus the legacy single fastest-lap bonus (N−1) when the `FL` column is set (a report whose
-  totals already follow the new rule is also accepted). Any difference (average-time points,
+- **Points are recomputed, not copied.** Each GP scores average-time points (2×N…2; 6 pilots:
+  12/10/8/6/4/2) plus best-lap points for every attendee (N…1). The CLI checks only the
+  **average-time order** against the report's Championship table: ranking the reported totals
+  (minus the legacy single fastest-lap bonus N−1 when the `FL` column is set) must not contradict
+  the order given by the times (ties allowed); a report whose totals equal the site's totals is
+  also accepted. The report's point values themselves are ignored. Any difference (order,
   fastest-lap holder, a pilot with points but no times) stops the import, and nothing is written.
-- **Best-lap points** come from the `Fastest lap` table: k-th best lap → N−k points (6 pilots:
-  5/4/3/2/1/0). Equal best laps share the higher points and the next pilot skips a place (5, 5,
-  3). Absent pilots get 0 and attendees take the top values (compact mode). Only the GP's best
+- **Best-lap points** come from the `Fastest lap` table: k-th best lap → N−k+1 points (6 pilots:
+  6/5/4/3/2/1). Equal best laps share the higher points and the next pilot skips a place (6, 6,
+  4). Absent pilots get 0 and attendees take the top values (compact mode). Only the GP's best
   lap (lap rank 1) gets the **VR** mark, which counts for the tie-break (wins → fastest laps →
   fewer absences).
 - **Display:** the standings have "Pts média" and "Pts volta" columns, and GP cells, the GP report
-  and the calendar show the split (e.g. `8 + 1`). All of it is computed; nothing to edit.
+  and the calendar show the split (e.g. `10 + 2`). All of it is computed; nothing to edit.
+- **Start grid:** after the import, the next-GP banner shows the inverted championship order for
+  the following GP (leader last), and the dry run prints it ("Grelha de partida do próximo GP").
 - **"Resultados" section** (`src/components/sections/GpResults.astro`): one tab per completed GP.
   The newest GP is selected by default, and older GPs remain available as tabs. Each panel
   (`#resultados-gpN`) is rendered by `src/components/GpReport.astro`, and the calendar links to it.
@@ -89,7 +92,7 @@ npm run import-gp -- --race gpN [--date AAAA-MM-DD] [--timesheet URL] [--replace
   `N pts (média + volta)`, plus `VR` for the best lap) and the new championship standings, then
   ask (`ask_user`) for confirmation before writing.
 - **`✖ ... não bate certo com o regulamento`** (lines like
-  `Nome: relatório X pts no tempo médio, regulamento Y pts`): stop. Show the mismatches and ask the user how to
+  `Nome: relatório à frente de Outro no tempo médio, regulamento 3.º vs 2.º`): stop. Show the mismatches and ask the user how to
   proceed (fix the report, or confirm the times are right). Never edit the JSON by hand or change
   the scoring code to make a report "fit".
 - **Unknown or ambiguous name:** ask the user which pilot it is, then rerun with
@@ -121,8 +124,8 @@ npm run build          # rebuild production dist afterwards
 - Stop any `astro dev` server on port 4321 first. Playwright reuses whatever is listening there,
   and the dev server doesn't serve `404.html` or the sitemap.
 - A few e2e specs pin production values (e.g. the GP1 checks in `tests/e2e/sections.spec.ts` and
-  `standings.spec.ts`, including the "Pts média"/"Pts volta" totals and the `8 + 1` breakdowns,
-  the next-GP banner and GP2/GP6 calendar checks in `sections.spec.ts`,
+  `standings.spec.ts`, including the "Pts média"/"Pts volta" totals and the `10 + 2` breakdowns,
+  the next-GP banner, start grid and GP2/GP6 calendar checks in `sections.spec.ts`,
   and the leader in `hero.spec.ts`). If a new GP changes them (another leader, totals, shared
   positions, `#calendario details` count), update those expectations to the new computed values and
   say so in the report. Don't change the scoring code or the unit-test fixtures.
@@ -135,6 +138,7 @@ Tell the user:
   absent pilots and ignored names;
 - each pilot's GP points as `total (média + volta)`;
 - the new championship top 3 (or the full table), noting shared positions;
+- the start grid for the next GP (inverted championship order);
 - the files changed;
 - the verification commands and their results;
 - how to preview: `npm run dev`, then open

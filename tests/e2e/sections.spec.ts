@@ -60,11 +60,27 @@ test('next-GP banner is the first section and links to its calendar card', async
     await expect(banner).toContainText('Kartódromo Internacional de Braga');
     await expect(banner).toContainText('Data a anunciar');
     await expect(countdown).toHaveCount(0);
+    await expect(banner.getByTestId('start-grid').locator('li')).toHaveText([
+      /1\.º[\s\S]*Torres/,
+      /2\.º[\s\S]*Joel/,
+      /3\.º[\s\S]*Dinis/,
+      /4\.º[\s\S]*P\. Queirós/,
+      /5\.º[\s\S]*Emídio/,
+    ]);
   } else {
     await expect(banner).toContainText('Kartódromo Indoor de Matosinhos');
     await expect(banner).toContainText('Matosinhos');
     await expect(banner).toContainText('Indoor');
     await expect(banner).toContainText('dezembro de 2026 · dia a anunciar');
+    await expect(banner.getByTestId('start-grid')).toContainText('Grelha de partida');
+    await expect(banner.getByTestId('start-grid').locator('li')).toHaveText([
+      /1\.º[\s\S]*Joel/,
+      /2\.º[\s\S]*P\. Queirós/,
+      /3\.º[\s\S]*P\. Oliveira/,
+      /4\.º[\s\S]*Torres/,
+      /5\.º[\s\S]*Dinis/,
+      /6\.º[\s\S]*Emídio/,
+    ]);
     await expect(countdown).toHaveCount(0);
   }
 });
@@ -109,7 +125,7 @@ test('rules show points table and the full accordion', async ({ page }) => {
     `soma ${positionPoints[0]} + ${lapPoints[0]} = ${positionPoints[0] + lapPoints[0]} pontos`,
   );
   await expect(table).toContainText('Falta');
-  await expect(page.locator('#regulamento details')).toHaveCount(6);
+  await expect(page.locator('#regulamento details')).toHaveCount(7);
   const conduct = page.locator('#regulamento details', { hasText: 'Conduta e transparência' });
   await conduct.locator('summary').click();
   await expect(conduct).toContainText('folha de tempos oficial do kartódromo');
@@ -139,7 +155,7 @@ test.describe('production season', () => {
     await gp1.locator('summary').click();
     await expect(gp1.locator('tbody tr')).toHaveCount(N);
     await expect(gp1.locator('tbody tr').last()).toContainText('6.º');
-    await expect(page.locator('[data-pilot="emidio"] dd')).toHaveText(['15', '1', '1', '0']);
+    await expect(page.locator('[data-pilot="emidio"] dd')).toHaveText(['18', '1', '1', '0']);
   });
 
   test('results section shows GP1 classification, highlights and rankings', async ({ page }) => {
@@ -163,8 +179,8 @@ test.describe('production season', () => {
     const rows = panel.locator('table tbody tr');
     await expect(rows).toHaveCount(N);
     await expect(rows.first()).toContainText('1:02.769');
-    await expect(rows.first().getByTestId('points-breakdown')).toContainText('10 + 5');
-    await expect(rows.nth(1).getByTestId('points-breakdown')).toContainText('8 + 1');
+    await expect(rows.first().getByTestId('points-breakdown')).toContainText('12 + 6');
+    await expect(rows.nth(1).getByTestId('points-breakdown')).toContainText('10 + 2');
     await expect(rows.nth(1)).toContainText('+0.259');
     await expect(
       section.locator('section[aria-label="Ranking: Consistência"] li').first(),
@@ -229,8 +245,8 @@ test.describe('fixture season', () => {
 
   test('pilot stats come from the engine', async ({ page }) => {
     await page.goto('./');
-    await expect(page.locator('[data-pilot="emidio"] dd')).toHaveText(['31', '2', '0', '0']);
+    await expect(page.locator('[data-pilot="emidio"] dd')).toHaveText(['40', '2', '0', '0']);
     await expect(page.locator('[data-pilot="joel"] dd').nth(3)).toHaveText('1');
-    await expect(page.locator('[data-pilot="torres"] dd')).toHaveText(['3', '0', '0', '1']);
+    await expect(page.locator('[data-pilot="torres"] dd')).toHaveText(['9', '0', '0', '1']);
   });
 });

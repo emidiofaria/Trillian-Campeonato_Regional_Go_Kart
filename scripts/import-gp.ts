@@ -6,7 +6,7 @@ import * as p from '@clack/prompts';
 import { importReport } from '../src/lib/gp-import';
 import { formatLap } from '../src/lib/format';
 import { applyResult } from '../src/lib/results-entry';
-import { computeChampionship } from '../src/lib/scoring';
+import { computeChampionship, startGrid } from '../src/lib/scoring';
 import { validateSeason } from '../src/lib/validate';
 import { readRawSeason, writeSeason } from './season-files';
 
@@ -118,6 +118,12 @@ async function main() {
   p.note(
     champ.standings.map((r) => `${r.position}.º ${name(r.pilotId)} · ${r.total} pts`).join('\n'),
     'Classificação geral',
+  );
+  p.note(
+    startGrid(champ)
+      .map((id, i) => `${i + 1}.º ${name(id)}`)
+      .join('\n'),
+    'Grelha de partida do próximo GP (invertida)',
   );
 
   if (values['dry-run']) {

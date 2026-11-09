@@ -3,27 +3,27 @@ import type { Pilot, Race, RaceResult, ResultEntry } from './schemas';
 /**
  * How session positions are awarded when a pilot is absent (applies to both the average-time and
  * the best-lap tables):
- * - 'compact': attendees take the top positions in order (4 attendees => 8/6/4/2).
- * - 'fixed':   the slowest attendee always takes the table's last slot (0 pts),
- *              the others take the table from the top (4 attendees => 8/6/4/0).
+ * - 'compact': attendees take the top positions in order (4 of 5 attend => 10/8/6/4).
+ * - 'fixed':   the slowest attendee always takes the table's last slot (2 pts),
+ *              the others take the table from the top (4 of 5 attend => 10/8/6/2).
  */
 export type AbsenceRankingMode = 'compact' | 'fixed';
 export const ABSENCE_RANKING_MODE: AbsenceRankingMode = 'compact';
 
 /**
- * Points for 1st..Nth with N registered pilots (docs/rules.md section 5): 2×(N−1), …, 2, 0.
- * Absent = 0. E.g. 5 pilots => [8, 6, 4, 2, 0].
+ * Points for 1st..Nth with N registered pilots (docs/rules.md section 5): 2×N, …, 4, 2.
+ * Absent = 0. E.g. 6 pilots => [12, 10, 8, 6, 4, 2].
  */
 export function positionPoints(pilotCount: number): number[] {
-  return Array.from({ length: pilotCount }, (_, i) => 2 * (pilotCount - 1 - i));
+  return Array.from({ length: pilotCount }, (_, i) => 2 * (pilotCount - i));
 }
 
 /**
- * Best-lap points for the 1st..Nth best lap of a GP (docs/rules.md section 5): N−1, …, 1, 0.
- * E.g. 6 pilots => [5, 4, 3, 2, 1, 0].
+ * Best-lap points for the 1st..Nth best lap of a GP (docs/rules.md section 5): N, …, 2, 1.
+ * Absent = 0. E.g. 6 pilots => [6, 5, 4, 3, 2, 1].
  */
 export function lapPointsTable(pilotCount: number): number[] {
-  return Array.from({ length: pilotCount }, (_, i) => pilotCount - 1 - i);
+  return Array.from({ length: pilotCount }, (_, i) => pilotCount - i);
 }
 
 /** Points tables for the current pilot list (used by the UI and the CLIs). */
@@ -185,7 +185,7 @@ export function scoreSession(
   const entries: SessionEntry[] = [
     ...attendees.map((a, i) => {
       const positionPoints = pointsFor(table, i, attendees.length, mode);
-      // Equal best laps share the higher rank; the next pilot skips (5, 5, 3, …).
+      // Equal best laps share the higher rank; the next pilot skips (6, 6, 4, …).
       const lapRank = 1 + attendees.filter((o) => o.bestLap < a.bestLap).length;
       const lapPoints = pointsFor(lapTable, lapRank - 1, attendees.length, mode);
       const fastestLap = lapRank === 1;
@@ -313,4 +313,14 @@ export function computeChampionship(
     completedRaces: sessions.length,
     leaderIds: sessions.length ? rows.filter((r) => r.position === 1).map((r) => r.pilotId) : [],
   };
+}
+
+/**
+ * Inverted start grid for the next GP (docs/rules.md section 8): the championship order reversed,
+ * so the leader starts last. Tied pilots keep the tie-break order (wins, fastest laps, absences,
+ * pilot number), so the better-placed one starts further back. Empty before any GP.
+ */
+export function startGrid(championship: ChampionshipResult): string[] {
+  if (!championship.completedRaces) return [];
+  return championship.standings.map((r) => r.pilotId).reverse();
 }
