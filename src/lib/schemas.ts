@@ -32,6 +32,11 @@ export const raceSchema = z
     circuit: z.string().min(1),
     type: z.enum(['Indoor', 'Outdoor']),
     location: z.string().min(1),
+    /** Expected month (YYYY-MM), shown while the exact date is still unknown. */
+    month: z
+      .string()
+      .regex(/^\d{4}-(0[1-9]|1[0-2])$/)
+      .optional(),
     date: z.string().date().optional(),
     timesheetUrl: z.string().url().optional(),
     status: raceStatusSchema,

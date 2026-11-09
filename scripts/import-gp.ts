@@ -90,7 +90,7 @@ async function main() {
     imported.scored.entries
       .map((e) =>
         e.attended
-          ? `${e.position}.º ${name(e.pilotId)} · média ${formatLap(e.avgLapTime)} · melhor ${formatLap(e.bestLap)} · ${e.totalPoints} pts${e.fastestLap ? ` (${e.positionPoints} + ${e.bonusPoints} VR)` : ''}`
+          ? `${e.position}.º ${name(e.pilotId)} · média ${formatLap(e.avgLapTime)} · melhor ${formatLap(e.bestLap)} · ${e.totalPoints} pts (${e.positionPoints} + ${e.lapPoints})${e.fastestLap ? ' VR' : ''}`
           : `F  ${name(e.pilotId)} · falta · 0 pts`,
       )
       .join('\n'),

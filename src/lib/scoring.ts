@@ -1,7 +1,8 @@
 import type { Pilot, Race, RaceResult, ResultEntry } from './schemas';
 
 /**
- * How session positions are awarded when a pilot is absent (not defined in docs/rules.md):
+ * How session positions are awarded when a pilot is absent (applies to both the average-time and
+ * the best-lap tables):
  * - 'compact': attendees take the top positions in order (4 attendees => 8/6/4/2).
  * - 'fixed':   the slowest attendee always takes the table's last slot (0 pts),
  *              the others take the table from the top (4 attendees => 8/6/4/0).
@@ -17,19 +18,22 @@ export function positionPoints(pilotCount: number): number[] {
   return Array.from({ length: pilotCount }, (_, i) => 2 * (pilotCount - 1 - i));
 }
 
-/** Fastest-lap (VR) bonus: half the winner's points, i.e. N−1 (5 pilots => +4). */
-export function fastestLapBonus(pilotCount: number): number {
-  return pilotCount - 1;
+/**
+ * Best-lap points for the 1st..Nth best lap of a GP (docs/rules.md section 5): N−1, …, 1, 0.
+ * E.g. 6 pilots => [5, 4, 3, 2, 1, 0].
+ */
+export function lapPointsTable(pilotCount: number): number[] {
+  return Array.from({ length: pilotCount }, (_, i) => pilotCount - 1 - i);
 }
 
-/** Points table for the current pilot list (used by the UI and the CLIs). */
+/** Points tables for the current pilot list (used by the UI and the CLIs). */
 export function currentPointsTable(pilots: readonly unknown[]): {
   positionPoints: number[];
-  fastestLapBonus: number;
+  lapPoints: number[];
 } {
   return {
     positionPoints: positionPoints(pilots.length),
-    fastestLapBonus: fastestLapBonus(pilots.length),
+    lapPoints: lapPointsTable(pilots.length),
   };
 }
 
@@ -54,8 +58,11 @@ export interface SessionEntry {
   lapStdDev: number | null;
   lapSpread: number | null;
   positionPoints: number;
+  /** 1-based rank of the best lap among attendees (equal times share it); null when absent. */
+  lapRank: number | null;
+  /** Set the GP's absolute fastest lap (lapRank 1). */
   fastestLap: boolean;
-  bonusPoints: number;
+  lapPoints: number;
   totalPoints: number;
 }
 
@@ -79,7 +86,8 @@ export type GpCell =
       position: number;
       points: number;
       positionPoints: number;
-      bonusPoints: number;
+      lapPoints: number;
+      lapRank: number;
       fastestLap: boolean;
     };
 
@@ -88,6 +96,10 @@ export interface StandingRow {
   position: number;
   pilotId: string;
   total: number;
+  /** Points from the average-time classification. */
+  positionTotal: number;
+  /** Points from the best-lap ranking. */
+  lapTotal: number;
   wins: number;
   fastestLaps: number;
   absences: number;
@@ -161,10 +173,10 @@ export function scoreSession(
 
   const pilotCount = sessionPilotCount(result);
   const table = positionPoints(pilotCount);
-  const bonus = fastestLapBonus(pilotCount);
+  const lapTable = lapPointsTable(pilotCount);
 
   const fastestLapTime = attendees.length ? Math.min(...attendees.map((a) => a.bestLap)) : null;
-  // Exact ties on the absolute fastest lap: every pilot who set it gets the bonus.
+  // Exact ties on the absolute fastest lap: every pilot who set it is credited.
   const fastestLapPilotIds =
     fastestLapTime === null
       ? []
@@ -173,8 +185,10 @@ export function scoreSession(
   const entries: SessionEntry[] = [
     ...attendees.map((a, i) => {
       const positionPoints = pointsFor(table, i, attendees.length, mode);
-      const fastestLap = fastestLapPilotIds.includes(a.pilotId);
-      const bonusPoints = fastestLap ? bonus : 0;
+      // Equal best laps share the higher rank; the next pilot skips (5, 5, 3, …).
+      const lapRank = 1 + attendees.filter((o) => o.bestLap < a.bestLap).length;
+      const lapPoints = pointsFor(lapTable, lapRank - 1, attendees.length, mode);
+      const fastestLap = lapRank === 1;
       return {
         pilotId: a.pilotId,
         attended: true,
@@ -187,9 +201,10 @@ export function scoreSession(
         lapStdDev: a.lapStdDev ?? null,
         lapSpread: a.lapSpread ?? null,
         positionPoints,
+        lapRank,
         fastestLap,
-        bonusPoints,
-        totalPoints: positionPoints + bonusPoints,
+        lapPoints,
+        totalPoints: positionPoints + lapPoints,
       };
     }),
     ...absentees.map((e) => ({
@@ -204,8 +219,9 @@ export function scoreSession(
       lapStdDev: null,
       lapSpread: null,
       positionPoints: 0,
+      lapRank: null,
       fastestLap: false,
-      bonusPoints: 0,
+      lapPoints: 0,
       totalPoints: 0,
     })),
   ];
@@ -248,6 +264,8 @@ export function computeChampionship(
       position: 0,
       pilotId: pilot.id,
       total: 0,
+      positionTotal: 0,
+      lapTotal: 0,
       wins: 0,
       fastestLaps: 0,
       absences: 0,
@@ -263,6 +281,8 @@ export function computeChampionship(
         row.perGp.push({ raceId: race.id, state: 'absent', points: 0 });
       } else {
         row.total += entry.totalPoints;
+        row.positionTotal += entry.positionPoints;
+        row.lapTotal += entry.lapPoints;
         if (entry.position === 1) row.wins += 1;
         if (entry.fastestLap) row.fastestLaps += 1;
         row.perGp.push({
@@ -271,7 +291,8 @@ export function computeChampionship(
           position: entry.position,
           points: entry.totalPoints,
           positionPoints: entry.positionPoints,
-          bonusPoints: entry.bonusPoints,
+          lapPoints: entry.lapPoints,
+          lapRank: entry.lapRank!,
           fastestLap: entry.fastestLap,
         });
       }

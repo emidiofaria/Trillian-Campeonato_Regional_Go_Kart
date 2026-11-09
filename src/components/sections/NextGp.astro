@@ -3,7 +3,7 @@ import Badge from '../ui/Badge.astro';
 import Button from '../ui/Button.astro';
 import Icon from '../icons/Icon.astro';
 import { nextRace } from '../../lib/data';
-import { formatDate } from '../../lib/format';
+import { formatDate, formatMonth } from '../../lib/format';
 import { withBase } from '../../lib/site';
 ---
 
@@ -64,6 +64,11 @@ import { withBase } from '../../lib/site';
               <Icon name="calendar" size={16} />
               {nextRace.date ? (
                 <time datetime={nextRace.date}>{formatDate(nextRace.date)}</time>
+              ) : nextRace.month ? (
+                <span>
+                  <time datetime={nextRace.month}>{formatMonth(nextRace.month)}</time> · dia a
+                  anunciar
+                </span>
               ) : (
                 'Data a anunciar'
               )}

@@ -153,7 +153,7 @@ async function main() {
     session.entries
       .map((e) =>
         e.attended
-          ? `${e.position}.º ${name(e.pilotId)} · média ${formatLap(e.avgLapTime)} · ${e.totalPoints} pts${e.fastestLap ? ' (VR)' : ''}`
+          ? `${e.position}.º ${name(e.pilotId)} · média ${formatLap(e.avgLapTime)} · ${e.totalPoints} pts (${e.positionPoints} + ${e.lapPoints})${e.fastestLap ? ' VR' : ''}`
           : `F  ${name(e.pilotId)} · falta · 0 pts`,
       )
       .join('\n'),

@@ -48,14 +48,15 @@ inspirado em telemetria, em modo escuro, profissional e sem exageros.
 ### 3B. Classificação Geral
 
 - Cabeçalho com ícone de bandeira xadrez, título "Classificação Geral" e indicação "N Pilotos" (calculado a partir de `src/data/pilots.json`; hoje 6).
-- Tabela com as colunas Pos, Piloto (avatar colorido + nome), Pontos Totais e GP1 a GP7.
-- Cada célula de GP mostra os pontos desse GP:
+- Tabela com as colunas Pos, Piloto (avatar colorido + nome), Pontos Totais, Pts média (tempo
+  médio), Pts volta (melhor volta) e GP1 a GP7.
+- Cada célula de GP mostra os pontos desse GP e a decomposição "média + volta" (ex.: "8 + 1"):
   - "—" para GP ainda não realizado;
   - "F" (falta) com estilo distinto;
-  - marcador "VR" quando o piloto ganhou o bónus de volta mais rápida.
+  - marcador "VR" quando o piloto fez a volta mais rápida do GP.
 - O líder tem o badge "Líder" e o total em amarelo. Antes do primeiro GP aparece
   "A temporada ainda não começou".
-- Nota de rodapé: "+N−1 pontos pela volta mais rápida (VR) da sessão" (hoje +5).
+- Nota de rodapé com as duas tabelas de pontos (hoje tempo médio 10/8/6/4/2/0 + melhor volta 5/4/3/2/1/0).
 - Painel recolhível "Critérios de desempate".
 
 ### 3C. Calendário
@@ -63,7 +64,7 @@ inspirado em telemetria, em modo escuro, profissional e sem exageros.
 - Grelha de 7 cartões, um por GP: número do GP, badge Indoor/Outdoor (cor e ícone distintos),
   circuito, localização, estado (Próximo GP / Agendado / Concluído) e data, se existir.
 - Nos GP concluídos, o cartão expande para mostrar o pódio, os tempos médios, as melhores voltas,
-  o vencedor da VR e a ligação para a folha de tempos, se existir.
+  os pontos (média + volta), o autor da VR e a ligação para a folha de tempos, se existir.
 
 ### 3D. Pilotos
 
@@ -74,7 +75,8 @@ inspirado em telemetria, em modo escuro, profissional e sem exageros.
 
 ### 3E. Regulamento
 
-- Caixa de resumo com a tabela de pontos (2×(N−1)…2/0 com N pilotos, hoje 10/8/6/4/2/0; falta = 0; VR +N−1, hoje +5).
+- Caixa de resumo com a tabela de pontos por posição: tempo médio 2×(N−1)…2/0 e melhor volta
+  N−1…1/0 com N pilotos (hoje 10/8/6/4/2/0 e 5/4/3/2/1/0); falta = 0.
 - Acordeão com o regulamento completo: formato, faltas, desempates, conduta e transparência (ver
   `docs/rules.md`).
 

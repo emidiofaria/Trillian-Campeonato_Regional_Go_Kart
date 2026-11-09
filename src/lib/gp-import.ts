@@ -240,7 +240,7 @@ export interface ImportedGp {
   ignored: string[];
   matched: Map<string, string>;
   scored: SessionResult;
-  /** Differences between the report and the rules (points or fastest lap); empty if consistent. */
+  /** Differences between the report and the rules (average-time points or fastest lap); empty if consistent. */
   mismatches: string[];
 }
 
@@ -289,12 +289,22 @@ export function importReport(
   const order = [...pilots].sort((a, b) => a.number - b.number).map((p) => p.id);
   const scored = scoreSession({ raceId: 'import', pilotCount: pilots.length, entries }, order);
 
+  // Only the average-time points are checked: best-lap points are always computed here. Reports
+  // in the legacy format add a single fastest-lap bonus (N−1, flagged in the FL column) to the
+  // total; reports already on the new rules carry the full total.
+  const legacyBonus = pilots.length - 1;
+  const reportedFlNames = new Set(report.reportedFastestLap);
   const mismatches: string[] = [];
   for (const e of scored.entries) {
     const name = nameOf.get(e.pilotId);
     const reported = name !== undefined ? report.reportedPoints.get(name) : undefined;
-    if (reported !== undefined && reported !== e.totalPoints)
-      mismatches.push(`${name}: relatório ${reported} pts, regulamento ${e.totalPoints} pts`);
+    if (reported !== undefined && name !== undefined) {
+      const avgPoints = reported - (reportedFlNames.has(name) ? legacyBonus : 0);
+      if (avgPoints !== e.positionPoints && reported !== e.totalPoints)
+        mismatches.push(
+          `${name}: relatório ${avgPoints} pts no tempo médio, regulamento ${e.positionPoints} pts`,
+        );
+    }
     if (name && !e.attended && reported)
       mismatches.push(`${name}: tem pontos no relatório mas falta o tempo médio ou a melhor volta`);
   }

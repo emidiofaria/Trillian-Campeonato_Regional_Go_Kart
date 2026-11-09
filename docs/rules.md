@@ -20,11 +20,11 @@ Este campeonato foi criado entre amigos com o objetivo de desfrutar de bons mome
 | GP | Circuito / Pista | Tipo | Localização |
 | :-: | :--- | :-: | :--- |
 | **GP 1** | Kartódromo Cabo do Mundo | Outdoor | Matosinhos |
-| **GP 2** | Kartódromo de Baltar | Outdoor | Paredes / Baltar |
+| **GP 2** | Kartódromo Indoor de Matosinhos | Indoor | Matosinhos |
 | **GP 3** | Rilhadas | Outdoor | Fafe |
 | **GP 4** | Kartódromo Internacional de Braga | Outdoor | Braga |
 | **GP 5** | Kartódromo de Viana | Outdoor | Viana do Castelo |
-| **GP 6** | Kartódromo Indoor de Matosinhos | Indoor | Matosinhos |
+| **GP 6** | Kartódromo de Baltar | Outdoor | Paredes / Baltar |
 | **GP 7** | Kartódromo Indoor de Famalicão | Indoor | Vila Nova de Famalicão |
 
 ---
@@ -38,7 +38,9 @@ Este campeonato foi criado entre amigos com o objetivo de desfrutar de bons mome
 
 ## 5. Sistema de Pontuação (para 6 Participantes)
 
-Os pontos da classificação geral são atribuídos com base no tempo médio da sessão:
+Em cada GP, cada piloto soma duas pontuações: a da posição no **tempo médio** e a da posição da sua **melhor volta**.
+
+### Pontos do Tempo Médio
 
 | Posição | Critério (Tempo Médio) | Cálculo | Pontos Conquistados |
 | :--- | :--- | :---: | :---: |
@@ -50,11 +52,26 @@ Os pontos da classificação geral são atribuídos com base no tempo médio da 
 | **6º Lugar** | 6º Tempo Médio | - | **0 pts** |
 | **Falta** | **Não compareceu ao GP** | - | **0 pts** |
 
-### Bónus de Volta Mais Rápida (VR)
-* **+5 pontos** (metade dos pontos da vitória) para o piloto que realizar a **volta mais rápida absoluta** da sessão de 10 minutos.
-* Estes pontos somam diretamente à pontuação obtida na classificação geral do GP (ex: o 1º classificado que também faça a volta mais rápida soma 10 + 5 = 15 pontos).
+### Pontos da Melhor Volta
+Todos os pilotos presentes são ordenados pela sua melhor volta da sessão de 10 minutos:
+
+| Posição | Critério (Melhor Volta) | Pontos Conquistados |
+| :--- | :--- | :---: |
+| **1º Lugar** | Volta mais rápida absoluta (VR) | **5 pts** |
+| **2º Lugar** | 2ª melhor volta | **4 pts** |
+| **3º Lugar** | 3ª melhor volta | **3 pts** |
+| **4º Lugar** | 4ª melhor volta | **2 pts** |
+| **5º Lugar** | 5ª melhor volta | **1 pt** |
+| **6º Lugar** | 6ª melhor volta | **0 pts** |
+| **Falta** | **Não compareceu ao GP** | **0 pts** |
+
+* Pilotos com exatamente a mesma melhor volta recebem os mesmos pontos (os mais altos) e o piloto seguinte salta uma posição.
+* Estes pontos somam diretamente aos pontos do tempo médio (ex: o piloto com o melhor tempo médio que também faça a volta mais rápida soma 10 + 5 = 15 pontos; o 2º no tempo médio com a 5ª melhor volta soma 8 + 1 = 9 pontos).
+* Se faltarem pilotos, os presentes ocupam as posições do topo em ambas as tabelas.
 
 ---
+
+> Nota: esta regra aplica-se a toda a época, incluindo o GP1, que foi recalculado.
 
 ## 6. Gestão de Faltas e Assiduidade
 * **Penalização por Falta:** Quem não comparecer a um GP obtém **0 pontos** nessa jornada. 
@@ -70,7 +87,7 @@ Os pontos da classificação geral são atribuídos com base no tempo médio da 
 
 ### Em caso de empate na Classificação Final do Campeonato:
 1. **Maior número de vitórias** (1ºs lugares nos GPs).
-2. **Maior número de Voltas Mais Rápidas** conquistadas ao longo da época.
+2. **Maior número de Voltas Mais Rápidas** (1º lugar na melhor volta) conquistadas ao longo da época.
 3. Menor número de faltas.
 
 ---

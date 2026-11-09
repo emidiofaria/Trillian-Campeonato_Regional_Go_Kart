@@ -3,8 +3,9 @@ name: add-gp-results
 description: >-
   Record the results of a Grand Prix in the Kart Cup 2026 championship site from a session report
   (markdown tables: Championship, Fastest lap, Best mean time, Top speed, Most consistent pilot),
-  given as an .md file or pasted in the chat. Runs `npm run import-gp`, which checks the points
-  against the rules, updates the standings, calendar and the "Resultados" tabs (new GP becomes the
+  given as an .md file or pasted in the chat. Runs `npm run import-gp`, which recomputes the points
+  (average-time points + best-lap points for every pilot), checks the average-time points against
+  the report, updates the standings, calendar and the "Resultados" tabs (new GP becomes the
   default tab, previous GPs stay available as tabs), archives the raw report in docs/results/, and
   verifies the build and tests. Use whenever the user asks to add, record, import or update GP
   results, e.g. "resultados do GP", "novo GP", "importar resultados", "atualizar classificação",
@@ -20,10 +21,19 @@ Work from the repository root. Never `git push`.
 
 - **Standings, calendar, pilot stats, hero leader chip** are computed from `src/data/results.json`
   by `src/lib/scoring.ts`. Never hardcode results in components.
-- **Points are recomputed, not copied.** The CLI rebuilds the classification from the times
-  (average lap, then best lap) and compares it with the report's Championship table. Any difference
-  (points, fastest-lap holder, a pilot with points but no times) stops the import, and nothing is
-  written.
+- **Points are recomputed, not copied.** Each GP scores average-time points (2×(N−1)…0) plus
+  best-lap points for every attendee (N−1…0, equal best laps share the higher value). The CLI
+  checks only the **average-time points** against the report's Championship table: the reported
+  total minus the legacy single fastest-lap bonus (N−1) when the `FL` column is set (a report whose
+  totals already follow the new rule is also accepted). Any difference (average-time points,
+  fastest-lap holder, a pilot with points but no times) stops the import, and nothing is written.
+- **Best-lap points** come from the `Fastest lap` table: k-th best lap → N−k points (6 pilots:
+  5/4/3/2/1/0). Equal best laps share the higher points and the next pilot skips a place (5, 5,
+  3). Absent pilots get 0 and attendees take the top values (compact mode). Only the GP's best
+  lap (lap rank 1) gets the **VR** mark, which counts for the tie-break (wins → fastest laps →
+  fewer absences).
+- **Display:** the standings have "Pts média" and "Pts volta" columns, and GP cells, the GP report
+  and the calendar show the split (e.g. `8 + 1`). All of it is computed; nothing to edit.
 - **"Resultados" section** (`src/components/sections/GpResults.astro`): one tab per completed GP.
   The newest GP is selected by default, and older GPs remain available as tabs. Each panel
   (`#resultados-gpN`) is rendered by `src/components/GpReport.astro`, and the calendar links to it.
@@ -60,6 +70,8 @@ Ask for:
 1. **Which GP** (always ask): offer the GPs from `src/data/races.json`, with the `next` GP as the
    default. Show `gpN · circuit · date`.
 2. **Date** (`AAAA-MM-DD`): required if that race has no `date`. Otherwise, offer the stored date.
+   If the race only has a `month` (`AAAA-MM`), the date must fall in that month (the data check
+   rejects it otherwise); if the GP moved to another month, update `month` first.
 3. **Report:** a path to an `.md` file, or the report pasted in the chat. If pasted, save it
    verbatim to a temporary file in the session workspace (not in the repo) and pass that path. The
    CLI also accepts `-` to read the report from stdin.
@@ -73,9 +85,11 @@ If the user already gave some of these in the request, don't ask for them again.
 npm run import-gp -- --race gpN [--date AAAA-MM-DD] [--timesheet URL] [--replace] --dry-run <report.md>
 ```
 
-- Show the user the pilot matching, the GP classification and the new championship standings,
-  then ask (`ask_user`) for confirmation before writing.
-- **`✖ ... não bate certo com o regulamento`:** stop. Show the mismatches and ask the user how to
+- Show the user the pilot matching, the GP classification (each line prints
+  `N pts (média + volta)`, plus `VR` for the best lap) and the new championship standings, then
+  ask (`ask_user`) for confirmation before writing.
+- **`✖ ... não bate certo com o regulamento`** (lines like
+  `Nome: relatório X pts no tempo médio, regulamento Y pts`): stop. Show the mismatches and ask the user how to
   proceed (fix the report, or confirm the times are right). Never edit the JSON by hand or change
   the scoring code to make a report "fit".
 - **Unknown or ambiguous name:** ask the user which pilot it is, then rerun with
@@ -107,8 +121,10 @@ npm run build          # rebuild production dist afterwards
 - Stop any `astro dev` server on port 4321 first. Playwright reuses whatever is listening there,
   and the dev server doesn't serve `404.html` or the sitemap.
 - A few e2e specs pin production values (e.g. the GP1 checks in `tests/e2e/sections.spec.ts` and
-  `standings.spec.ts`, and the leader in `hero.spec.ts`). If a new GP changes them (another leader,
-  totals, `#calendario details` count), update those expectations to the new computed values and
+  `standings.spec.ts`, including the "Pts média"/"Pts volta" totals and the `8 + 1` breakdowns,
+  the next-GP banner and GP2/GP6 calendar checks in `sections.spec.ts`,
+  and the leader in `hero.spec.ts`). If a new GP changes them (another leader, totals, shared
+  positions, `#calendario details` count), update those expectations to the new computed values and
   say so in the report. Don't change the scoring code or the unit-test fixtures.
 
 ### 5. Report
@@ -117,7 +133,8 @@ Tell the user:
 
 - the GP imported (round, circuit, date, session) and the winner, the fastest-lap holder (VR), any
   absent pilots and ignored names;
-- the new championship top 3 (or the full table);
+- each pilot's GP points as `total (média + volta)`;
+- the new championship top 3 (or the full table), noting shared positions;
 - the files changed;
 - the verification commands and their results;
 - how to preview: `npm run dev`, then open

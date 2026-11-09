@@ -4,7 +4,7 @@ import Badge from '../ui/Badge.astro';
 import Icon from '../icons/Icon.astro';
 import PilotAvatar from '../PilotAvatar.astro';
 import { championship, pilotById, sortedRaces } from '../../lib/data';
-import { formatDate, formatLap } from '../../lib/format';
+import { formatDate, formatLap, formatMonth } from '../../lib/format';
 import type { BadgeVariant } from '../types';
 import type { RaceStatus } from '../../lib/schemas';
 import { withBase } from '../../lib/site';
@@ -61,10 +61,16 @@ const statusLabel: Record<RaceStatus, { label: string; variant: BadgeVariant }> 
                   <Icon name="outdoor" size={14} /> Outdoor
                 </Badge>
               )}
-              {race.date && (
+              {race.date ? (
                 <span class="text-sm text-fg-muted">
                   <time datetime={race.date}>{formatDate(race.date)}</time>
                 </span>
+              ) : (
+                race.month && (
+                  <span class="text-sm text-fg-muted">
+                    <time datetime={race.month}>{formatMonth(race.month)}</time>
+                  </span>
+                )
               )}
             </div>
 
@@ -125,7 +131,20 @@ const statusLabel: Record<RaceStatus, { label: string; variant: BadgeVariant }> 
                             <td class="py-1.5 pr-2 text-right text-fg-muted">
                               {formatLap(e.bestLap)}
                             </td>
-                            <td class="py-1.5 text-right font-semibold text-fg">{e.totalPoints}</td>
+                            <td class="py-1.5 text-right font-semibold text-fg">
+                              {e.totalPoints}
+                              {e.attended && (
+                                <span class="block text-[0.7rem] font-normal text-fg-muted">
+                                  <span aria-hidden="true">
+                                    {e.positionPoints} + {e.lapPoints}
+                                  </span>
+                                  <span class="sr-only">
+                                    ({e.positionPoints} do tempo médio e {e.lapPoints} da melhor
+                                    volta)
+                                  </span>
+                                </span>
+                              )}
+                            </td>
                           </tr>
                         );
                       })}

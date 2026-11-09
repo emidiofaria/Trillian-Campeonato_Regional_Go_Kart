@@ -14,11 +14,11 @@ body:
       label: GP
       options:
         - GP1 · Kartódromo Cabo do Mundo (Matosinhos)
-        - GP2 · Kartódromo de Baltar (Paredes / Baltar)
+        - GP2 · Kartódromo Indoor de Matosinhos (Matosinhos)
         - GP3 · Rilhadas (Fafe)
         - GP4 · Kartódromo Internacional de Braga (Braga)
         - GP5 · Kartódromo de Viana (Viana do Castelo)
-        - GP6 · Kartódromo Indoor de Matosinhos (Matosinhos)
+        - GP6 · Kartódromo de Baltar (Paredes / Baltar)
         - GP7 · Kartódromo Indoor de Famalicão (Vila Nova de Famalicão)
     validations:
       required: true

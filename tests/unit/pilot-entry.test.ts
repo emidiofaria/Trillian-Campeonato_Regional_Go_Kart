@@ -82,7 +82,7 @@ describe('addPilot', () => {
     const all = [...season.pilots.map((p, i) => at(p.id, 50 + i, 49 + i, 49.5 + i))];
     const after = applyResult(season, 'gp1', all);
     const c = computeChampionship(after.pilots, after.races, after.results);
-    expect(c.standings.map((r) => r.total)).toEqual([15, 8, 6, 4, 2, 0]);
+    expect(c.standings.map((r) => r.total)).toEqual([15, 12, 9, 6, 3, 0]);
   });
 
   it('mid-season: newcomer is absent in past GPs, which keep their points table', () => {
@@ -97,7 +97,7 @@ describe('addPilot', () => {
     });
     const c = computeChampionship(season.pilots, season.races, season.results);
     const byId = Object.fromEntries(c.standings.map((r) => [r.pilotId, r]));
-    expect(byId.emidio.total).toBe(12); // 8 + 4, unchanged by the newcomer
+    expect(byId.emidio.total).toBe(12); // 8 + 4 (5-pilot tables), unchanged by the newcomer
     expect(byId.rui).toMatchObject({ total: 0, absences: 1 });
   });
 

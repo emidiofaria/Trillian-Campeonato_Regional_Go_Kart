@@ -6,6 +6,7 @@ import results from '../../src/data/results.json';
 import fixture from '../fixtures/season.json';
 import { collectSeasonIssues, validateSeason } from '../../src/lib/validate';
 import { computeChampionship } from '../../src/lib/scoring';
+import type { Race } from '../../src/lib/schemas';
 
 const clone = <T>(v: T): T => JSON.parse(JSON.stringify(v));
 
@@ -13,15 +14,15 @@ describe('season validation', () => {
   it('production data is valid and GP1 scores as on the official timesheet', () => {
     const season = validateSeason({ pilots: prodPilots, races, results });
     const totals = computeChampionship(season.pilots, season.races, season.results).standings.map(
-      (r) => [r.pilotId, r.total],
+      (r) => [r.pilotId, r.position, r.positionTotal, r.lapTotal, r.total],
     );
     expect(totals).toEqual([
-      ['emidio', 15],
-      ['torres', 8],
-      ['dinis', 6],
-      ['p-oliveira', 4],
-      ['p-queiros', 2],
-      ['joel', 0],
+      ['emidio', 1, 10, 5, 15],
+      ['dinis', 2, 6, 3, 9],
+      ['torres', 2, 8, 1, 9],
+      ['p-oliveira', 4, 4, 4, 8],
+      ['p-queiros', 5, 2, 0, 2],
+      ['joel', 5, 0, 2, 2],
     ]);
   });
 
@@ -85,6 +86,17 @@ describe('season validation', () => {
       'results.json [gp1]: há resultados mas o GP não está marcado como "completed"',
     );
     expect(issues.join('\n')).toMatch(/só pode haver um GP com estado "next"/);
+  });
+
+  it('rejects a date outside the announced month', () => {
+    const badRaces = clone(fixture.races) as Race[];
+    const race = badRaces.find((r) => r.status === 'scheduled')!;
+    race.month = '2026-12';
+    race.date = '2027-01-05';
+    const { issues } = collectSeasonIssues({ pilots, races: badRaces, results: fixture.results });
+    expect(issues).toContain(
+      `races.json [${race.id}]: data 2027-01-05 não pertence ao mês 2026-12`,
+    );
   });
 
   it('rejects unknown races', () => {

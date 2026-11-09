@@ -20,6 +20,17 @@ export function formatDate(iso: string | undefined, options?: Intl.DateTimeForma
   }).format(new Date(Date.UTC(y, m - 1, d)));
 }
 
+/** Year-month (YYYY-MM) -> "dezembro de 2026". */
+export function formatMonth(yearMonth: string | undefined): string {
+  if (!yearMonth) return '';
+  const [y, m] = yearMonth.split('-').map(Number);
+  return new Intl.DateTimeFormat('pt-PT', {
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(new Date(Date.UTC(y, m - 1, 1)));
+}
+
 export function formatPoints(points: number): string {
   return `${points} ${points === 1 ? 'ponto' : 'pontos'}`;
 }
