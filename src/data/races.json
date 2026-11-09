@@ -6,7 +6,7 @@
     "type": "Outdoor",
     "location": "Matosinhos",
     "date": "2026-11-08",
-    "status": "next"
+    "status": "completed"
   },
   {
     "id": "gp2",
@@ -14,7 +14,7 @@
     "circuit": "Kartódromo de Baltar",
     "type": "Outdoor",
     "location": "Paredes / Baltar",
-    "status": "scheduled"
+    "status": "next"
   },
   {
     "id": "gp3",

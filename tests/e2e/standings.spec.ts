@@ -11,17 +11,26 @@ test('standings table is accessible and lists every pilot and 7 GPs', async ({ p
   await expect(page.locator('#classificacao [role="region"][tabindex="0"]')).toHaveCount(1);
 });
 
-test.describe('empty season', () => {
+test.describe('production season', () => {
   test.skip(FIXTURE, 'production data only');
 
-  test('shows not-started message, no leader, all GPs not run', async ({ page }) => {
+  test('GP1 is scored and the remaining GPs are not run', async ({ page }) => {
     await page.goto('./');
-    await expect(page.getByTestId('season-not-started')).toContainText(
-      'A temporada ainda não começou',
-    );
-    await expect(page.locator('#classificacao').getByText('Líder')).toHaveCount(0);
+    await expect(page.getByTestId('season-not-started')).toHaveCount(0);
+    const rows = page.locator('#classificacao tbody tr');
+    await expect(rows.locator('th[scope="row"]')).toHaveText([
+      /Emídio/,
+      /Torres/,
+      /Dinis/,
+      /P\. Oliveira/,
+      /P\. Queirós/,
+      /Joel/,
+    ]);
+    await expect(rows.first()).toContainText('Líder');
+    await expect(rows.first().locator('td').nth(1)).toHaveText('15');
+    await expect(rows.first().locator('td').nth(2)).toContainText('bónus pela volta mais rápida');
     await expect(page.locator('#classificacao tbody').getByText('Não realizado')).toHaveCount(
-      7 * N,
+      6 * N,
     );
   });
 });

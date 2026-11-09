@@ -2,7 +2,6 @@ import { expect, test } from '@playwright/test';
 
 const PLAY = 'https://play.google.com/store/apps/details?id=io.github.emidiofaria.trillian';
 const SITE = 'https://emidiofaria.github.io/Trillian-website/';
-const FIXTURE = process.env.KARTCUP_FIXTURE === '1';
 
 test('hero has the sponsor heading and CTAs with safe external links', async ({ page }) => {
   await page.goto('./');
@@ -62,10 +61,6 @@ test('hero has no next-GP chip; leader chip depends on results', async ({ page }
   await page.goto('./');
   const hero = page.locator('section[aria-labelledby="hero-titulo"]');
   await expect(hero.getByText('Próximo GP')).toHaveCount(0);
-  if (FIXTURE) {
-    await expect(page.getByTestId('leader-chip')).toContainText('Emídio');
-  } else {
-    await expect(page.getByTestId('leader-chip')).toHaveCount(0);
-    await expect(page.getByLabel('Destaques do campeonato')).toHaveCount(0);
-  }
+  // Emídio leads both the production season (after GP1) and the fixture.
+  await expect(page.getByTestId('leader-chip')).toContainText('Emídio');
 });

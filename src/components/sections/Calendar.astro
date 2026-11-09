@@ -7,6 +7,7 @@ import { championship, pilotById, sortedRaces } from '../../lib/data';
 import { formatDate, formatLap } from '../../lib/format';
 import type { BadgeVariant } from '../types';
 import type { RaceStatus } from '../../lib/schemas';
+import { withBase } from '../../lib/site';
 
 const sessionByRace = new Map(championship.sessions.map((s) => [s.raceId, s]));
 
@@ -15,7 +16,6 @@ const statusLabel: Record<RaceStatus, { label: string; variant: BadgeVariant }> 
   scheduled: { label: 'Agendado', variant: 'neutral' },
   completed: { label: 'Concluído', variant: 'green' },
 };
-const podiumLabels = ['1.º', '2.º', '3.º', '4.º'];
 ---
 
 <Section id="calendario" eyebrow="7 Grandes Prémios" title="Calendário">
@@ -106,7 +106,7 @@ const podiumLabels = ['1.º', '2.º', '3.º', '4.º'];
                         return (
                           <tr class="border-t border-border/60">
                             <td class="py-1.5 pr-2 font-display font-bold text-fg">
-                              {e.position ? podiumLabels[e.position - 1] : 'F'}
+                              {e.position ? `${e.position}.º` : 'F'}
                             </td>
                             <th scope="row" class="py-1.5 pr-2 font-medium text-fg">
                               <span class="flex items-center gap-2 whitespace-nowrap">
@@ -141,6 +141,13 @@ const podiumLabels = ['1.º', '2.º', '3.º', '4.º'];
                     ({formatLap(session.fastestLapTime)})
                   </p>
                 )}
+                <a
+                  href={withBase(`#resultados-${race.id}`)}
+                  class="mt-3 flex items-center gap-1.5 text-sm font-semibold text-brand-blue-text underline-offset-4 hover:underline"
+                >
+                  <Icon name="star" size={16} /> Relatório completo
+                  <span class="sr-only"> do GP{race.round}</span>
+                </a>
                 {race.timesheetUrl && (
                   <a
                     href={race.timesheetUrl}

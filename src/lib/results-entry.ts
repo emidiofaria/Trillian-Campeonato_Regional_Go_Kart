@@ -19,6 +19,8 @@ export function parseLapTime(input: string): number | null {
 export interface ResultExtras {
   date?: string;
   timesheetUrl?: string;
+  /** Track session number on the official timesheet. */
+  session?: string;
 }
 
 /**
@@ -48,7 +50,12 @@ export function applyResult(
     if (r.status !== 'completed') r.status = r === upcoming ? 'next' : 'scheduled';
   }
 
-  const result: RaceResult = { raceId, pilotCount: season.pilots.length, entries };
+  const result: RaceResult = {
+    raceId,
+    ...(extras.session ? { session: extras.session } : {}),
+    pilotCount: season.pilots.length,
+    entries,
+  };
   const results = [...season.results.filter((r) => r.raceId !== raceId), result].sort(
     (a, b) =>
       races.find((r) => r.id === a.raceId)!.round - races.find((r) => r.id === b.raceId)!.round,

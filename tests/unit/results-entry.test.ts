@@ -6,7 +6,9 @@ import { computeChampionship } from '../../src/lib/scoring';
 import type { ResultEntry } from '../../src/lib/schemas';
 import { validateSeason } from '../../src/lib/validate';
 
-const emptySeason = () => validateSeason({ pilots, races, results: [] });
+// The real calendar before any GP was run (independent of the live results).
+const preSeasonRaces = races.map((r) => ({ ...r, status: r.round === 1 ? 'next' : 'scheduled' }));
+const emptySeason = () => validateSeason({ pilots, races: preSeasonRaces, results: [] });
 
 const attended = (pilotId: string, avg: number, best: number, second: number): ResultEntry => ({
   pilotId,

@@ -8,6 +8,7 @@ export const SPONSOR = {
 
 export const NAV_ITEMS = [
   { id: 'classificacao', label: 'Classificação' },
+  { id: 'resultados', label: 'Resultados' },
   { id: 'calendario', label: 'Calendário' },
   { id: 'pilotos', label: 'Pilotos' },
   { id: 'patrocinador', label: 'Patrocinador' },

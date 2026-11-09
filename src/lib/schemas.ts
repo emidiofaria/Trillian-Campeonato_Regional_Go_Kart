@@ -46,26 +46,38 @@ export const resultEntrySchema = z
     attended: z.boolean(),
     avgLapTime: lapTime.nullable(),
     bestLap: lapTime.nullable(),
+    /** Optional: only used as a tie-break; not every timesheet provides it. */
     secondBestLap: lapTime.nullable(),
+    /** Optional telemetry extras shown in the "Resultados" section. */
+    kart: z.number().int().min(1).optional(),
+    /** Top speed in km/h. */
+    topSpeed: z.number().positive().finite().optional(),
+    /** Standard deviation of the lap times, in seconds. */
+    lapStdDev: z.number().nonnegative().finite().optional(),
+    /** Slowest minus fastest lap, in seconds. */
+    lapSpread: z.number().nonnegative().finite().optional(),
   })
   .strict()
   .superRefine((e, ctx) => {
     const times = [e.avgLapTime, e.bestLap, e.secondBestLap];
+    const extras = [e.kart, e.topSpeed, e.lapStdDev, e.lapSpread];
     if (!e.attended) {
-      if (times.some((t) => t !== null)) {
+      if (times.some((t) => t !== null) || extras.some((x) => x !== undefined)) {
         ctx.addIssue({ code: 'custom', message: `${e.pilotId}: ausente não pode ter tempos` });
       }
       return;
     }
-    if (times.some((t) => t === null)) {
+    if (e.avgLapTime === null || e.bestLap === null) {
       ctx.addIssue({
         code: 'custom',
-        message: `${e.pilotId}: presente tem de ter tempo médio, melhor volta e 2.ª melhor volta`,
+        message: `${e.pilotId}: presente tem de ter tempo médio e melhor volta`,
       });
       return;
     }
-    const [avg, best, second] = times as number[];
-    if (best > second) {
+    const avg = e.avgLapTime;
+    const best = e.bestLap;
+    const second = e.secondBestLap;
+    if (second !== null && best > second) {
       ctx.addIssue({
         code: 'custom',
         message: `${e.pilotId}: melhor volta (${best}) maior que a 2.ª melhor (${second})`,
@@ -82,6 +94,8 @@ export const resultEntrySchema = z
 export const raceResultSchema = z
   .object({
     raceId: z.string().min(1),
+    /** Track session number on the official timesheet (e.g. "23"). */
+    session: z.string().min(1).optional(),
     /**
      * Registered pilots when the GP was run (defines its points table). Optional: defaults to
      * the number of entries. Keeps past GPs frozen when a pilot joins mid-season.

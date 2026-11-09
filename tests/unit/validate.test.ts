@@ -5,13 +5,36 @@ import races from '../../src/data/races.json';
 import results from '../../src/data/results.json';
 import fixture from '../fixtures/season.json';
 import { collectSeasonIssues, validateSeason } from '../../src/lib/validate';
+import { computeChampionship } from '../../src/lib/scoring';
 
 const clone = <T>(v: T): T => JSON.parse(JSON.stringify(v));
 
 describe('season validation', () => {
-  it('production data is valid and contains no results yet', () => {
-    expect(() => validateSeason({ pilots: prodPilots, races, results })).not.toThrow();
-    expect(results).toEqual([]);
+  it('production data is valid and GP1 scores as on the official timesheet', () => {
+    const season = validateSeason({ pilots: prodPilots, races, results });
+    const totals = computeChampionship(season.pilots, season.races, season.results).standings.map(
+      (r) => [r.pilotId, r.total],
+    );
+    expect(totals).toEqual([
+      ['emidio', 15],
+      ['torres', 8],
+      ['dinis', 6],
+      ['p-oliveira', 4],
+      ['p-queiros', 2],
+      ['joel', 0],
+    ]);
+  });
+
+  it('accepts an attendee without a second-best lap but rejects extras on an absentee', () => {
+    const ok = clone(fixture.results);
+    ok[0].entries[0].secondBestLap = null;
+    expect(collectSeasonIssues({ pilots, races: fixture.races, results: ok }).issues).toEqual([]);
+
+    const bad = clone(fixture.results) as unknown as { entries: Record<string, unknown>[] }[];
+    const absentee = bad.flatMap((r) => r.entries).find((e) => e.attended === false)!;
+    absentee.topSpeed = 45;
+    const { issues } = collectSeasonIssues({ pilots, races: fixture.races, results: bad });
+    expect(issues.join('\n')).toMatch(/ausente não pode ter tempos/);
   });
 
   it('fixture is valid', () => {
