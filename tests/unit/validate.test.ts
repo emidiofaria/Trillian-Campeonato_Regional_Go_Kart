@@ -17,12 +17,12 @@ describe('season validation', () => {
       (r) => [r.pilotId, r.position, r.positionTotal, r.lapTotal, r.total],
     );
     expect(totals).toEqual([
-      ['emidio', 1, 10, 5, 15],
-      ['dinis', 2, 6, 3, 9],
-      ['torres', 2, 8, 1, 9],
-      ['p-oliveira', 4, 4, 4, 8],
-      ['p-queiros', 5, 2, 0, 2],
-      ['joel', 5, 0, 2, 2],
+      ['emidio', 1, 12, 6, 18],
+      ['dinis', 2, 8, 4, 12],
+      ['torres', 2, 10, 2, 12],
+      ['p-oliveira', 4, 6, 5, 11],
+      ['p-queiros', 5, 4, 1, 5],
+      ['joel', 5, 2, 3, 5],
     ]);
   });
 

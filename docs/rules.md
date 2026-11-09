@@ -44,12 +44,12 @@ Em cada GP, cada piloto soma duas pontuações: a da posição no **tempo médio
 
 | Posição | Critério (Tempo Médio) | Cálculo | Pontos Conquistados |
 | :--- | :--- | :---: | :---: |
-| **1º Lugar** | Tempo Médio mais rápido | 5 × 2 | **10 pts** |
-| **2º Lugar** | 2º Tempo Médio | 4 × 2 | **8 pts** |
-| **3º Lugar** | 3º Tempo Médio | 3 × 2 | **6 pts** |
-| **4º Lugar** | 4º Tempo Médio | 2 × 2 | **4 pts** |
-| **5º Lugar** | 5º Tempo Médio | 1 × 2 | **2 pts** |
-| **6º Lugar** | 6º Tempo Médio | - | **0 pts** |
+| **1º Lugar** | Tempo Médio mais rápido | 6 × 2 | **12 pts** |
+| **2º Lugar** | 2º Tempo Médio | 5 × 2 | **10 pts** |
+| **3º Lugar** | 3º Tempo Médio | 4 × 2 | **8 pts** |
+| **4º Lugar** | 4º Tempo Médio | 3 × 2 | **6 pts** |
+| **5º Lugar** | 5º Tempo Médio | 2 × 2 | **4 pts** |
+| **6º Lugar** | 6º Tempo Médio | 1 × 2 | **2 pts** |
 | **Falta** | **Não compareceu ao GP** | - | **0 pts** |
 
 ### Pontos da Melhor Volta
@@ -57,21 +57,21 @@ Todos os pilotos presentes são ordenados pela sua melhor volta da sessão de 10
 
 | Posição | Critério (Melhor Volta) | Pontos Conquistados |
 | :--- | :--- | :---: |
-| **1º Lugar** | Volta mais rápida absoluta (VR) | **5 pts** |
-| **2º Lugar** | 2ª melhor volta | **4 pts** |
-| **3º Lugar** | 3ª melhor volta | **3 pts** |
-| **4º Lugar** | 4ª melhor volta | **2 pts** |
-| **5º Lugar** | 5ª melhor volta | **1 pt** |
-| **6º Lugar** | 6ª melhor volta | **0 pts** |
+| **1º Lugar** | Volta mais rápida absoluta (VR) | **6 pts** |
+| **2º Lugar** | 2ª melhor volta | **5 pts** |
+| **3º Lugar** | 3ª melhor volta | **4 pts** |
+| **4º Lugar** | 4ª melhor volta | **3 pts** |
+| **5º Lugar** | 5ª melhor volta | **2 pts** |
+| **6º Lugar** | 6ª melhor volta | **1 pt** |
 | **Falta** | **Não compareceu ao GP** | **0 pts** |
 
 * Pilotos com exatamente a mesma melhor volta recebem os mesmos pontos (os mais altos) e o piloto seguinte salta uma posição.
-* Estes pontos somam diretamente aos pontos do tempo médio (ex: o piloto com o melhor tempo médio que também faça a volta mais rápida soma 10 + 5 = 15 pontos; o 2º no tempo médio com a 5ª melhor volta soma 8 + 1 = 9 pontos).
+* Estes pontos somam diretamente aos pontos do tempo médio (ex: o piloto com o melhor tempo médio que também faça a volta mais rápida soma 12 + 6 = 18 pontos; o 2º no tempo médio com a 5ª melhor volta soma 10 + 2 = 12 pontos).
 * Se faltarem pilotos, os presentes ocupam as posições do topo em ambas as tabelas.
 
 ---
 
-> Nota: esta regra aplica-se a toda a época, incluindo o GP1, que foi recalculado.
+> Nota: estas tabelas (tempo médio 12/10/8/6/4/2 e melhor volta 6/5/4/3/2/1) aplicam-se a toda a época, incluindo o GP1, que foi recalculado.
 
 ## 6. Gestão de Faltas e Assiduidade
 * **Penalização por Falta:** Quem não comparecer a um GP obtém **0 pontos** nessa jornada. 
@@ -89,6 +89,10 @@ Todos os pilotos presentes são ordenados pela sua melhor volta da sessão de 10
 1. **Maior número de vitórias** (1ºs lugares nos GPs).
 2. **Maior número de Voltas Mais Rápidas** (1º lugar na melhor volta) conquistadas ao longo da época.
 3. Menor número de faltas.
+
+### Grelha de Partida (a partir do GP2)
+* A ordem de saída para a pista em cada GP é a **grelha invertida** da classificação geral do campeonato: o último classificado sai em 1º e o líder sai em último.
+* Pilotos empatados em pontos são ordenados pelos critérios de desempate acima (e, se continuarem empatados, pelo número de piloto); o melhor classificado sai mais atrás.
 
 ---
 

@@ -32,6 +32,13 @@ inspirado em telemetria, em modo escuro, profissional e sem exageros.
 - Em mobile, as âncoras ficam num menu acessível que abre e fecha.
 - A secção visível no ecrã fica destacada na navegação.
 
+### Banner do próximo GP (primeira secção)
+
+- Número do GP, circuito, localização, tipo e data (ou mês, ou "Data a anunciar").
+- "Grelha de partida (invertida)": classificação geral invertida (o líder sai em último), a
+  partir do GP2; oculta antes do primeiro GP.
+- Botão "Ver no calendário".
+
 ### 3A. Hero / Patrocinador
 
 - Badge "Patrocinador Oficial".
@@ -50,13 +57,13 @@ inspirado em telemetria, em modo escuro, profissional e sem exageros.
 - Cabeçalho com ícone de bandeira xadrez, título "Classificação Geral" e indicação "N Pilotos" (calculado a partir de `src/data/pilots.json`; hoje 6).
 - Tabela com as colunas Pos, Piloto (avatar colorido + nome), Pontos Totais, Pts média (tempo
   médio), Pts volta (melhor volta) e GP1 a GP7.
-- Cada célula de GP mostra os pontos desse GP e a decomposição "média + volta" (ex.: "8 + 1"):
+- Cada célula de GP mostra os pontos desse GP e a decomposição "média + volta" (ex.: "10 + 2"):
   - "—" para GP ainda não realizado;
   - "F" (falta) com estilo distinto;
   - marcador "VR" quando o piloto fez a volta mais rápida do GP.
 - O líder tem o badge "Líder" e o total em amarelo. Antes do primeiro GP aparece
   "A temporada ainda não começou".
-- Nota de rodapé com as duas tabelas de pontos (hoje tempo médio 10/8/6/4/2/0 + melhor volta 5/4/3/2/1/0).
+- Nota de rodapé com as duas tabelas de pontos (hoje tempo médio 12/10/8/6/4/2 + melhor volta 6/5/4/3/2/1).
 - Painel recolhível "Critérios de desempate".
 
 ### 3C. Calendário
@@ -75,9 +82,9 @@ inspirado em telemetria, em modo escuro, profissional e sem exageros.
 
 ### 3E. Regulamento
 
-- Caixa de resumo com a tabela de pontos por posição: tempo médio 2×(N−1)…2/0 e melhor volta
-  N−1…1/0 com N pilotos (hoje 10/8/6/4/2/0 e 5/4/3/2/1/0); falta = 0.
-- Acordeão com o regulamento completo: formato, faltas, desempates, conduta e transparência (ver
+- Caixa de resumo com a tabela de pontos por posição: tempo médio 2×N…2 e melhor volta N…1 com
+  N pilotos (hoje 12/10/8/6/4/2 e 6/5/4/3/2/1); falta = 0.
+- Acordeão com o regulamento completo: formato, grelha de partida, faltas, desempates, conduta e transparência (ver
   `docs/rules.md`).
 
 ### Patrocinador

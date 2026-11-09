@@ -158,7 +158,9 @@ const started = completedRaces > 0;
   <p class="mt-3 text-sm text-fg-muted">
     Pontos por GP = tempo médio ({POSITION_POINTS.join('/')}) + melhor volta ({
       LAP_POINTS.join('/')
-    }), ex.: <span aria-hidden="true">8 + 1</span><span class="sr-only">8 mais 1</span> ·
+    }), ex.: <span aria-hidden="true">{POSITION_POINTS[1]} + {LAP_POINTS.at(-2)}</span><span
+      class="sr-only">{POSITION_POINTS[1]} mais {LAP_POINTS.at(-2)}</span
+    > ·
     <span class="vr-marker" aria-hidden="true">VR</span> volta mais rápida do GP ·
     <span class="cell-absent" aria-hidden="true">F</span> Falta (0 pontos) · — GP ainda não realizado
   </p>

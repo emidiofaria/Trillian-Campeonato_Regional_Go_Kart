@@ -3,7 +3,7 @@ name: add-pilot
 description: >-
   Register a new pilot/driver in the Kart Cup 2026 championship site. Asks for the pilot name and a
   photo or avatar colour, runs `npm run add-pilot`, updates the docs and the OG image, and verifies
-  the build and tests. The points tables (average time 2×(N−1)…0, best lap N−1…0) adapt automatically. Use whenever
+  the build and tests. The points tables (average time 2×N…2, best lap N…1) adapt automatically. Use whenever
   the user asks to add, register or enrol a pilot or driver, e.g. "adicionar piloto", "novo piloto",
   "inscrever piloto", "add a pilot", "add a new driver", "new driver joins the championship".
 ---
@@ -16,9 +16,9 @@ Work from the repository root. Never `git push`.
 ## How the site adapts (don't edit these by hand)
 
 - **Points** are derived from the number of pilots N in `src/lib/scoring.ts`:
-  `positionPoints(N) = 2×(N−1), …, 2, 0` (average time) and `lapPointsTable(N) = N−1, …, 1, 0`
-  (best lap). For example, 5 pilots give 8/6/4/2/0 + 4/3/2/1/0, and 6 pilots give
-  10/8/6/4/2/0 + 5/4/3/2/1/0.
+  `positionPoints(N) = 2×N, …, 4, 2` (average time) and `lapPointsTable(N) = N, …, 2, 1`
+  (best lap). For example, 5 pilots give 10/8/6/4/2 + 5/4/3/2/1, and 6 pilots give
+  12/10/8/6/4/2 + 6/5/4/3/2/1. The start grid (`startGrid()`) also adapts.
   **Never edit the scoring code to add a pilot.**
 - **Mid-season joins:** each GP in `src/data/results.json` stores `pilotCount`. GPs already run
   keep their points table, and the newcomer is recorded there as absent (0 pts, 1 absence each).
@@ -77,17 +77,18 @@ never copy `[cite: …]` artifacts.
 - `docs/rules.md`:
   - **§2 Pilotos Inscritos:** add `* <Name>`.
   - **§5 heading:** `(para N Participantes)`.
-  - **§5 table:** one row per position from 1º to Nº, `Cálculo` = `(N−k) × 2` for position k
-    (`-` for the last), `Pontos` = `2×(N−k) pts`; keep the **Falta** row.
-  - **§5 "Pontos da Melhor Volta" table:** one row per position from 1º to Nº with `N−k` pts for
-    position k (the last gets 0); keep the **Falta** row. Keep the example
-    `soma 2(N−1) + (N−1) = 3(N−1) pontos`.
+  - **§5 table:** one row per position from 1º to Nº, `Cálculo` = `(N−k+1) × 2` for position k,
+    `Pontos` = `2×(N−k+1) pts` (the last gets 2); keep the **Falta** row (0).
+  - **§5 "Pontos da Melhor Volta" table:** one row per position from 1º to Nº with `N−k+1` pts
+    for position k (the last gets 1); keep the **Falta** row (0). Update the examples
+    (`soma 2N + N = 3N pontos`; `2º no tempo médio com a 5ª melhor volta`) and the note with the
+    two tables.
   - **§8 "boa sorte" line:** `Emídio, P. Queirós, …, <Penultimate> e <Name>!`.
   - If GPs were already run, add a note under §6 that the pilot joined from GP k and that earlier
     GPs keep the points table they were run with.
 - `README.md`: the pilot list in the intro, and the "today N: …" values in the Scoring paragraph.
 - `AGENTS.md`: the pilot list on the first line ("pilots: …").
-- `docs/layout.md`: the "hoje N / hoje 8/6/4/2/0 / hoje +4" example values.
+- `docs/layout.md`: the "hoje N" and "hoje 12/10/8/6/4/2 … 6/5/4/3/2/1" example values.
 
 ### 5. Verify
 

@@ -19,7 +19,7 @@ export const pilots: PilotData[] = (
     : read<PilotData[]>('../../src/data/pilots.json')
 ).sort((a, b) => a.number - b.number);
 
-/** Points tables for the current pilot count (docs/rules.md section 5): average 2×(N−1)…0, best lap N−1…0. */
+/** Points tables for the current pilot count (docs/rules.md section 5): average 2×N…2, best lap N…1. */
 export const N = pilots.length;
-export const positionPoints = Array.from({ length: N }, (_, i) => 2 * (N - 1 - i));
-export const lapPoints = Array.from({ length: N }, (_, i) => N - 1 - i);
+export const positionPoints = Array.from({ length: N }, (_, i) => 2 * (N - i));
+export const lapPoints = Array.from({ length: N }, (_, i) => N - i);

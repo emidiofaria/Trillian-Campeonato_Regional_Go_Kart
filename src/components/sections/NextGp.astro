@@ -2,9 +2,13 @@
 import Badge from '../ui/Badge.astro';
 import Button from '../ui/Button.astro';
 import Icon from '../icons/Icon.astro';
-import { nextRace } from '../../lib/data';
+import PilotAvatar from '../PilotAvatar.astro';
+import { championship, nextRace, pilotById } from '../../lib/data';
+import { startGrid } from '../../lib/scoring';
 import { formatDate, formatMonth } from '../../lib/format';
 import { withBase } from '../../lib/site';
+
+const grid = startGrid(championship).map((id) => pilotById.get(id)!);
 ---
 
 {
@@ -81,6 +85,25 @@ import { withBase } from '../../lib/site';
               data-countdown={nextRace.date}
               data-testid="next-gp-countdown"
             />
+          )}
+
+          {grid.length > 0 && (
+            <div class="mt-6" data-testid="start-grid">
+              <h2 class="text-xs font-semibold uppercase tracking-[0.2em] text-fg-muted">
+                Grelha de partida <span class="normal-case tracking-normal">(invertida)</span>
+              </h2>
+              <ol class="mt-2 flex flex-wrap gap-2 text-sm">
+                {grid.map((pilot, i) => (
+                  <li class="next-chip">
+                    <span class="font-display font-bold tabular-nums text-brand-yellow">
+                      {i + 1}.º
+                    </span>
+                    <PilotAvatar pilot={pilot} />
+                    {pilot.name}
+                  </li>
+                ))}
+              </ol>
+            </div>
           )}
 
           <div class="mt-8">
